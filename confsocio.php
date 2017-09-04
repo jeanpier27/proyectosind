@@ -81,7 +81,7 @@ require_once('login/cerrar_sesion.php');
                            <input type="text" name="descripcion" readonly value="<?php echo $consultasocioup['descripcion']; ?>">
                            
                             <label>Valor</label>
-                            <input type="text" name="valor" required value="<?php echo $consultasocioup['valor']; ?>">    
+                            <input type="text"  class="numero" name="valor" required value="<?php echo $consultasocioup['valor']; ?>">    
                       
                            
                            <br>

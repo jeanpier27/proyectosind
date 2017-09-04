@@ -106,12 +106,18 @@ require_once('login/cerrar_sesion.php');
                                 <span>Seleccione al Proveedor </span> 
                                
                           <select class="selectpicker" name="nombres" data-live-search="true" required="">
+                          <?php 
+                                if(isset($_GET['proveedor'])){
+                                    $id_prov=$_GET['proveedor'];
+
+                                }
+                           ?>
                           <option <?php if(isset($_GET['proveedor'])){}else{echo 'selected';}  ?> disabled>Seleccione </option>
                            <?php  
 
                              while($row=$sqlproveedor->fetch_array()){ ?>
 
-                              <option <?php if(isset($_GET['proveedor'])){echo 'selected';} ?>  value="<?php echo $row['id_proveedores']; ?>"><?php echo ($row['nombres']); ?></option>
+                              <option <?php if($id_prov==$row['id_proveedores']){echo 'selected';} ?>  value="<?php echo $row['id_proveedores']; ?>"><?php echo ($row['nombres']); ?></option>
                                <?php  
                             }
                             ?>
@@ -176,7 +182,7 @@ require_once('login/cerrar_sesion.php');
                  
                              <div class="group-material">
                                 
-                                <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" class="tooltips-general material-control"  data-toggle="tooltip" required="" data-placement="top" title="N.- Factura" name="n_factura"  value="<?php if(isset($_GET['n_factura'])){echo $_GET['n_factura'];} ?>" >
+                                <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" class="tooltips-general material-control"  data-toggle="tooltip" required="" data-placement="top" title="N.- Factura" name="n_factura"  value="<?php if(isset($_GET['n_factura'])){echo $_GET['n_factura'];} ?>" maxlength="20">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label id="ltipo">N.- Factura</label>
@@ -185,7 +191,7 @@ require_once('login/cerrar_sesion.php');
 
                             <div class="group-material">
                                 
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" required="" title="Aut. SRI" name="aut_sri"  value="" >
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" required="" title="Aut. SRI" name="aut_sri"  value="" maxlength="10">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Aut. SRI</label>
@@ -270,7 +276,7 @@ require_once('login/cerrar_sesion.php');
 
                             <div class="group-material">
                                 
-                                <input type="text" class="material-control" id="n_retencion" onkeyup="javascript:this.value=this.value.toUpperCase();activar();"  onkeyup="activar();"  name="numero_ret" required >
+                                <input type="text" class="material-control numero" id="n_retencion" onkeyup="javascript:this.value=this.value.toUpperCase();activar();"  onkeyup="activar();"  name="numero_ret" required maxlength="10">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label >N.- Retencion</label>
@@ -280,7 +286,7 @@ require_once('login/cerrar_sesion.php');
 
                             <div class="group-material">
                                 
-                                <input type="text" class="numero" onchange="retencion();" onkeyup="retencion();" data-toggle="tooltip" data-placement="top" title="Total a Pagar" name="renta"  readonly="" >%
+                                <input type="number" class="numero" onchange="retencion();" onkeyup="retencion();" data-toggle="tooltip" data-placement="top" title="Total a Pagar" name="renta" step="1" min="1" max="100"  readonly="" maxlength="3" >%
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>RENTA</label>
@@ -308,7 +314,7 @@ require_once('login/cerrar_sesion.php');
 
                             <div class="group-material">
                                 
-                                <input type="text" class="numero" onchange="retencioniva();" onkeyup="retencioniva();" data-toggle="tooltip" data-placement="top" title="Total a Pagar" name="iva_p" readonly=""  >%
+                                <input type="number" class="numero" onchange="retencioniva();" onkeyup="retencioniva();" data-toggle="tooltip" data-placement="top" title="Total a Pagar" name="iva_p" step="1" min="1" max="100" readonly="" maxlength="3" >%
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Iva</label>
@@ -412,12 +418,13 @@ if(isset($_POST['registra'])){
     $porc_iva=$_POST['iva_p'];
     $valor_iva=$_POST['valorivab'];
     $totalegreso=$_POST['total_egres'];
+    $fecha_registro=$_POST['fecha_registro'];
 
     $sqlbusca=$conexion->query("select IFNULL(sum(total),0) from tb_facturasxcobrar where id_proveedores='".$id_proveedor."' and n_factura_ntv='".$n_fact_nv."'");
     $consulbus=mysqli_fetch_array($sqlbusca);
     if($consulbus[0]<=0){
   
-     $queryinsert="insert into tb_facturasxcobrar (id_proveedores,fac_ntv,n_factura_ntv,fecha_fac1,aut_sri,fecha_fact,descripcion,subtotal,sobtotal_c,descuento,iva,total,n_retenc,porc_renta,valor_renta,porc_iva,valor_iva,valor_pagar,estado,observacion,id_usuarios)values('".$id_proveedor."','".$tipo_fact."','".$n_fact_nv."','".$fecha_factu1."','".$aut_sri."','".$fecha_factu."','".$descripcion."','".$subtotal."','".$subtotal_cero."','".$descuento."','".$ivas."','".$totalpagar."','".$n_retencion."','".$porc_renta."','".$valor_renta."','".$porc_iva."','".$valor_iva."','".$totalegreso."','ACTIVO','','".$_SESSION['id_usuario']."')";
+     $queryinsert="insert into tb_facturasxcobrar (id_proveedores,fac_ntv,n_factura_ntv,fecha_fac1,aut_sri,fecha_fact,descripcion,subtotal,sobtotal_c,descuento,iva,total,n_retenc,porc_renta,valor_renta,porc_iva,valor_iva,valor_pagar,estado,observacion,id_usuarios,fecha_re)values('".$id_proveedor."','".$tipo_fact."','".$n_fact_nv."','".$fecha_factu1."','".$aut_sri."','".$fecha_factu."','".$descripcion."','".$subtotal."','".$subtotal_cero."','".$descuento."','".$ivas."','".$totalpagar."','".$n_retencion."','".$porc_renta."','".$valor_renta."','".$porc_iva."','".$valor_iva."','".$totalegreso."','ACTIVO','','".$_SESSION['id_usuario']."','".$fecha_registro."')";
              $resultinsert = mysqli_query($conexion, $queryinsert); 
              if($resultinsert){
                     // echo ("<script type='text/javascript'>alert('ok');</script>");
@@ -684,9 +691,11 @@ $('input[name=fecha_factura1]').daterangepicker({
     if(valo_iva!=0){
         if( $('#siva').prop('checked') ) {
             $('input[name=iva_p]').removeAttr('readonly');
+            $('input[name=iva_p]').attr('required',true);
     // alert('Seleccionado');
         }else{
             $('input[name=iva_p]').attr('readonly','true');
+            $('input[name=iva_p]').removeAttr('required');
             $('input[name=iva_p]').val("");
             $('input[name=iva_total]').val("");
             $('input[name=valorivab]').val("");

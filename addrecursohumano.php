@@ -142,6 +142,7 @@ require_once('login/conexion.php'); ?>
                   
                            
                             <p class="text-center">
+                            <a href="addrecursohumano.php" class="btn btn-info"><i class="zmdi zmdi-floppy"></i> LIMPIAR</a>
                                 
                                 <button  name="registra" id="registra" type="submit" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; GUARDAR</button> &nbsp;&nbsp;
                             </p>
@@ -238,7 +239,7 @@ require_once('login/cerrar_conexion.php');}
                                 if(data=='ok'){
                                   $('button[name=actualizar]').attr("name","registra");
                                     $('button[name=registra]').attr("name","registra");
-                                    $('input[name=cedula]').val('');
+                                    // $('input[name=cedula]').val('');
                                       $('input[name=nombressocio]').val('');
                                       $('input[name=apellidossocio]').val('');
                                       $('input[name=telefono1socio]').val('');

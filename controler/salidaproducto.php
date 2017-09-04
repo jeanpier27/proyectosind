@@ -10,6 +10,9 @@ $id_banco=$_POST['id_banco'];
 $totalapagar=$_POST['totalapagar'];
 $fecha=$_POST['fecharegistro'];
 $count=0;
+$sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
+                $respcom=mysqli_fetch_array($sqlcompro);
+                if($respcom[0]!=1){
 $consuln=$conexion->query("select nombre,apellido from tb_personas where id_persona=".$id_persona); 
 	while($consultasocio=mysqli_fetch_array($consuln)){
 		$nombres_comp=$consultasocio['nombre'].' '.$consultasocio['apellido'];
@@ -39,5 +42,8 @@ if($b){
         echo 'error';    
     }
     }
+}else{
+                echo 'errorrep'; 
+            }
 
  ?>

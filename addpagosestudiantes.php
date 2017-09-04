@@ -228,8 +228,10 @@ require_once('login/cerrar_sesion.php');
                             </div> 
 
                             <div class="group-material">
-                                
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" maxlength="10" name="ingreso_n" required value="" >
+                                 <?php 
+                            $conuslt=$conexion->query("select max(comprabante_n)as comp from tb_ingreso_escuela"); 
+                            $res=mysqli_fetch_array($conuslt);?>
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" maxlength="10" name="ingreso_n" required placeholder="<?php echo($res[0]); ?>" value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Comprobante de Ingreso N.-</label>
@@ -283,6 +285,9 @@ if(isset($_POST['registra'])){
     $ingreso_n=$_POST['ingreso_n'];
     $deposito=$_POST['comproante_bco'];
     $id_banco=$_POST['id_banco'];
+    $sqlcompro=$conexion->query("select 1 from tb_ingreso_escuela where comprabante_n=".$ingreso_n);
+                $respcom=mysqli_fetch_array($sqlcompro);
+                if($respcom[0]!=1){
 
     $squery=$conexion->query("select id_tipo_licencia from tb_estudiantes where id_estudiante=".$id_est);
     $resul=mysqli_fetch_array($squery);
@@ -306,6 +311,9 @@ if(isset($_POST['registra'])){
     }else{
         echo '<script type="text/javascript">swal("Error!", "No se pudo guardar la cuota!", "error")</script>';    
     }
+    }  else{
+                echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante!", "error")</script>'; 
+            }
 }
 
 

@@ -174,6 +174,11 @@ require_once('login/cerrar_sesion.php');
                    $fecha_salida=substr($fecha, 13);
                    $Estado = 'ACTIVO';
 
+                   $consulrepetidodocente=$conexion->query("select 1 from tb_docente inner join tb_usuarios on tb_docente.id_usuarios=tb_usuarios.id_usuarios where tb_usuarios.id_persona=".$Id_per);
+                   $resprepetido=mysqli_fetch_array($consulrepetidodocente);
+
+                   if($resprepetido[0]!=1){
+
                    $add_table_usu = "insert into tb_usuarios (id_persona, contraseña, id_tipo_usuario, estado) values (".$Id_per.", '".$password."', ".$id_tipo_usuario.", '".$Estado."')";    
                    $ingreso_table_usu = mysqli_query($conexion,$add_table_usu);
 
@@ -196,6 +201,9 @@ require_once('login/cerrar_sesion.php');
                     }
 
                      // *************************************
+                   }
+                   }else{
+                    header('location: docentes.php?msg=repetido');
                    }
 
 

@@ -76,14 +76,27 @@ require_once('login/cerrar_sesion.php');
                            while($consultasocioup=mysqli_fetch_array($sqlupd)){
                         ?>
                         <form action="" method="post">
-                        <input type="hidden" name="id_vehiculo" value="<?php echo $_GET['id']; ?>">
+                        <input type="hidden" name="id_vehiculo" value="<?php echo $_GET['id']; ?>" >
 
                            <label>PLACA O RAMV</label>
-                           <input type="text" name="placa" onkeyup="javascript:this.value=this.value.toUpperCase();" required class="" value="<?php echo $consultasocioup['placa']; ?>">
+                           <input type="text" name="placa" onkeyup="javascript:this.value=this.value.toUpperCase();" required class="" value="<?php echo $consultasocioup['placa']; ?>" maxlength="8">
                            <label>Marca</label>
-                           <input type="text" name="marca" onkeyup="javascript:this.value=this.value.toUpperCase();" required class="letras" value="<?php echo $consultasocioup['marca']; ?>">
+                           <select name="marca">                                
+                           <?php 
+                                  $selecmarca=$conexion->query("select * from tb_marca");
+                                  while($marcas=mysqli_fetch_array($selecmarca)){ 
+                                  ?>
+                                   <option value="<?php echo $marcas['id_marca']; ?>" <?php if($consultasocioup['id_marca']==$marcas['id_marca']){ echo "selected";} ?>><?php echo $marcas['descripcion']; ?></option>
+                                   <?php } ?>
+                            ?>
+                             
+                           </select>
+                          
                            <label>Modelo</label>
-                           <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" name="modelo" maxlength="10" required class="" value="<?php echo $consultasocioup['modelo']; ?>">
+                           <select name="modelo" id="modelo">
+                             
+                           </select>
+                           <input type="hidden" onkeyup="javascript:this.value=this.value.toUpperCase();" name="modelos" maxlength="10" required class="" value="<?php echo $consultasocioup['id_modelo']; ?>">
                            <label>Motor</label>
                            <input type="text" name="motor" maxlength="40" onkeyup="javascript:this.value=this.value.toUpperCase();" required class="" value="<?php echo $consultasocioup['motor']; ?>">
                            
@@ -224,8 +237,14 @@ require_once('login/cerrar_sesion.php');
                                 <tr>
                                 <td><?php echo($consultasocio['id_vehiculo']); ?></td>
                                 <td><?php echo($consultasocio['placa']); ?></td>
-                                <td><?php echo($consultasocio['marca']); ?></td>
-                                <td><?php echo($consultasocio['modelo']); ?></td>
+                                 <?php  $consulmarca=$conexion->query("select descripcion from tb_marca where id_marca=".$consultasocio['id_marca']);
+                                  $marc=mysqli_fetch_array($consulmarca);
+                                  $consulmodelo=$conexion->query("select descripcion from tb_modelo where id_marca=".$consultasocio['id_marca']." and id_modelo=".$consultasocio['id_modelo']);
+                                  $mode=mysqli_fetch_array($consulmodelo);
+
+                                ?>
+                                <td><?php echo($marc[0]); ?></td>
+                                <td><?php echo($mode[0]); ?></td>
                                 <td><?php echo($consultasocio['motor']); ?></td>
                                 <td><?php echo($consultasocio['chasis']); ?></td>
                                 <td><?php echo($consultasocio['año_produccion']); ?></td>
@@ -260,6 +279,48 @@ require_once('login/cerrar_sesion.php');
  </body>
  <script type="text/javascript">
  	  $(document).ready(function(){
+
+      var id_modelo=$('input[name=modelos]').val();
+      var id_marca=$('select[name=marca]').val();
+      // console.log(id_marca+id_modelo);
+       $.post("controler/consulta_modelo.php",{cedula:id_marca},function(data,status){
+                                
+                                    $('select[name=modelo]').html(data);    
+                                    $("#modelo> option[value='"+id_modelo+"']").attr("selected",true);         
+                               
+                            });
+
+       
+       console.log(id_modelo);
+
+      $('select[name=marca]').change(function(){
+                        // alert($('select[name=nombres]').val());s
+                        var id_persona=$('select[name=marca]').val();
+                        
+                            $.post("controler/consulta_modelo.php",{cedula:id_persona},function(data,status){
+                                
+                                    // console.log(data);
+                                    // console.log(status);
+                                    $('select[name=modelo]').html(data);
+                               
+                                  //   swal({
+                                  //       title: "Advertencia?",
+                                  //     text: "Ya se encuentra registrado!",
+                                  //     type: "warning",
+                                  //     confirmButtonColor: "#DD6B55",
+                                  //     confirmButtonText: "Aceptar!"
+                                  // },
+                                  // function(){
+                                  //       location.href="addsocio.php";
+                                      
+                                  // });
+                                
+                               
+                            });
+                       
+                    
+                });
+
                    
                     $('input[name=fecha_consulta]').daterangepicker({
                         autoUpdateInput: false,

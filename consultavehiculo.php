@@ -154,8 +154,14 @@ $sqlsocio=$conexion->query("select * from tb_vehiculo where fecha_factura>='".$f
                                 <tr>
                                 <td><?php echo($consultasocio['id_vehiculo']); ?></td>
                                 <td><?php echo($consultasocio['placa']); ?></td>
-                                <td><?php echo($consultasocio['marca']); ?></td>
-                                <td><?php echo($consultasocio['modelo']); ?></td>
+                                <?php  $consulmarca=$conexion->query("select descripcion from tb_marca where id_marca=".$consultasocio['id_marca']);
+                                  $marc=mysqli_fetch_array($consulmarca);
+                                  $consulmodelo=$conexion->query("select descripcion from tb_modelo where id_marca=".$consultasocio['id_marca']." and id_modelo=".$consultasocio['id_modelo']);
+                                  $mode=mysqli_fetch_array($consulmodelo);
+
+                                ?>
+                                <td><?php echo($marc[0]); ?></td>
+                                <td><?php echo($mode[0]); ?></td>
                                 <td><?php echo($consultasocio['motor']); ?></td>
                                 <td><?php echo($consultasocio['chasis']); ?></td>
                                 <td><?php echo($consultasocio['año_produccion']); ?></td>
@@ -272,7 +278,7 @@ $(document).ready(function(){
        buttons: [
             {
                 extend: 'print', text:'Imprimir',
-                 message: 'Datos de Socios',
+                 message: 'Datos de Vehículos',
                 exportOptions: {
                     columns: ':visible',
                     

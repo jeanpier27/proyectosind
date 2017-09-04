@@ -98,22 +98,31 @@ require_once('login/cerrar_sesion.php');
                     $fecha_fin_poli     = substr($fechas, -10); 
                     $id_proveed     = $_POST['id_proveedores'];                    
                     $fecha_venci_matri   =$_POST['venci_matricula'];
+                    $aseguradora   =$_POST['aseguradora'];
+
+
+                    if($id_proveed!="" and $aseguradora!="" and $marca!=0 and $modelo!="" and $ano_produc!="" and $fechas!="" and $fecha_venci_matri!=""){
                   
                     $sql=$conexion->query("SELECT * FROM tb_vehiculo WHERE(placa='".$placa."')"); 
                         if($f = $sql->fetch_array()){
-                            if($placa==$f['placa']){
+                            if($placa==$f['placa'] or $modelo==$f['id_modelo'] or $marca==$f['id_marca']){
                                         echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Esta placa ya fue registrada",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="addvehiculo.php";});});</script>';
                                 }
                               }else{               
-                        $query ="INSERT INTO tb_vehiculo (fecha_factura,placa,marca,modelo,motor,chasis,año_produccion,fecha_inicio_poliza,fecha_fin_poliza,id_proveedores,fecha_venci_matricula,estado,observacion) VALUES ('".$fecha_factura."','".$placa."','".$marca."','".$modelo."','".$motor."','".$chasis."','".$ano_produc."','".$fecha_ini_poli."','".$fecha_fin_poli."',".$id_proveed.",'".$fecha_venci_matri."','ACTIVO','')";
+                        $query ="INSERT INTO tb_vehiculo (fecha_factura,placa,id_marca,id_modelo,motor,chasis,año_produccion,fecha_inicio_poliza,fecha_fin_poliza,id_proveedores,fecha_venci_matricula,estado,observacion,aseguradora) VALUES ('".$fecha_factura."','".$placa."','".$marca."','".$modelo."','".$motor."','".$chasis."','".$ano_produc."','".$fecha_ini_poli."','".$fecha_fin_poli."',".$id_proveed.",'".$fecha_venci_matri."','ACTIVO','','".$aseguradora."')";
 
                         $resultado = $conexion->query($query); 
                         if($resultado){
 
-                               echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="facturas_x_cobrar.php?n_factura='.$n_factura.'&fecha_fact='.$fecha_factura.'";});});</script>';
+                               echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="addvehiculo.php";});});</script>';
 
+                      }else{
+                         echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="addvehiculo.php";});});</script>';
                       }
                   }
+                    }else{
+                       echo '<script>jQuery(function(){swal({title:"Error..!!",text:"Debe seleccionar todos los campos",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="addvehiculo.php";});});</script>';
+                    }
                    }
                   ?>       
 
@@ -136,27 +145,27 @@ require_once('login/cerrar_sesion.php');
 
                             </div>
 
-                             <div class="group-material">
+                            <!--  <div class="group-material">
                                 <input type="text" class="tooltips-general material-control" required="" maxlength="20" onkeyup="javascript:this.value=this.value.toUpperCase();" data-toggle="tooltip" data-placement="top"  placeholder="N.- de Factura" title="Describa la factura" name="n_factura">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>N.- Factura</label>
-                            </div> 
+                            </div> -->
 
                             <div class="group-material">
-                                Fecha de Factura
+                                Fecha de Compra
                                 <input type="text" class="tooltips-general material-control" name="fecha_factura" required="" readonly="">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 
 
                             </div> 
-
+ 
 
                             <div class="group-material">
                             
                             
-                                 <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" class="material-control tooltips-general check-representative" required="" data-toggle="tooltip" data-placement="top" placeholder="Escribe la PLACA o RAMV" name="placa" >
+                                 <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" class="material-control tooltips-general check-representative" required="" data-toggle="tooltip" maxlength="8" data-placement="top" placeholder="Escribe la PLACA o RAMV" name="placa" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>PLACA o RAMV</label>
@@ -223,7 +232,7 @@ require_once('login/cerrar_sesion.php');
                          
                             <div class="group-material">
                             Fecha de inicio y fin Poliza
-                                <input type="text" class="tooltips-general material-control" required="" maxlength="20" onkeyup="javascript:this.value=this.value.toUpperCase();" data-toggle="tooltip" data-placement="top"  placeholder="Fecha de fin de Poliza " readonly="" title="Describa la fecha" name="fecha_fin_poliza">
+                                <input type="text" class="tooltips-general material-control" required="" maxlength="20" onkeyup="javascript:this.value=this.value.toUpperCase();" data-toggle="tooltip" data-placement="top"  placeholder="Fecha de inicio y fin de Poliza " readonly="" title="Describa la fecha" name="fecha_fin_poliza" required="">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 
@@ -238,7 +247,7 @@ require_once('login/cerrar_sesion.php');
                                 <span>Seleccione la aseguradora </span> 
                                 <br>
                                
-                          <select class="selectpicker material-control" name="id_proveedores" data-live-search="true" required="">
+                          <select class="selectpicker material-control" name="aseguradora" data-live-search="true" required="">
                           <option selected="" disabled>Seleccione </option>
 
                            <?php  
@@ -256,7 +265,7 @@ require_once('login/cerrar_sesion.php');
 
                      <div class="group-material">
                      Fecha de Vencimiento Matricula
-                                <input type="text" class="tooltips-general material-control" required="" maxlength="20"  data-toggle="tooltip" data-placement="top"  placeholder="Escribe Vencimiento de matricula del Vehículo" title="Fecha Vehiculo" readonly="" name="venci_matricula">
+                                <input type="text" class="tooltips-general material-control" required="" maxlength="20"  data-toggle="tooltip" data-placement="top"  placeholder="Escribe Vencimiento de matricula del Vehículo" title="Fecha matricula" readonly="" name="venci_matricula" required="">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 
@@ -289,6 +298,7 @@ require_once('login/cerrar_sesion.php');
  </body>
 <script type="text/javascript">
 $(document).ready(function(){
+
 
   $('select[name=marca]').change(function(){
                         // alert($('select[name=nombres]').val());s

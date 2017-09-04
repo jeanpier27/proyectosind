@@ -199,7 +199,9 @@ require_once('login/cerrar_sesion.php');
                            
 
                             <div class="group-material">
-                                <?php       
+                                <?php     
+                                $consultcanticurso=$conexion->query("select cantidad from tb_cantidad_curso");  
+                                $resul=mysqli_fetch_array($consultcanticurso);
                                 $consultcurso=$conexion->query("select * from tb_curso");
                                 while($resp=mysqli_fetch_array($consultcurso)){
                                    $consul_curso = $conexion->query("select id_curso FROM `tb_estudiantes`  where id_promocion='".$promo."'  and horario='".$horario."' and id_curso='".$resp['id_curso']."'");
@@ -208,7 +210,7 @@ require_once('login/cerrar_sesion.php');
                                     while($nume=mysqli_fetch_array($consul_curso)){
                                       $count++;
                                     }
-                                    if($count<3){
+                                    if($count<$resul[0]){
                                       
                                       $cursovisible=$resp['curso'];
                                       $id_curso=$resp['id_curso'];

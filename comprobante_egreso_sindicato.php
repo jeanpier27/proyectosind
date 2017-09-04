@@ -48,8 +48,12 @@ while($consultasocio=mysqli_fetch_array($sqlingreso)){
   $pdf->setXY(20,115);   
   $pdf->Cell(35,5,$consultasocio['des'],0,1,'L');
    $pdf->SetFont('Arial','',10);
-  $pdf->setXY(75,115);   
-  $pdf->Cell(15,5,$total,0,1,'R'); 
+  $pdf->setXY(75,115);  
+  if($total==""){ 
+  $pdf->Cell(15,5,$consultasocio['saldo'],0,1,'R'); 
+}else{
+  $pdf->Cell(15,5,$total,0,1,'R');
+}
   
   if($renta>0){
   $pdf->setXY(125,120); 

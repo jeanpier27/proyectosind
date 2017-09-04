@@ -23,7 +23,13 @@ $id_per=$_GET['nombres'];
 
             ?>
 
-
+ <script type="text/javascript">
+    $(document).ready(function(){
+            $('#contcontable').attr("style","display:block;");
+            $('#ingresos').attr("style","background-color:#E75A5A;");
+              
+            });
+</script>
 
  <div class="navbar-lateral full-reset">
         <div class="visible-xs font-movile-menu mobile-menu-button"></div>
@@ -385,8 +391,11 @@ $id_per=$_GET['nombres'];
 
 
                             <div class="group-material">
+                            <?php 
+                            $conuslt=$conexion->query("select max(comprabante_n)as comp from tb_ingreso_sindicato"); 
+                            $res=mysqli_fetch_array($conuslt);?>
                                 
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" name="ingreso_n" required value="" >
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" name="ingreso_n" placeholder="<?php echo($res[0]); ?>" required value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Comprobante de Ingreso N.-</label>
@@ -443,6 +452,9 @@ $id_per=$_GET['nombres'];
                   $Saldo=$_POST['abono'];                  
                   $Estado="ACTIVO";
 
+                  $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
+                $respcom=mysqli_fetch_array($sqlcompro);
+                if($respcom[0]!=1){
 
                   $consulta3 = "update tb_bancos set saldo = saldo + ".$Saldo." where id_banco = ".$Id_banco;    
                   $ingreso3 = mysqli_query($conexion,$consulta3);
@@ -516,6 +528,9 @@ $id_per=$_GET['nombres'];
                 }                  
 
               }
+            }else{
+                echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante !", "error")</script>'; 
+            }
               }
 
                 ?>

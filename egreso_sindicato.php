@@ -115,6 +115,20 @@ require_once('login/cerrar_sesion.php');
                          <?php 
 if(isset($_POST['registra'])){
 $a=$_POST['fact'];
+if($a==""){
+echo '<script type="text/javascript">swal({
+  title: "Error?",
+  text: "Debe elegir una factura para poder continuar!",
+  type: "error",
+  confirmButtonText: "Aceptar!",
+  closeOnConfirm: false
+},
+function(){
+  location.href="egreso_sindicato.php";
+});</script>';
+exit;
+}
+
 $count=0;
 foreach ($a as $value) {
     $total=number_format($total+$_POST['valor_p'][$value],2);
@@ -360,6 +374,12 @@ $sqlsocio=$conexion->query("SELECT tb_facturasxcobrar.*,tb_proveedores.nombres F
                               <p class="text-center">
                                 
                                 <button  name="registra" id="registra" type="submit" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; Pagar Facturas</button> &nbsp;&nbsp;
+
+                            </p>
+
+                            <p class="text-center">
+                                <a href="egreso_sindicato_otrs.php" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i>&nbsp;&nbsp;  Otros Egresos</a>
+                               
 
                             </p>
                               </form>

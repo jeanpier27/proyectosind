@@ -107,7 +107,7 @@ require_once('login/cerrar_sesion.php');
             <article class="tile">
                 <div class="tile-icon full-reset"><i class="zmdi zmdi-spinner"></i></div>
                 <div class="tile-name all-tittles"><a href="distribuirestudiantes.php">Seleccione</a></div>
-                <div class="tile-num full-reset"><p style="font-size: 50%;">Asignacion Cursos</p></div>
+                <div class="tile-num full-reset"><p style="font-size: 50%;">Actualizacion Cursos</p></div>
             </article>
 
 

@@ -83,7 +83,7 @@ require_once('login/cerrar_sesion.php');
                         <?php //////////CONSULTA A LA BASE DE DATOS////////    
                             // $sql2=$conexion->query("SELECT * FROM tb_pagos_socio Group by descripcion");
 
-                            $sqlsocio=$conexion->query("SELECT * from tb_personas");   
+                            $sqlsocio=$conexion->query("SELECT * from tb_personas order by apellido");   
                          ?>
 
                         <div class="group-material">
@@ -127,8 +127,11 @@ require_once('login/cerrar_sesion.php');
                             </div> 
 
                             <div class="group-material">
+                            <?php 
+                            $conuslt=$conexion->query("select max(comprabante_n)as comp from tb_ingreso_sindicato"); 
+                            $res=mysqli_fetch_array($conuslt);?>
                                 
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" maxlength="10" name="ingreso_n" required value="" >
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" maxlength="10" name="ingreso_n" placeholder="<?php echo($res[0]); ?>" required value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Comprobante de Ingreso N.-</label>
@@ -177,7 +180,7 @@ require_once('login/cerrar_sesion.php');
                                     <tr  class="info">
                                       <th>Id</th>
                                       <th>Cofre</th>
-                                      <th>Valor Compra</th>
+                                      <!-- <th>Valor Compra</th> -->
                                       <th>Valor de Venta</th>
                                       <th>Stock</th>                                      
                                       <th>Cantidad</th>
@@ -192,21 +195,24 @@ require_once('login/cerrar_sesion.php');
                                   <?php  
 
                                   while($row=$sqlproducto->fetch_array()){ ?>
-                                  <tr>  
+                                  <tr> 
+                                  <?php if($row['cantidad']>0){  ?> 
                                   <input type="hidden" name="id" value ="<?php echo $row['id_producto']; ?>">
                                   <td><?php echo $row['id_producto']; ?></td> 
                                   <td><?php echo $row['descripcion']; ?></td>                                  
-                                  <td><?php echo '$'.$row['valor_compra']; ?></td>
+                                  <!-- <td><?php echo '$'.$row['valor_compra']; ?></td> -->
                                   <?php 
+                                  $sqlganancia=$conexion->query("select valor from tb_pagos_contable where descripcion='GANANCIA COFRE'");
+                                    $resultgana=mysqli_fetch_array($sqlganancia);
                                     $compra=$row['valor_compra'];
-                                    $total=($row['valor_compra']*0.45)+$row['valor_compra'];
+                                    $total=($row['valor_compra']*($resultgana[0]*0.01))+$row['valor_compra'];
                                    ?>
                                   <td><?php echo '$'.$total; ?></td>
                                   <input type="hidden" name="precio_producto" value="<?php echo $total; ?>">
                                   <td><?php echo $row['cantidad']; ?></td>  
                                   <td><input type="number" style="width:40px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;"  class="numero" min="0"  max="<?php echo $row['cantidad']; ?>" onkeyup="calcular()" onchange="calcular()" onfocus="calcular()" name="cantidad_producto_agregado" value="0"></td>
                                   <?php  
-                              }
+                              }}
                               ?>
                          
                                 </tr>
@@ -237,7 +243,9 @@ require_once('login/cerrar_sesion.php');
         </section>
         </div>
 
-      
+      <?php 
+      $sqliva=$conexion->query("select valor from tb_pagos_contable where descripcion='IVA'");
+      $resultiva=mysqli_fetch_array($sqliva); ?>
         
  </body>
  <script type="text/javascript">
@@ -245,7 +253,7 @@ require_once('login/cerrar_sesion.php');
 
     subtotal_obtenido=0;
     count=0;
-    iva = 12;
+    iva = <?php echo $resultiva[0]; ?>;
     cantidades = [];
     $("[name=cantidad_producto_agregado]").each(function(){
       cantidades.push( $(this).val() );
@@ -333,9 +341,11 @@ require_once('login/cerrar_sesion.php');
                                       
                                   });
                                 }
-                                else{
+                                else if(data=='error'){
                                     sweetAlert("Error..", "No se guardaron los datos!", "error");
                                     
+                                }else{
+                                  sweetAlert("Error..", "Se encuentra repetido el Comprobante de ingreso!", "error");
                                 }
                                
                             });

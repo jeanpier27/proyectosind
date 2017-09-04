@@ -100,7 +100,7 @@ require_once('login/cerrar_sesion.php');
 
 // $sqlsocio=$conexion->query("SELECT tb_inventario_historico.*,tb_producto.* FROM `tb_inventario_historico` inner join tb_producto on tb_inventario_historico.id_producto=tb_producto.id_producto WHERE date(fecha)>='".$fecha1."' and date(fecha)<='".$fecha2."'");  
 // }else{
-    $sqlsocio=$conexion->query("select * from tb_docente"); 
+    $sqlsocio=$conexion->query("SELECT `tb_personas`.`nombre`, `tb_personas`.`apellido`, `tb_docente`.`*`, `tb_usuarios`.id_usuarios FROM `tb_personas` inner JOIN `tb_usuarios` ON `tb_usuarios`.`id_persona` = `tb_personas`.`id_persona` inner JOIN `tb_docente` ON `tb_docente`.`id_usuarios` = `tb_usuarios`.`id_usuarios`"); 
 // }
  
     ?>
@@ -143,9 +143,13 @@ require_once('login/cerrar_sesion.php');
                                ?>
 
                                 <tr>
-                                <td><?php echo($consultasocio['id_inventario']); ?></td>
-                                <td><?php echo($consultasocio['descripcion']); ?></td>
-                                <td><?php echo($consultasocio['cantidad']); ?></td>
+                                <td><?php echo($consultasocio['id_docente']); ?></td>
+                                <td><?php echo($consultasocio['apellido'].' '.$consultasocio['nombre']); ?></td>
+                                <td><?php echo($consultasocio['sueldo']); ?></td>
+                                <td><?php echo($consultasocio['fecha_ingreso']); ?></td>
+                                <td><?php echo($consultasocio['fecha_salida']); ?></td>
+                                <td><?php echo($consultasocio['estado']); ?></td>                                
+                                <td><?php echo($consultasocio['observaciones']); ?></td>
                               
 
                                <?php 

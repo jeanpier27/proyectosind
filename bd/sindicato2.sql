@@ -100,7 +100,7 @@ create table tb_modelo(
 
   CREATE TABLE tb_vehiculo (
   id_vehiculo int primary key AUTO_INCREMENT ,
-  fecha_factura date NOT NULL,
+  fecha_factura date,
   placa varchar(50),
   id_marca int,
   id_modelo int,
@@ -113,10 +113,11 @@ create table tb_modelo(
   fecha_venci_matricula date,
   estado varchar(10),
   observacion text,
-  proveedor varchar(100),
+  aseguradora int,
   foreign key(id_proveedores) references tb_proveedores (id_proveedores),
   foreign key(id_marca) references tb_marca (id_marca),
-  foreign key(id_proveedores) references tb_proveedores (id_proveedores)
+  foreign key(id_modelo) references tb_modelo (id_modelo),
+  foreign key(aseguradora) references tb_proveedores (id_proveedores)
 );
 
   CREATE TABLE tb_mantenimiento_vehiculo (
@@ -127,7 +128,10 @@ create table tb_modelo(
  descripcion text,
   estado varchar(10),
   observacion text,
-  foreign key(id_vehiculo) references tb_vehiculo (id_vehiculo)
+  valor float(10,2),
+  id_proveedor int,
+  foreign key(id_vehiculo) references tb_vehiculo (id_vehiculo),
+  foreign key(id_proveedor) references tb_proveedores (id_proveedores)
 );
 
 create table tb_pagos_socio(
@@ -416,6 +420,10 @@ create table tb_alquiler(
   fecha_hasta datetime,
   estado varchar(10),
   valor float (10,2),
+  abonos float(10,2),
+  descuento int,
+  garantia int,
+  estadogarantia varchar(10),
   foreign key(id_persona) references tb_personas (id_persona),
   foreign key(id_beneficio) references tb_beneficios (id_beneficio)
 );
@@ -483,17 +491,18 @@ create table tb_estudiantes(
   id_estudiante int primary key AUTO_INCREMENT,
   id_persona int,
   fecha datetime,
-  id_tipo_licencia int,
   id_promocion int,
   horario varchar(25),
   valor float(10,2),
   abono float(10,2),
   observacion text,
   estado varchar(10),
+  id_curso int,
   foreign key(id_promocion) references tb_promocion (id_promocion),
-  foreign key(id_tipo_licencia) references tb_pago_licencia (id_tipo_licencia),
+  foreign key(id_curso) references tb_curso (id_curso),
   foreign key(id_persona) references tb_personas (id_persona)  
 );
+
 
 create table tb_curso(
   id_curso int primary key AUTO_INCREMENT,
@@ -551,7 +560,34 @@ create table tb_notas(
 
  );
 
+create table tb_cantidad_curso(
+  id_cantidad_curso int primary key AUTO_INCREMENT,
+  descripcion text,
+  cantidad int
+  );
 
+
+create table tb_actividad_comercial(
+  id_actividad_comercial int primary key AUTO_INCREMENT,
+  descripcion text
+  );
+
+
+create table tb_asistencia_alumnos(
+  id_asistencia_alumnos int primary key AUTO_INCREMENT,
+  fecha date,
+  id_estudiante int,
+  asistencia int,
+  id_promocion int,
+  id_asignatura int,
+  id_curso int,
+  observacion text,
+  foreign key(id_estudiante) references tb_estudiantes (id_estudiante),
+  foreign key(id_promocion) references tb_promocion (id_promocion),
+  foreign key(id_asignatura) references tb_asignaturas (id_asignatura),
+  foreign key(id_curso) references tb_curso (id_curso)
+
+ );
 
 drop procedure IF EXISTS insertar_persona;
 DELIMITER $$
@@ -674,8 +710,8 @@ DELIMITER $$
 CREATE PROCEDURE actualizar_vehiculo(
            IN id_vehicul int,
            IN placas varchar(50),
-           IN marcas varchar(30),
-           IN modelos varchar(30),
+           IN marcas int,
+           IN modelos int,
            IN motors varchar(10),
            IN chasiss varchar(10),
            IN año_produccions varchar(10),
@@ -688,7 +724,7 @@ CREATE PROCEDURE actualizar_vehiculo(
 BEGIN
 
 START TRANSACTION;
-update tb_vehiculo set placa=placas,marca=marcas,modelo=modelos,motor=motors,chasis=chasiss,año_produccion=año_produccions,fecha_inicio_poliza=fecha_inicio_polizas,fecha_fin_poliza=fecha_fin_polizas,estado=estados,observacion=observacions,fecha_venci_matricula=fecha_venci_matriculas where id_vehiculo=id_vehicul;
+update tb_vehiculo set placa=placas,id_marca=marcas,id_modelo=modelos,motor=motors,chasis=chasiss,año_produccion=año_produccions,fecha_inicio_poliza=fecha_inicio_polizas,fecha_fin_poliza=fecha_fin_polizas,estado=estados,observacion=observacions,fecha_venci_matricula=fecha_venci_matriculas where id_vehiculo=id_vehicul;
 
 COMMIT;    
 
@@ -803,7 +839,7 @@ CREATE PROCEDURE insertar_pagos_alquiler(
            IN saldos float(10,2),
            IN id_alqui int,
            IN id_plan_c int,
-           IN estad varchar(10)
+           IN id_bien int
 
          )
 BEGIN
@@ -815,9 +851,11 @@ update tb_alquiler set abonos=abonos+saldos where id_alquiler=id_alqui;
 
 set a =(select abonos from tb_alquiler where id_alquiler=id_alqui);
 set b=(select valor from tb_alquiler where id_alquiler=id_alqui);
-update tb_alquiler set estado=estad where id_alquiler=id_alqui;
 IF(b=a) then
 update tb_alquiler set estado='PAGADO' where id_alquiler=id_alqui;
+  if(id_bien=1)then
+    update tb_alquiler set estadogarantia='DEVUELTO' where id_alquiler=id_alqui;
+  end if;
 end if;
 insert into tb_ingreso_sindicato (id_persona, id_banco, fecha, descripcion, comprabante_n, comprabante_banco, saldo, estado,id_plan_cuentas) values (id_per, Id_banco, Fechas,Descripcion, comprobante_ingreso, deposito, saldos,'ACTIVO',id_plan_c );
 insert into tb_alquiler_pagos (saldo,comprobante_ingre,id_alquiler,estado) values(saldos,comprobante_ingreso,id_alqui,'ACTIVO');

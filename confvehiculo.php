@@ -64,115 +64,210 @@ require_once('login/cerrar_sesion.php');
         </nav>
         <div class="container">
             <div class="page-header">
-              <h1 class="all-tittles">SINDICATO DE CHOFERES  DE NARANJAL<small> - Tipo de licencia</small></h1>
+              <h1 class="all-tittles">SINDICATO DE CHOFERES  DE NARANJAL<small> - Varios</small></h1>
             </div>
         </div>
         <!-- <section class="full-reset text-center" style="padding: 10px 40PX;" id="contenedor"> -->
         	<div class="container-flat-form">
-                    <div class="title-flat-form title-flat-blue">Tipo de licencia </div>
+                    <div class="title-flat-form title-flat-blue">Vehículo </div>
                     <div class="row">
                        <div class="col-xs-12 col-sm-11 col-sm-offset-1">
-                       <form method="post" action="">
-                          <?php 
-                          $sqlcon=$conexion->query('select * from tb_pago_licencia where id_tipo_licencia='.$_GET['id']);
-                          if(isset($_GET['id'])) {
-                             while($consultaso=mysqli_fetch_array($sqlcon)){
-                            ?>
-                              <center>
-                                <label>Tipo Licencia</label>
-                                <input type="text" readonly="" value="<?php echo $consultaso['tipo_licencia'] ?>" name="">
-                                <label>Valor</label>
-                                <input type="text" class="numero" value="<?php echo $consultaso['valor'] ?>" name="valor">
-                                <input type="hidden" name="idpers" value="<?php echo $_GET['id'] ?>" >
-                              </center>
-
-
-                              <p class="text-center">
-                                <!-- <button type="reset" class="btn btn-info" style="margin-right: 20px;"><i class="zmdi zmdi-roller"></i> &nbsp;&nbsp; LIMPIAR</button> -->
-                                <button  name="registra" id="registra" type="submit" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; GUARDAR</button> &nbsp;&nbsp;
-                            </p>
-                            <?php  } }?>
-                            </form>
+                      
+    <!-- <div style="display: flex; justify-content: space-between;"> -->
+    <center>
+    <div class="group-material">
+    
+      <div>
+      <h1>MARCA</h1>
+      <form autocomplete="off" method="post">
+        <select name="marca">
+        <?php $consulmarca=$conexion->query("select * from tb_marca"); 
+        while($row=mysqli_fetch_array($consulmarca)){?>
+          <option value="<?php echo($row['id_marca']); ?>"><?php echo($row['descripcion']); ?></option>
+        <?php } ?>
+        </select>
+        <input type="text" name="addmarca">
+          <input type="submit" name="agregarmarca" class="btn btn-info" value="Agregar Marca">
+        <h1>MODELO</h1>
+        <select name="modelo"></select>
+        <input type="text" name="addmodelo">
+        <input type="submit" name="agregarmodelo" class="btn btn-info" value="Agregar Modelo">
+        </form>
+      </div>
+    </div>
+    </center>
+                   
 <?php 
-if(isset($_POST['registra'])){
-  $valor=$_POST['valor'];
-  $idpers=$_POST['idpers'];
 
-  $sqlupda=$conexion->query("update tb_pago_licencia set valor='".$valor."' where id_tipo_licencia=".$idpers);
+  if(isset($_POST['agregarmodelo'])){
+    $id_marca=$_POST['marca'];
+    $modelo=$_POST['addmodelo'];
+    $repetido=$conexion->query("select 1 from tb_modelo where descripcion='".$marca."' and id_marca='".$id_marca."'");
+    $consult=mysqli_fetch_array($repetido);
+    if($consult[0]!=1){
+      $insertm=$conexion->query("insert into tb_modelo (id_marca,descripcion)values('".$id_marca."','".$modelo."')");
+      if($insertm){
+        echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
 
-  if($sqlupda){
-    echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="consultatipolicencia.php";});</script>';   
+      }else{
+        echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"error",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+      }
 
-  }else{
-    echo '<script type="text/javascript">swal("Error!", "No se pudo guardar el socio!", "error")</script>';   
+    }else{
+      echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Ya se encuentra registrada el modelo",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+    }
+
   }
 
-}
-// $sqlsocio=$conexion->query("SELECT tb_inventario_historico.*,tb_producto.* FROM `tb_inventario_historico` inner join tb_producto on tb_inventario_historico.id_producto=tb_producto.id_producto WHERE date(fecha)>='".$fecha1."' and date(fecha)<='".$fecha2."'");   
-
-// $sqlsocio=$conexion->query("SELECT tb_inventario_historico.*,tb_producto.* FROM `tb_inventario_historico` inner join tb_producto on tb_inventario_historico.id_producto=tb_producto.id_producto WHERE date(fecha)>='".$fecha1."' and date(fecha)<='".$fecha2."'");  
-// }else{
-    $sqlsocio=$conexion->query("select * from tb_pago_licencia"); 
-// }
- 
-    ?>
-                            <div class="table-responsive">   
-                            <table class="table table-hover table-bordered table-responsive order-table" aling="center" id="tabladatos">
-                                <thead>
-                                    <tr  class="info">
-                                      <th>Id</th>
-                                      <th>Tipo Licencia</th>
-                                      <th>Valor</th>
-                                      <th></th>
-                                     
 
 
-                                      
-                                  </tr>
-                              </thead>
-                              <tfoot>
-                                  <tr  class="info">
-                                    <th>Id</th>
-                                      <th>Tipo Licencia</th>
-                                      <th>Valor</th>
-                                     <th></th>
-                                      
-                                      <!-- <th>Observacion</th> -->
+  if(isset($_POST['agregarmarca'])){
+    $marca=$_POST['addmarca'];
+    $repetido=$conexion->query("select 1 from tb_marca where descripcion='".$marca."'");
+    $result=mysqli_fetch_array($repetido);
+    if($result[0]!=1){
+    $sqlinsert=$conexion->query("insert into tb_marca (descripcion)values('".$marca."')");
+    if($sqlinsert){
+      echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
 
+    }else{
+      echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"error",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+    }
+    }else{
+       echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Ya se encuentra registrada la marca",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+    }
 
-                                      
-                                  </tr>
-                              </tfoot>
-
-                              <tbody>
-                              <?php 
-                                while($consultasocio=mysqli_fetch_array($sqlsocio)){
-                               ?>
-
-                                <tr>
-                                <td><?php echo($consultasocio['id_tipo_licencia']); ?></td>
-                                <td><?php echo($consultasocio['tipo_licencia']); ?></td>
-                                <td><?php echo($consultasocio['valor']); ?></td>
-                                  <th><a class="btn btn-info" href="consultatipolicencia.php?id=<?php echo $consultasocio['id_tipo_licencia']; ?>"><i class="glyphicon glyphicon-pencil"></i></a></th>
-                              
-
-                               <?php 
-                               } 
-                               ?>
-                               </tr>
-                              </tbody>
-
-                              </table>
-                              </div>
-<?php 
-// } 
-?>
-
+  }
+ ?>
                        </div>
                        </div>
         	
 
         <!-- </section> -->
+        </div>
+
+        <div class="container-flat-form">
+                    <div class="title-flat-form title-flat-blue">Cantidad de Alumnos por Curso </div>
+                    <div class="row">
+                       <div class="col-xs-12 col-sm-11 col-sm-offset-1">
+                       <div  class="group-material">
+                       <center>
+                       <h1>Cantidad de alumno por curso</h1>
+                       <?php 
+                       $consulcant=$conexion->query("select cantidad from tb_cantidad_curso where descripcion='alumnosxcurso'");
+                       $respu=mysqli_fetch_array($consulcant);
+                        ?>
+                        <form autocomplete="off" method="post">
+                        <!-- <label>Cantidad por Curso</label> -->
+                        <input type="text" class="numero" name="cantidad" value="<?php echo($respu[0]); ?>">
+                        <input type="submit" name="guardarcantidad" value="Guardar" class="btn btn-info" >
+                        </form>
+                       </div>
+                       <?php 
+                        if(isset($_POST['guardarcantidad'])){
+                          $cantidad=$_POST['cantidad'];
+                          // echo ("<script type='text/javascript'>alert('".$cantidad."');</script>");
+                          $insert=$conexion->query("update tb_cantidad_curso set cantidad='".$cantidad."' where id_cantidad_curso=1");
+                          if($insert){
+                            echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+
+                          }else{
+                            echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"error",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                          }
+
+                        }
+                        ?>
+
+                       </center>
+                       </div>
+                       </div>
+          
+        </div>
+
+
+        <div class="container-flat-form">
+                    <div class="title-flat-form title-flat-blue">Valor de Garantía</div>
+                    <div class="row">
+                       <div class="col-xs-12 col-sm-11 col-sm-offset-1">
+                       <div  class="group-material">
+                       <center>
+                       <h1>Valor de Garantía Salon de eventos</h1>
+                       <?php 
+                       $consulcant=$conexion->query("select cantidad from tb_cantidad_curso where descripcion='garantia'");
+                       $respu=mysqli_fetch_array($consulcant);
+                        ?>
+                        <form autocomplete="off" method="post">
+                        <!-- <label>Cantidad por Curso</label> -->
+                        <input type="text" class="numero" name="garantia" value="<?php echo($respu[0]); ?>">
+                        <input type="submit" name="guardargarantia" value="Guardar" class="btn btn-info" >
+                        </form>
+                       </div>
+                       <?php 
+                        if(isset($_POST['guardargarantia'])){
+                          $cantidad=$_POST['garantia'];
+                          // echo ("<script type='text/javascript'>alert('".$cantidad."');</script>");
+                          $insert=$conexion->query("update tb_cantidad_curso set cantidad='".$cantidad."' where id_cantidad_curso=2");
+                          if($insert){
+                            echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+
+                          }else{
+                            echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"error",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                          }
+
+                        }
+                        ?>
+
+                       </center>
+                       </div>
+                       </div>
+          
+        </div>
+
+        <div class="container-flat-form">
+                    <div class="title-flat-form title-flat-blue">Actividad Comercial</div>
+                    <div class="row">
+                       <div class="col-xs-12 col-sm-11 col-sm-offset-1">
+                       <div  class="group-material">
+                       <center>
+                       <h1>Actividad Comercial</h1>
+                       
+                        <form autocomplete="off" method="post">
+                          <select name="marca">
+                            <?php $consulmarca=$conexion->query("select descripcion from tb_actividad_comercial"); 
+                            while($row=mysqli_fetch_array($consulmarca)){?>
+                            <option value="<?php echo($row['id_marca']); ?>"><?php echo($row['descripcion']); ?></option>
+                            <?php } ?>
+                          </select>
+                          <input type="text" name="actividad">
+                          <input type="submit" name="agregaractividad" class="btn btn-info" value="Agregar Actividad Comercial">
+                          
+                        </form>
+                       </div>
+                       <?php 
+                        if(isset($_POST['agregaractividad'])){
+                          $cantidad=$_POST['actividad'];
+                          // echo ("<script type='text/javascript'>alert('".$cantidad."');</script>");
+                          $repetido=$conexion->query("select 1 from tb_actividad_comercial where descripcion='".$cantidad."'");
+                          $result=mysqli_fetch_array($repetido);
+                          if($result!=1){
+                          $insert=$conexion->query("insert into tb_actividad_comercial (descripcion) values('".$cantidad."') ");
+                          if($insert){
+                            echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+
+                          }else{
+                            echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"error",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                          }
+                        }else{
+                           echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Ya se encuentra repetida la actividad comercial",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                        }
+
+                        }
+                        ?>
+
+                       </center>
+                       </div>
+                       </div>
+          
         </div>
 
       
@@ -185,6 +280,46 @@ if(isset($_POST['registra'])){
                     return ((key >= 48 && key <= 57) || (key==8) || (key==46)) 
                 });
  	$(document).ready(function(){
+
+   var id_persona=$('select[name=marca]').val();
+                        
+                            $.post("controler/consulta_modelo.php",{cedula:id_persona},function(data,status){
+                                
+                                    console.log(data);
+                                    console.log(status);
+                                    $('select[name=modelo]').html(data);
+                                                               
+                               
+                            });
+
+     $('select[name=marca]').change(function(){
+                        // alert($('select[name=nombres]').val());s
+                        var id_persona=$('select[name=marca]').val();
+                        console.log(id_persona);
+                        
+                            $.post("controler/consulta_modelo.php",{cedula:id_persona},function(data,status){
+                                
+                                    console.log(data);
+                                    console.log(status);
+                                    $('select[name=modelo]').html(data);
+                               
+                                  //   swal({
+                                  //       title: "Advertencia?",
+                                  //     text: "Ya se encuentra registrado!",
+                                  //     type: "warning",
+                                  //     confirmButtonColor: "#DD6B55",
+                                  //     confirmButtonText: "Aceptar!"
+                                  // },
+                                  // function(){
+                                  //       location.href="addsocio.php";
+                                      
+                                  // });
+                                
+                               
+                            });
+                       
+                    
+                });
                    
                     $('input[name=fecha_consulta]').daterangepicker({
                         autoUpdateInput: false,

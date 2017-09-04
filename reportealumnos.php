@@ -65,7 +65,7 @@ require_once('login/cerrar_sesion.php');
         
         <!-- <section class="full-reset text-center" style="padding: 10px 40PX;" id="contenedor"> -->
             <div class="container-flat-form">
-                    <div class="title-flat-form title-flat-blue">Cursos</div>
+                    <div class="title-flat-form title-flat-blue">Alumnos</div>
                     <div class="row">
 
                    
@@ -77,7 +77,7 @@ require_once('login/cerrar_sesion.php');
                           <option value="0">Seleccione Promocion</option>
                            <?php
                            $Promo = isset($_REQUEST["promo"]) ? $_REQUEST["promo"]: 0;
-                           $sqlpromo=$conexion->query("SELECT id_promocion, fecha_inicio, fecha_fin FROM `tb_promocion` order by id_promocion");
+                           $sqlpromo=$conexion->query("SELECT id_promocion, descripcion, fecha_inicio, fecha_fin FROM `tb_promocion` order by id_promocion");
 
                             while($row=$sqlpromo->fetch_array()){ 
                               $Id_promo = $row['id_promocion'];
@@ -86,68 +86,21 @@ require_once('login/cerrar_sesion.php');
 
                                 ?>
 
-                              <option value="<?php echo $Id_promo; ?>"  <?php if($Id_promo == $Promo){echo "selected='selected'";}?>   ><?php echo $Ff_inicio.' - '.$Ff_fin; ?></option>
+                              <option value="<?php echo $Id_promo; ?>"  <?php if($Id_promo == $Promo){echo "selected='selected'";}?>   ><?php echo $row['descripcion'].' '.$Ff_inicio.' - '.$Ff_fin; ?></option>
                                <?php  
                             }
                             ?>
                           </select>
                             </div>
 
-                    <div class="group-material">
-                                <span>Seleccione Tipo Curso </span> 
-                               
-                          <select class="selectpicker" name="" id="curso" data-live-search="true" onchange="carga_bienes(this.value)" required="">
-                          <option value="0">Seleccione Tipo De Curso</option>
-                           <?php
-
-                           $Id_cur = isset($_REQUEST["cur"]) ? $_REQUEST["cur"]: 0;
-                           $Promo = isset($_REQUEST["promo"]) ? $_REQUEST["promo"]: 0;
-
-                           $sqlcur=$conexion->query("SELECT `tb_pago_licencia`.`id_tipo_licencia`, `tb_pago_licencia`.`tipo_licencia`, `tb_pago_licencia`.`estado` FROM `tb_pago_licencia` where `tb_pago_licencia`.`estado` = 'ACTIVO' and `tb_pago_licencia`.`tipo_licencia` != 'Psicosensometrico' ORDER BY `tb_pago_licencia`.`tipo_licencia` ASC");
-
-                            while($row=$sqlcur->fetch_array()){ 
-                              $cursito = $row['id_tipo_licencia'];
-                              $tipo_cursito = $row['tipo_licencia'];
-                              $Estadito = $row['estado'];
-                                ?>
-
-                              <option value="<?php echo $cursito; ?>"  <?php if($cursito == $Id_cur){echo "selected='selected'";}?>   ><?php echo $tipo_cursito; ?></option>
-                               <?php  
-                            }
-                            ?>
-                          </select>
-                            </div>
-
-
-                            <div class="group-material">
-                                <span>Seleccione Jornada </span> 
-                               
-                          <select class="selectpicker" name="" id="jornadita" data-live-search="true" onchange="carga_bienes(this.value)" required="">
-                          <option value="">Seleccione Tipo De Jornada</option>
-                           <?php
-
-                          $Id_cur = isset($_REQUEST["cur"]) ? $_REQUEST["cur"]: 0;
-                           $Jor = isset($_REQUEST["jor"]) ? $_REQUEST["jor"]: "";
-
-                           $sqljorna=$conexion->query("SELECT distinct horario FROM `tb_estudiantes` ORDER BY horario ASC");
-
-                            while($row=$sqljorna->fetch_array()){ 
-                              $jornadita = $row['horario'];                             
-                                ?>
-
-                              <option value="<?php echo $jornadita; ?>"  <?php if($jornadita == $Jor){echo "selected='selected'";}?>   ><?php echo $jornadita; ?></option>
-                               <?php  
-                            }
-                            ?>
-                          </select>
-                            </div>
+                   
                             </center>
                         
 
 
                        <div class="col-xs-12 col-sm-12 col-sm-offset-0 col-xs-offset-0">
 
-                       <center><th><p><h1>Distribucion de cursos</h1></p></th></center>
+                       <center><th><p><h1></h1></p></th></center>
 
                         <form autocomplete="" action="" method="post" id="formreg" name="formreg">
                             <div class="table-responsive">   
@@ -158,9 +111,10 @@ require_once('login/cerrar_sesion.php');
                                       <th hidden="">Id_estudiante</th>
                                       <th>nº</th>
                                       <th>Apellidos Nombres</th>
-                                      <th>Horario</th>                                   
-                                      <!-- <th>Observaciones</th>                                                                                                  -->
-                                      <th>Abonado</th>
+                                      <th>Horario</th>
+                                      <th>Curso</th> 
+                                      <th>Estado</th>
+                                      <th>Observacion</th>
                                       
                                   </tr>
                               </thead>                              
@@ -171,10 +125,10 @@ require_once('login/cerrar_sesion.php');
 
 
                               $Promo = isset($_REQUEST["promo"]) ? $_REQUEST["promo"]: 0;
-                              $Id_cur = isset($_REQUEST["cur"]) ? $_REQUEST["cur"]: 0;
-                              $Jor = isset($_REQUEST["jor"]) ? $_REQUEST["jor"]: "";
+                              // $Id_cur = isset($_REQUEST["cur"]) ? $_REQUEST["cur"]: 0;
+                              // $Jor = isset($_REQUEST["jor"]) ? $_REQUEST["jor"]: "";
 
-                              $sqlestudiante=$conexion->query("SELECT `tb_estudiantes`.`id_estudiante`,`tb_estudiantes`.`valor`,`tb_estudiantes`.`abono`,`tb_estudiantes`.`horario`, `tb_personas`.`nombre`, `tb_personas`.`apellido`FROM `tb_personas`inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_persona` = `tb_personas`.`id_persona` where tb_estudiantes.id_tipo_licencia='".$Id_cur."' and tb_estudiantes.horario='".$Jor."' and tb_estudiantes.id_promocion='".$Promo."' ");
+                              $sqlestudiante=$conexion->query("select `tb_estudiantes`.`id_estudiante`, `tb_personas`.`apellido`, `tb_personas`.`nombre`, `tb_estudiantes`.`horario`, `tb_estudiantes`.`id_curso`, `tb_curso`.`curso`, `tb_estudiantes`.`estado`, `tb_estudiantes`.`observacion`,`tb_estudiantes`.`estado` FROM `tb_personas` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_persona` = `tb_personas`.`id_persona` inner JOIN `tb_curso` ON `tb_estudiantes`.`id_curso` = `tb_curso`.`id_curso` WHERE tb_estudiantes.id_promocion='".$Promo."' ");
 
                                // $numero_estudiantes = mysqli_num_rows($sqlestudiante);
                                
@@ -190,57 +144,26 @@ require_once('login/cerrar_sesion.php');
                                ?>
 
                                 <tr>
-<td hidden=""><input name="id_estudiante<?php echo $i;?>" value="<?php echo $Id; ?>" style="width:80px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" type="text"></td>
+<td hidden=""><input name="id_estudiante[<?php echo $Id;?>]" value="<?php echo $Id; ?>" style="width:80px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" type="text"></td>
 <td><p style="width:10px;"><?php echo $i+1; ?></p></td>
 <td><p style="width:200px;"><?php echo $Apellido.' '.$Nombre; ?></p></td>
-<td><p style="width:100px;"><?php echo $Descripcion; ?></p></td>                                
-<td><?php echo $consultaestudiante['abono'];; ?></td>
-
-
+<!-- <td><p style="width:100px;"><?php echo $Descripcion; ?></p></td>                                 -->
+<td><?php echo $Descripcion; ?>
+</td>
+<td>
 <?php 
-
-                              if (isset($_POST['registro'.$i.''])){
-
-                               $Id_estudiante = $_POST['id_estudiante'.$i.'']; 
-                               $Curso_R = $_POST['curso'.$i.'']; 
-                               $Observaciones_matricula = $_POST['Observaciones_matricula'.$i.''];
-                               $estado = "ACTIVO";
-                               // echo ("<script type='text/javascript'>alert('EST".$Id_estudiante.' CURSO'.$Curso_R.' OBSERVA'.$Observaciones_matricula."');</script>");
-                               $Promo = isset($_REQUEST["promo"]) ? $_REQUEST["promo"]: 0;
-                               $Id_Curso = $_REQUEST["cur"]; if ($Id_Curso == '') { $Id_Curso = 0; }
-                               $Jor = isset($_REQUEST["jor"]) ? $_REQUEST["jor"]: "";
-                                // 
-                               // $update_table_estudiante = "update tb_estudiantes set observacion='".$Observaciones_matricula."' where id_estudiante =".$Id_estudiante;    
-                               // $actualizacion_estudiante = mysqli_query($conexion,$update_table_estudiante);
-
-                               $busca_curso_existente =mysqli_query($conexion,"select * FROM tb_curso_detalle where id_estudiante =".$Id_estudiante." ");
-                               // $despejar_curso=mysqli_fetch_array($busca_curso_existente);
-                               // $curso = $despejar_curso['curso'];
-                               $numero_curso = mysqli_num_rows($busca_curso_existente);
-                               
-
-                               if ($numero_curso == 0) {
-                                 
-                                $add_table_curso = "insert into tb_curso_detalle (id_curso,id_estudiante) values (".$Curso_R.", '".$Id_estudiante."')";    
-                               $ingreso_table_curso = mysqli_query($conexion,$add_table_curso); 
-                              
-                               } else {
-                                 
-                                 $add_table_curso = "update tb_curso_detalle set id_curso ='".$Curso_R."' where id_estudiante =".$Id_estudiante;    
-                               $ingreso_table_curso = mysqli_query($conexion,$add_table_curso);     
-                               //    echo ("<script type='text/javascript'>alert('EST".$Id_estudiante.' CURSO'.$Curso_R.' resul'.$ingreso_table_curso."');</script>");
-                               // exit;                       
-
-                               }                       
-
-
-                               if ($ingreso_table_curso) {
-                                 header('location: distribuirestudiantes.php?msg=yes&promo='.$Promo.'&cur='.$Id_Curso.'&jor='.$Jor); 
-                               } else {
-                                 header('location: distribuirestudiantes.php?msg=no&promo='.$Promo.'&cur='.$Id_Curso.'&jor='.$Jor);
-                               }
-                     }  
+$consultcurso=$conexion->query("select `tb_curso`.`curso`, `tb_estudiantes`.`id_curso` FROM `tb_curso` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_curso` = `tb_curso`.`id_curso` where tb_estudiantes.id_estudiante=".$Id);
+while($conscurso=mysqli_fetch_array($consultcurso)){
  ?>
+<?php echo $conscurso['curso']; ?> 
+
+<?php } ?>
+</td>
+
+<td> <?php echo $consultaestudiante['estado']; ?>
+</td>
+
+<td><?php echo $Observacion; ?></td>
 </td>
 
 
@@ -253,58 +176,41 @@ require_once('login/cerrar_sesion.php');
                               </table>
                               </div>                    
 
-                              <center><button  name="registro_actualizar" id="" type="submit" class="btn btn-info"><i class="glyphicon glyphicon-refresh"></i>      Actualizar Todo</button></center>
-                              <?php 
+                             <!--  <center><button  name="registro_actualizar" id="" type="submit" class="btn btn-info"><i class="glyphicon glyphicon-refresh"></i>      Actualizar Todo</button></center> -->
+                             
+                        </form>
+                            <?php 
 
                               if (isset($_POST['registro_actualizar'])){
+
+
+                            foreach ($_POST['id_estudiante'] as $value) {                       
+                            
+                              if($_POST['observacion'][$value]!=""){
+                                $id=$_POST['id_estudiante'][$value];
+                                $horario=$_POST['horario'][$value];
+                                $curso=$_POST['curso'][$value];
+                                $estado=$_POST['estado'][$value];
+                                $observacionbd=$_POST['observacionbd'][$value];
+                                $observa=$_POST['observacion'][$value];
+                                $fecha=date('Y-m-d H:i:s');
+                                $observaciontotal=$observacionbd.' ('.$fecha.' usuario: '.$_SESSION['nombres'].'.- '.$observa.')';
+                                $sqlupdate=$conexion->query("update tb_estudiantes set horario='".$horario."', id_curso='".$curso."',estado='".$estado."', observacion='".$observaciontotal."' where id_estudiante=".$id);
                               
-                                for ($i=0; $i < $numero_estudiantes; $i++) {
+                            }
+                          }
 
-                                 $Id_estudiante = $_POST['id_estudiante'.$i.'']; 
-                               $Curso_R = $_POST['curso'.$i.'']; 
-                               $Observaciones_matricula = $_POST['Observaciones_matricula'.$i.''];
-                               $estado = "ACTIVO";
-
-                               $Promo = isset($_REQUEST["promo"]) ? $_REQUEST["promo"]: 0;
-                               $Id_Curso = $_REQUEST["cur"]; if ($Id_Curso == '') { $Id_Curso = 0; }
-                               $Jor = isset($_REQUEST["jor"]) ? $_REQUEST["jor"]: "";
-
-                               $update_table_estudiante = "update tb_estudiantes set observacion='".$Observaciones_matricula."' where id_estudiante =".$Id_estudiante;    
-                               $actualizacion_estudiante = mysqli_query($conexion,$update_table_estudiante);
-
-                               $busca_curso_existente =mysqli_query($conexion,"select * FROM tb_curso where id_estudiante =".$Id_estudiante);
-                               $despejar_curso=mysqli_fetch_array($busca_curso_existente);
-                               $curso = $despejar_curso['curso'];
-                               $numero_curso = mysqli_num_rows($busca_curso_existente);
-                               
-
-                               if ($numero_curso == 0) {
-                                 
-                                $add_table_curso = "insert into tb_curso (id_estudiante, curso, estado) values (".$Id_estudiante.", '".$Curso_R."','".$estado."')";    
-                               $ingreso_table_curso = mysqli_query($conexion,$add_table_curso); 
-
+                                if ($sqlupdate) {
+                                 header('location: distribuirestudiantes.php?msg=yes'); 
                                } else {
-
-                                 $add_table_curso = "update tb_curso set curso ='".$Curso_R."' where id_estudiante =".$Id_estudiante;    
-                               $ingreso_table_curso = mysqli_query($conexion,$add_table_curso);                               
-
-                               }   
-                                                              
-                                }
-
-                                if ($actualizacion_estudiante and $ingreso_table_curso) {
-                                 header('location: distribuirestudiantes.php?msg=yes&promo='.$Promo.'&cur='.$Id_Curso.'&jor='.$Jor); 
-                               } else {
-                                 header('location: distribuirestudiantes.php?msg=no&promo='.$Promo.'&cur='.$Id_Curso.'&jor='.$Jor);
+                                 header('location: distribuirestudiantes.php?msg=no');
                                }
                           
                              }  
                              ?>
-                        </form>
-
                        </div>
                        </div>
-            
+          
 
         <!-- </section> -->
         </div>
@@ -551,9 +457,9 @@ ob_end_flush();
 <script>
                                 function carga_bienes() {
                                     var x = document.getElementById("promociones").value;
-                                    var a = document.getElementById("curso").value;
-                                    var y = document.getElementById("jornadita").value;
-                                    location.href="reportealumnos.php?promo="+x+"&cur="+a+"&jor="+y;
+                                    // var a = document.getElementById("curso").value;
+                                    // var y = document.getElementById("jornadita").value;
+                                    location.href="reportealumnos.php?promo="+x;
                                     //location.href="updatestudiante.php?est="+a;
                                     // document.getElementById("demo").innerHTML = "You selected: " + x;
                                 }

@@ -90,20 +90,45 @@ require_once('login/cerrar_sesion.php');
                     $fecha_factura= $_POST['fecha_factura'];
                     $descripcion      = $_POST['descripcion'];
                     $id_vehiculo      = $_POST['nombres'];
+                    $id_proveedores      = $_POST['id_proveedores'];
+                    $valor      = $_POST['valor'];
+
                     $fecha=date('Y-m-d H:i:s');
                     $observaciontotal=$observacionbd.' ('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
                                 
-                        $query ="INSERT INTO tb_mantenimiento_vehiculo (id_vehiculo,n_factura,fecha_fact,descripcion,estado,observacion) VALUES ('".$id_vehiculo."','".$n_factura."','".$fecha_factura."','".$descripcion."','ACTIVO','".$observaciontotal."')";
+                        $query ="INSERT INTO tb_mantenimiento_vehiculo (id_vehiculo,n_factura,fecha_fact,descripcion,estado,observacion,valor,id_proveedor) VALUES ('".$id_vehiculo."','".$n_factura."','".$fecha_factura."','".$descripcion."','ACTIVO','".$observaciontotal."','".$valor."','".$id_proveedores."')";
 
                         $resultado = $conexion->query($query); 
                         if($resultado){
 
-                               echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="facturas_x_cobrar.php?n_factura='.$n_factura.'&fecha_fact='.$fecha_factura.'&descripcion='.$descripcion.'";});});</script>';
+                               echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="facturas_x_cobrar.php?n_factura='.$n_factura.'&fecha_fact='.$fecha_factura.'&descripcion='.$descripcion.'&proveedor='.$id_proveedores.'";});});</script>';
 
+                      }else{
+                         echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="addmantvehiculo.php";});});</script>';
                       }
                   
                    }
                   ?>       
+
+
+                              <div class="group-material">
+                                <span>Seleccione Proveedor </span> 
+                                <br>
+                               
+                          <select class="selectpicker material-control" name="id_proveedores" data-live-search="true" required="">
+                          <option selected="" disabled>Seleccione </option>
+
+                           <?php  
+                             $sqlproveedor=$conexion->query("SELECT *  FROM  tb_proveedores where estado='ACTIVO' and (activi_comercial like '%VEHICULO%' OR activi_comercial LIKE '%AUTOMOVIL%') ");
+                             while($rows=$sqlproveedor->fetch_array()){ ?>
+
+                              <option value="<?php echo $rows['id_proveedores']; ?>"><?php echo ($rows['nombres']); ?></option>
+                               <?php  
+                            }
+                            ?>
+                          </select>
+
+                            </div>
 
                              <div class="group-material">
                                 <input type="text" class="tooltips-general material-control" required="" maxlength="20" onkeyup="javascript:this.value=this.value.toUpperCase();" data-toggle="tooltip" data-placement="top"  placeholder="N.- de Factura" title="Describa la factura" name="n_factura">
@@ -129,6 +154,15 @@ require_once('login/cerrar_sesion.php');
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Descripcion</label>
+                            </div>
+
+                             <div class="group-material">
+                            
+                            
+                                 <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" class="material-control tooltips-general check-representative numero" required="" data-toggle="tooltip" data-placement="top" placeholder="Valor" name="valor" >
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label>Valor</label>
                             </div>
                                <?php //////////CONSULTA A LA BASE DE DATOS////////    
                             // $sql2=$conexion->query("SELECT * FROM tb_pagos_socio Group by descripcion");
@@ -177,6 +211,11 @@ require_once('login/cerrar_sesion.php');
  </body>
 <script type="text/javascript">
 $(document).ready(function(){
+  $(".numero").keypress(function(e){
+                    var key = window.Event ? e.which : e.keyCode 
+                    return ((key >= 48 && key <= 57) || (key==8) || (key==46)) 
+                });
+
    $('input[name=fecha_factura]').daterangepicker({
                         singleDatePicker: true,
                         showDropdowns: true,

@@ -245,9 +245,9 @@ require_once('login/cerrar_sesion.php');
             events: [
                 <?php                
                 $Id_bien = isset($_REQUEST["bien"]) ? $_REQUEST["bien"]: 0; 
-                $consulta_alquiler = $conexion->query("SELECT `tb_alquiler`.`id_alquiler`,`tb_alquiler`.`id_beneficio`, `tb_personas`.`nombre`,`tb_personas`.`apellido`, `tb_beneficios`.`beneficio`, `tb_alquiler`.`fecha_desde`, `tb_alquiler`.`fecha_hasta`, `tb_alquiler`.`estado`, `tb_beneficios`.`estado` as benefito,`tb_alquiler`.`valor`,`tb_alquiler`.`abonos` FROM `tb_personas`
+                $consulta_alquiler = $conexion->query("SELECT `tb_alquiler`.`id_alquiler`,`tb_alquiler`.`id_beneficio`, `tb_personas`.`nombre`,`tb_personas`.`apellido`, `tb_beneficios`.`beneficio`, `tb_alquiler`.`fecha_desde`, `tb_alquiler`.`fecha_hasta`, `tb_alquiler`.`estado`, `tb_beneficios`.`estado` as benefito,`tb_alquiler`.`valor`,`tb_alquiler`.`abonos`,`tb_alquiler`.`estadogarantia` FROM `tb_personas`
                     INNER JOIN `tb_alquiler` ON `tb_alquiler`.`id_persona` = `tb_personas`.`id_persona`
-                    INNER JOIN `tb_beneficios` ON `tb_alquiler`.`id_beneficio` = `tb_beneficios`.`id_beneficio` where (`tb_alquiler`.`estado` = 'ACTIVO') AND `tb_alquiler`.`id_beneficio` = ".$Id_bien);
+                    INNER JOIN `tb_beneficios` ON `tb_alquiler`.`id_beneficio` = `tb_beneficios`.`id_beneficio` where (`tb_alquiler`.`estado` = 'ACTIVO' or tb_alquiler.estadogarantia='DEVUELTO') AND `tb_alquiler`.`id_beneficio` = ".$Id_bien);
                                 while ($alquiler=$consulta_alquiler->fetch_array()){ 
                                   $personita=$alquiler['nombre'].' '.$alquiler['apellido'];;
                                   $benefic=$alquiler['beneficio'];
@@ -259,6 +259,7 @@ require_once('login/cerrar_sesion.php');
                                   $abono=$alquiler['abonos'];
                                   $id_bene=$alquiler['id_beneficio'];
                                   $estado=$alquiler['estado'];
+                                  $estadogarantia=$alquiler['estadogarantia'];
 
                                   date_default_timezone_set('America/Bogota');
                                   $fecha_nueva_inicio = date("Y-n-d h:i:s A",strtotime($inicio));
@@ -276,11 +277,16 @@ require_once('login/cerrar_sesion.php');
                                     <?php } ?>
                                     url: '<?php echo "addpagosalquiler.php?bien=".$id_bene."&idal=".$cod_alqui; ?>',
                                     <?php 
+                                     if($Id_bien==1 and $estadogarantia=='DEVUELTO'){?>
+                                        color:'#e74c3c',
+                                     <?php }else{
                                     if($abono<$valor and $abono>0){  ?>
                                         color:'#f1c40f',
                                         <?php }elseif($estado=='ACTIVO'){  ?>
                                         color:'#2980b9',
-                                        <?php } ?>
+                                        <?php }}
+                                       ?>
+
                                 },
 
 
@@ -534,6 +540,15 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
 
                     <div class="row">
                        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+                       <div >
+                       <h1>Información de colores para los bienes alquilados</h1>
+                       <div width="50px" height="50px" style="background: #2980b9; width=50px; height=50px"><h1>Alquiler Reservado</h1></div>
+                       <div width="50px" height="50px" style="background: #f1c40f;"><h1>Alquiler Abonado</h1></div>
+                       <div width="50px" heigth="50px" style="background: #2ecc71;"><h1>Alquiler Pagado</h1></div>
+                       <?php if($_REQUEST["bien"]==1){  ?>
+                       <div width="50px" heigth="50px" style="background: #e74c3c;"><h1>Devolver Garantía</h1></div>
+                         <?php } ?>
+                       </div>
                        <div class="group-material">
                                 <span>Seleccione el bien</span> 
                                 <select class="tooltips-general material-control" data-toggle="tooltip" id="carga_bienes_encontrados" onchange="carga_bienes()" data-placement="top" title="Elige el bien"  required name="id_beneficio">
@@ -589,7 +604,7 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                             $id_alq=$_GET['idal'];
                               $sql4=$conexion->query("SELECT tb_alquiler.*,tb_personas.nombre,tb_personas.apellido FROM `tb_alquiler` inner join tb_personas on tb_alquiler.id_persona=tb_personas.id_persona WHERE tb_alquiler.id_alquiler=".$id_alq);  
                              ?>
-                            <div class="group-material">
+                            <div class="group-material" >
                                 <label>Nombres</label><br>
                                 <?php
                                           while($fe = $sql4->fetch_array()){ 
@@ -608,6 +623,8 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                                 <span class="bar"></span> -->
                                 <!-- <label>Fecha y Hora que comenzar&aacute; a utilizar</label> -->
                             </div>
+
+
                                
                            <div class="group-material">
                                 Fecha Registro
@@ -616,16 +633,39 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                                 <span class="bar"></span>
                                 
                             </div> 
+                            <?php 
+                            $consulestadogarantia=$conexion->query("select estadogarantia from tb_alquiler where id_alquiler=".$id_alq);
+                            $respestgaran=mysqli_fetch_array($consulestadogarantia);
 
-                            <div class="group-material">
+                            $sqlvalorgarantia=$conexion->query("select cantidad from tb_cantidad_curso where descripcion='garantia'");
+                            $resvalorgara=mysqli_fetch_array($sqlvalorgarantia);
+
+
+                            $consulgarantia=$conexion->query("select 1 from tb_alquiler where garantia=0 and id_alquiler=".$id_alq);
+                            $resgarantia=mysqli_fetch_array($consulgarantia);
+
+                            if($_GET['bien']==1){
+                            if($resgarantia[0]==1){   ?> 
+                            <div class="group-material" <?php if($respestgaran[0]=='DEVUELTO'){echo('style="display:none;"');} ?>>
+                                Garantia
+                                <input type="text" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Descripcion" name="garantia" readonly="" value="<?php echo($resvalorgara[0]); ?>" >
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                            </div> 
+                            <?php } }?>
+
+                          
                                 
-                                <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Descripcion" name="descripcion" required value="" >
+                            <div class="group-material" <?php if($respestgaran[0]=='DEVUELTO'){echo('style="display:none;"');} ?> >
+                                
+                                <input type="text"  onkeyup="javascript:this.value=this.value.toUpperCase();" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Descripcion" name="descripcion" <?php if($respestgaran[0]!='DEVUELTO'){echo('required');} ?>  value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Descripcion</label>
 
                             </div> 
-                            <div class="group-material">
+                            
+                            <div class="group-material" <?php if($respestgaran[0]=='DEVUELTO'){echo('style="display:none;"');} ?> >
                                 Valor de la Deuda
                                 <input type="text" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Descripcion" name="deuda" readonly  required value="<?php echo $deuda; ?>" >
                                 <span class="highlight"></span>
@@ -633,9 +673,9 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                                 
                             </div> 
 
-                            <div class="group-material">
+                            <div class="group-material" <?php if($respestgaran[0]=='DEVUELTO'){echo('style="display:none;"');} ?> >
                                 
-                                <input type="number" class="tooltips-general material-control numero " step="0.01" max="<?php echo $deuda; ?>" data-toggle="tooltip" data-placement="top" title="Valor Abonar" id="valor_abonar" name="abono" required value="" >
+                                <input type="number" class="tooltips-general material-control numero " step="0.01" max="<?php echo $deuda; ?>" data-toggle="tooltip" data-placement="top" title="Valor Abonar" id="valor_abonar" name="abono" <?php if($respestgaran[0]!='DEVUELTO'){echo('required');} ?>  value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Valor Abonar</label>
@@ -671,30 +711,36 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                                         $('#sidescuento').css("display","block");
                                     $('input[name=descuento]').attr("max",""+maximo+"");
                                     }
-                                    console.log(maximo);
+                                    // console.log(maximo);
                                 })
                             </script>
 
-                            <div class="group-material">
+                            <?php $consuldescuento=$conexion->query("select 1 from tb_alquiler where descuento=0 and id_alquiler=".$id_alq);
+                            $resdescuento=mysqli_fetch_array($consuldescuento);
+                            if($resdescuento[0]==1){  ?>
+
+                            <div class="group-material" <?php if($respestgaran[0]=='DEVUELTO'){echo('style="display:none;"');} ?> >
                                 <span id="nodescuento" style="display:none;">Descuento</span>
                                 <input type="number" class="tooltips-general material-control numero " step="0.01" max="" data-toggle="tooltip" data-placement="top" title="Descuento" id="descuento" name="descuento" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
-                                <label id="sidescuento"> Descuento</label>
-                               
+                                <label id="sidescuento"> Descuento</label>           
 
                             </div>
+                            <?php } ?>
 
-                             <div class="group-material">
-                                
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" name="ingreso_n" required value="" >
+                             <div class="group-material" <?php if($respestgaran[0]=='DEVUELTO'){echo('style="display:none;"');} ?> >
+                                <?php 
+                            $conuslt=$conexion->query("select max(comprabante_n)as comp from tb_ingreso_sindicato"); 
+                            $res=mysqli_fetch_array($conuslt);?>
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" name="ingreso_n" <?php if($respestgaran[0]!='DEVUELTO'){echo('required');} ?>  placeholder="<?php echo($res[0]); ?>" value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Comprobante de Ingreso N.-</label>
 
                             </div> 
 
-                            <div class="group-material">
+                            <div class="group-material" <?php if($respestgaran[0]=='DEVUELTO'){echo('style="display:none;"');} ?> >
                                 
                                 <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Banco N.-" name="comproante_bco" value="" >
                                 <span class="highlight"></span>
@@ -702,7 +748,7 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                                 <label>Deposito de Banco N.-</label>
 
                             </div> 
-                              <div class="group-material"> 
+                             <!--  <div class="group-material" <?php if($respestgaran[0]=='DEVUELTO'){echo('style="display:none;"');} ?> > 
                              <span>Seleccione ESTADO </span> 
                                  <select style="color:red;" name="estado" class="tooltips-general material-control" data-toggle="tooltip" data-placement="top" >
                                    <option value="ACTIVO" selected="">ACTIVO</option>
@@ -711,9 +757,9 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
 
-                            </div>
+                            </div> -->
 
-                             <div class="group-material">
+                             <div class="group-material" <?php if($respestgaran[0]=='DEVUELTO'){echo('style="display:none;"');} ?> >
                              BANCO A ACREDITARSE
                             <?php
                               $sql2=mysqli_query($conexion,"SELECT * FROM `tb_bancos` WHERE descripcion='CUENTA ADMINISTRATIVA'"); 
@@ -726,13 +772,30 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                             <input type="hidden" name="id_banco" value="<?php echo $consult['id_banco']; ?>">
                             <?php } 
                                               ?>
-                           
-                                                 
+
+                             <?php 
+                              // if(){
+                            
+                            if ($respestgaran[0]!="DEVUELTO"){  ?>
+                                                                         
                               
                             <p class="text-center">
                                 <!-- <button type="reset" class="btn btn-info" style="margin-right: 20px;"><i class="zmdi zmdi-roller"></i> &nbsp;&nbsp; LIMPIAR</button> -->
                                 <button  name="registro" id="registro" type="submit" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; GUARDAR</button> &nbsp;&nbsp;  
                             </p>
+
+                            <?php }else{ 
+
+                                $id_alq=$_GET['idal'];
+                                ?>
+                            <input type="hidden" name="id_alqui" value="<?php echo $id_alq; ?>">
+                            <p class="text-center">
+                                <button  name="guardargarantia" type="submit" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; Devolver Garantía</button> &nbsp;&nbsp;  
+                            </p>
+                            <?php } ?>
+
+
+
                             <?php } ?>
                        </div>
                    </div>
@@ -742,7 +805,16 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
 
                 <?php
 
+                if(isset($_POST['guardargarantia'])){                  
+                  $idalq=$_POST['id_alqui'];
+                  $insert=$conexion->query("update tb_alquiler set estadogarantia='ok' where id_alquiler=".$idalq);
+                  if($insert){
+                        echo '<script type="text/javascript">swal({title: "ok", text: "Garantía devuelto con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="addpagosalquiler.php";});</script>'; 
+                  }
+                }
+
                  if (isset($_POST['registro'])){
+                    $bienes=$_GET['bien'];
                   $id_per=$_POST['id_per'];
                   $comprobante_ingreso=$_POST['ingreso_n'];
                   $Id_banco=$_POST['id_banco'];                 
@@ -752,7 +824,20 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                   $Saldo=$_POST['abono'];                  
                   $idalq=$_POST['id_alqui'];
                   $bien=$_POST['bien'];
+                  $descuento=$_POST['descuento'];
+                  $valdescuento=$_POST['descuento'];
                   $estado=$_POST['estado'];
+                  $garantia=$_POST['garantia'];
+                  if($garantia>0){
+                    $garantia=1;
+                  }else{
+                    $garantia=0;
+                  }
+                  if($descuento>0){
+                    $descuento=1;
+                  }else{
+                    $descuento=0;
+                  }
                   if($bien==1){
                     $id_plan_cu=61;
                   }
@@ -765,9 +850,25 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                   if($bien==4){
                     $id_plan_cu=64;
                   }
+                    $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
+                $respcom=mysqli_fetch_array($sqlcompro);
+                if($respcom[0]!=1){
                   // echo ("<script type='text/javascript'>alert('".$id_per.' '.$comprobante_ingreso.' '.$Id_banco.' '.$Fecha.' '.$Descripcion.' '.$Comprobante_banco.' '.$Saldo.' '.$idalq."');</script>");
+                  $consuldescuento=$conexion->query("select 1 from tb_alquiler where descuento=0 and id_alquiler=".$idalq);
+                            $resdescuento=mysqli_fetch_array($consuldescuento);
+                            if($resdescuento[0]==1){
+                  $insert=$conexion->query("update tb_alquiler set descuento='".$descuento."', valor=valor-'".$valdescuento."',estadogarantia='ok' where id_alquiler=".$idalq);
+                  
+                    }
+                  if($bienes==1){
+                    $consuldescuentos=$conexion->query("select 1 from tb_alquiler where garantia=0 and estadogarantia='ok' and id_alquiler=".$idalq);
+                            $resdescuentos=mysqli_fetch_array($consuldescuentos);
+                            if($resdescuentos[0]==1){
+                    $insert2=$conexion->query("update tb_alquiler set garantia='".$garantia."', estadogarantia='PROCESO' where id_alquiler=".$idalq);
+                        }
+                  }
             
-                  $consulta2 = "call insertar_pagos_alquiler(".$id_per.",'".$comprobante_ingreso."', ".$Id_banco.", '".$Fecha."', '".$Descripcion."','".$Comprobante_banco."',   ".$Saldo.", '".$idalq."','".$id_plan_cu."','".$estado."')";    
+                  $consulta2 = "call insertar_pagos_alquiler(".$id_per.",'".$comprobante_ingreso."', ".$Id_banco.", '".$Fecha."', '".$Descripcion."','".$Comprobante_banco."',   ".$Saldo.", '".$idalq."','".$id_plan_cu."','".$bienes."')";    
                   $ingreso2 = mysqli_query($conexion,$consulta2);
                   if($ingreso2){
                      header('location: addpagosalquiler.php?msg=yes&ingreso='.$comprobante_ingreso);
@@ -777,7 +878,9 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                   }
 
 
-
+                  }  else{
+                echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante socio!", "error")</script>'; 
+            }
 
                
               }
@@ -798,6 +901,7 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
   $('input[name=fecha_registro]').daterangepicker({
                         singleDatePicker: true,
                         showDropdowns: true,
+                        drops:"up",
                         locale: {
                           cancelLabel: 'Clear',
                           format: 'YYYY-MM-DD',

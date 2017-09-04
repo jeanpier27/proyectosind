@@ -61,6 +61,7 @@ require_once('login/cerrar_sesion.php');
             </div>
         </div>
         <section class="full-reset text-center" style="padding: 10px 40PX;" id="contenedor">
+        <?php if($_SESSION['tipo_usuario']=='SECRETARIO_GENERAL' or $_SESSION['tipo_usuario']=='SECRETARIO_FINANCIERO'){  ?>
         	<h1>USTED TIENE EL ACCESO A TODAS LAS CONFIGURACIONES Y ACCIONES</h1>
 
         	<article class="tile">
@@ -70,7 +71,13 @@ require_once('login/cerrar_sesion.php');
         		</div>  
 
         	</article>
-        	
+        <?php }else{  ?>
+            <center>
+                
+               <img src="assets/img/logo.png" width="400" height="500" >
+            </center>
+
+        <?php } ?>
 
         </section>
         </div>

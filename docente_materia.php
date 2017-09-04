@@ -33,7 +33,7 @@ require_once('login/cerrar_sesion.php');
                 $Id_paralelo = $_POST["paralelo_seleccionado"];
 
 
-                $repetidos=$conexion->query("select 1 from tb_asignatura_docente where id_docente='".$Id_docente."' and id_asignatura='".$Id_materia."' and id_promocion='".$promocion."' and horario='".$horario."'");
+                $repetidos=$conexion->query("select 1 from tb_asignatura_docente where id_docente='".$Id_docente."' and id_asignatura='".$Id_materia."' and id_promocion='".$promocion."' and horario='".$horario."' and id_curso='".$Id_paralelo."'");
                 $resulrepe=mysqli_fetch_array($repetidos);
                 
                 if(!$resulrepe[0]){          
@@ -264,8 +264,12 @@ require_once('login/cerrar_sesion.php');
 
                                       <th>Id</th>
                                       <th>Docente</th>
-                                      <th>Materias</th>                                                                                                                                      
-                                      <th>Actualizar</th>
+                                      <th>Promocion</th> 
+                                      <th>Horario</th> 
+                                      <th>Curso</th> 
+                                      <th>Materias</th>  
+                                      <th>Estado</th>   
+                                      <th>Observacion</th>                                                              
                                       
                                   </tr>
                               </thead>                              
@@ -278,11 +282,11 @@ require_once('login/cerrar_sesion.php');
                               if ($Id_docen == '') {
                                  $Id_docen = 0;
                                }                           
-
+                               $Promo = isset($_REQUEST["promo"]) ? $_REQUEST["promo"]: 0;
+                               $Jor = isset($_REQUEST["jor"]) ? $_REQUEST["jor"]: "";
                                                           
 
-                              $sqldocente_materia=$conexion->query("SELECT `tb_asignatura_docente`.`id_asignatura_docente`, `tb_personas`.`nombre`, `tb_personas`.`apellido`, `tb_asignaturas`.`asignatura`, `tb_docente`.`estado`, `tb_usuarios`.`estado` FROM `tb_personas` INNER JOIN `tb_usuarios` ON `tb_usuarios`.`id_persona` = `tb_personas`.`id_persona`
-    INNER JOIN `tb_docente` ON `tb_docente`.`id_usuarios` = `tb_usuarios`.`id_usuarios` INNER JOIN `tb_asignatura_docente` ON `tb_asignatura_docente`.`id_docente` = `tb_docente`.`id_docente` INNER JOIN `tb_asignaturas` ON `tb_asignatura_docente`.`id_asignatura` = `tb_asignaturas`.`id_asignatura` WHERE `tb_docente`.`id_docente`=".$Id_docen);
+                              $sqldocente_materia=$conexion->query("SELECT `tb_asignatura_docente`.`id_asignatura_docente`, `tb_personas`.`nombre`, `tb_personas`.`apellido`, `tb_asignaturas`.`asignatura`, `tb_docente`.`estado`, `tb_usuarios`.`estado`, tb_asignatura_docente.horario, tb_asignatura_docente.id_curso, tb_asignatura_docente.id_promocion, tb_asignatura_docente.observacion, tb_promocion.descripcion,tb_asignatura_docente.estado as estados FROM `tb_personas` INNER JOIN `tb_usuarios` ON `tb_usuarios`.`id_persona` = `tb_personas`.`id_persona` INNER JOIN `tb_docente` ON `tb_docente`.`id_usuarios` = `tb_usuarios`.`id_usuarios` INNER JOIN `tb_asignatura_docente` ON `tb_asignatura_docente`.`id_docente` = `tb_docente`.`id_docente` INNER JOIN `tb_asignaturas` ON `tb_asignatura_docente`.`id_asignatura` = `tb_asignaturas`.`id_asignatura`inner join tb_promocion on tb_asignatura_docente.id_promocion=tb_promocion.id_promocion WHERE `tb_asignatura_docente`.`id_docente`=".$Id_docen." and tb_asignatura_docente.id_promocion='".$Promo."' and tb_asignatura_docente.horario='".$Jor."'");
 
                               $numero_asignaciones = mysqli_num_rows($sqldocente_materia);
 
@@ -293,14 +297,36 @@ require_once('login/cerrar_sesion.php');
                                 $Nombre = $consultadocente_materia['nombre'];
                                 $Apellido = $consultadocente_materia['apellido'];
                                 $Asignatura = $consultadocente_materia['asignatura'];
+                                $observacion = $consultadocente_materia['observacion'];
+                                $horario = $consultadocente_materia['horario'];
    
                                ?>
 
                                 <tr>
-<td><input name="id_asignatura_docente<?php echo $i;?>" readonly value="<?php echo $Id; ?>" style="width:80px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" type="text"></td>
-<td><p style="width:200px;"><?php echo $Apellido.' '.$Nombre; ?></p></td>                               
+                                <input type="hidden" name="id_docente" value="<?php echo $Id_docen; ?>">
+                                <input type="hidden" name="id_promo" value="<?php echo $Promo; ?>">
+<td><input name="id_asignatura_docente[<?php echo $Id;?>]" readonly value="<?php echo $Id; ?>" style="width:80px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" type="text"></td>
+<td><p style="width:200px;"><?php echo $Apellido.' '.$Nombre; ?></p></td>
+<td><?php echo $consultadocente_materia['descripcion']; ?></td>   
 <td>
-<select name="asignatura<?php echo $i;?>" style="width:300px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" class="tooltips-general material-control" data-toggle="tooltip" data-placement="top" >
+<select name="horario[<?php echo $Id;?>]" style="width:120px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" class="tooltips-general material-control" data-toggle="tooltip" data-placement="top" >
+<option value="NOCTURNO" <?php if($horario=="NOCTURNO"){echo "selected";} ?>> NOCTURNO </option>
+<option value="FIN DE SEMANA" <?php if($horario=="FIN DE SEMANA"){echo "selected";} ?>> FIN DE SEMANA </option>
+</select>
+</td>  
+<td>
+<select name="curso[<?php echo $Id;?>]" style="width:40px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" class="tooltips-general material-control" data-toggle="tooltip" data-placement="top" >
+<?php 
+$consultcurso=$conexion->query("select `tb_curso`.`curso`, `tb_estudiantes`.`id_curso` FROM `tb_curso` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_curso` = `tb_curso`.`id_curso` GROUP by tb_estudiantes.id_curso");
+while($conscurso=mysqli_fetch_array($consultcurso)){
+ ?>
+<option value="<?php echo $conscurso['id_curso']; ?>" <?php if($consultadocente_materia['id_curso']==$conscurso['id_curso']){echo "selected";} ?>> <?php echo $conscurso['curso']; ?> </option>
+
+<?php } ?>
+</select>
+</td>                         
+<td>
+<select name="asignatura[<?php echo $Id;?>]" style="width:300px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" class="tooltips-general material-control" data-toggle="tooltip" data-placement="top" >
 <?php 
 $sqlmateria=$conexion->query("SELECT * from tb_asignaturas");
 
@@ -314,26 +340,14 @@ $sqlmateria=$conexion->query("SELECT * from tb_asignaturas");
 </select>
 </td>
 <td>
-<button  name="registro<?php echo $i;?>" id="registro" type="submit" class="btn btn-info"><i class="glyphicon glyphicon-refresh"></i></button>
-<?php 
-
-                              if (isset($_POST['registro'.$i.''])){
-                               
-                               $Id_asignatura_docente1 = $_POST['id_asignatura_docente'.$i.''];                                
-                               $Asignatura1 = $_POST['asignatura'.$i.''];
-                               $Docente = isset($_REQUEST["doce"]) ? $_REQUEST["doce"]: "";                               
-
-                               $update_table_asignatura_docente = "update tb_asignatura_docente set id_docente='".$Docente."', id_asignatura='".$Asignatura1."' where id_asignatura_docente =".$Id_asignatura_docente1;    
-                               $actualizacion_asignatura_docente = mysqli_query($conexion,$update_table_asignatura_docente);
-
-                               if ($actualizacion_asignatura_docente) {
-                                 header('location: docente_materia.php?msg=yes&doce='.$Docente); 
-                               } else {
-                                 header('location: docente_materia.php?msg=no&doce='.$Docente);
-                               }
-                     }  
- ?>
+<select name="estado[<?php echo $Id;?>]" style="width:120px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" class="tooltips-general material-control" data-toggle="tooltip" data-placement="top" >
+<option value="ACTIVO" <?php if($consultadocente_materia['estados']=="ACTIVO"){echo "selected";} ?>> ACTIVO </option>
+<option value="INACTIVO" <?php if($consultadocente_materia['estados']=="INACTIVO"){echo "selected";} ?>> INACTIVO </option>
+</select>
 </td>
+<td><input type="text"  name="observacion[<?php echo $Id;?>]" style="width:120px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" title="<?php echo $observacion; ?>" placeholder="<?php echo $observacion; ?>" ></td>
+<input type="hidden" name="observacionbd[<?php echo $Id;?>]" value="<?php echo $observacion; ?>">
+
 
 
                                <?php 
@@ -345,27 +359,42 @@ $sqlmateria=$conexion->query("SELECT * from tb_asignaturas");
                               </table>
                               </div>                    
 
-                              <center><button  name="registro_actualizar" id="" type="submit" class="btn btn-info"><i class="glyphicon glyphicon-refresh"></i>      Actualizar Todo</button></center>
+                              <center><button  name="registro_actualizar" id="" type="submit" class="btn btn-info"><i class="glyphicon glyphicon-refresh"></i>      Actualizar</button></center>
                               <?php 
 
                               if (isset($_POST['registro_actualizar'])){
+                                $id_docente=$_POST['id_docente'];
+                                $id_promo=$_POST['id_promo'];
+                            foreach ($_POST['id_asignatura_docente'] as $value) {                       
+                            
+                              if($_POST['observacion'][$value]!=""){
+                                $id=$_POST['id_asignatura_docente'][$value];
+                                $horario=$_POST['horario'][$value];
+                                $curso=$_POST['curso'][$value];
+                                $asignatura=$_POST['asignatura'][$value];
+                                $estado=$_POST['estado'][$value];
+                                $observacionbd=$_POST['observacionbd'][$value];                         
+                                
+                                $observa=$_POST['observacion'][$value];
+                                $fecha=date('Y-m-d H:i:s');
+                                $observaciontotal=$observacionbd.' ('.$fecha.' usuario: '.$_SESSION['nombres'].'.- '.$observa.')';
+
+                                $repetidos=$conexion->query("select 1 from tb_asignatura_docente where id_docente='".$id_docente."' and id_asignatura='".$asignatura."' and horario='".$horario."' and id_curso='".$curso."' and id_promocion='".$id_promo."'");
+                                $resulrepe=mysqli_fetch_array($repetidos);
+                                if($resulrepe[0]!=1){
+
+                                $sqlupdate=$conexion->query("update tb_asignatura_docente set horario='".$horario."', id_curso='".$curso."',estado='".$estado."', observacion='".$observaciontotal."',id_asignatura='".$asignatura."'  where id_asignatura_docente=".$id);
+                              }else{
+
+                              }
+                            }
+                          }
                               
-                                for ($i=0; $i < $numero_asignaciones; $i++) { 
-                               $Id_asignatura_docente2 = $_POST['id_asignatura_docente'.$i.''];                                
-                               $Asignatura2 = $_POST['asignatura'.$i.''];
-                               $Docente2 = isset($_REQUEST["doce"]) ? $_REQUEST["doce"]: ""; 
 
-                               // echo '<script language="javascript">alert("'.$Id_asignatura_docente2.'");</script>';
-                             
-
-                               $update_table_asignatura_docente2 = "update tb_asignatura_docente set id_docente='".$Docente2."', id_asignatura='".$Asignatura2."' where id_asignatura_docente =".$Id_asignatura_docente2;    
-                               $actualizacion_asignatura_docente2 = mysqli_query($conexion,$update_table_asignatura_docente2);                               
-                                }
-
-                                if ($actualizacion_asignatura_docente2) {
-                                 header('location: docente_materia.php?msg=yes&doce='.$Docente2); 
+                                if ($sqlupdate) {
+                                 header('location: docente_materia.php?msg=yes'); 
                                } else {
-                                 header('location: docente_materia.php?msg=no&doce='.$Docente2);
+                                 header('location: docente_materia.php?msg=no');
                                }
                           
                              }  

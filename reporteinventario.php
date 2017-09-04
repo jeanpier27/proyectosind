@@ -73,8 +73,37 @@ require_once('login/cerrar_sesion.php');
                 <div class="tile-name all-tittles"><a href="consultainventario.php">Seleccione</a></div>
                 <div class="tile-num full-reset">Consulta</div>
             </article>
-           
-            
+        <!--    <article class="tile">
+                <div class="tile-icon full-reset"><i class="zmdi zmdi-assignment-check"></i></div>
+                <div class="tile-name all-tittles"><a href="#" data-toggle="modal" id="prueb">prueba</a></div>
+                <div class="tile-num full-reset">prueba</div>
+            </article> -->
+
+            <script type="text/javascript">
+               
+                $('#free_play_form_button').click();
+                setInterval(function(){
+                     $('#free_play_form_button').click();
+                },3602000);
+            </script>
+           <!-- 
+            <div class="modal fade" id="p1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        </div>
+                    
+                    </div>
+                
+                </div>
+                
+            </div> -->
         	
 
         </section>

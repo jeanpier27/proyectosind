@@ -38,7 +38,9 @@ require_once('login/cerrar_sesion.php');
                 $beneficiario = $_POST['beneficiario'];
                 $pla_cuent=70;
 
-
+                $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
+                $respcom=mysqli_fetch_array($sqlcompro);
+                if($respcom[0]!=1){
            
         $query="call insertar_socio('$id_per','$tipo_licenciansocio','$fecha_naci','$fecha_ingreso','$valor','$abono', '$fecha_registro','$descripcion','$ingreso_n','$comproante_bco','$id_banco','$beneficiario','$pla_cuent')";
         $a=$conexion->query($query);     
@@ -87,9 +89,12 @@ require_once('login/cerrar_sesion.php');
     }else{
         echo '<script type="text/javascript">swal("Error!", "No se pudo guardar el socio!", "error")</script>';    
     }
-              
+            }  else{
+                echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante socio!", "error")</script>'; 
+            }
 
 }
+
 
             ?>
 
@@ -251,8 +256,12 @@ require_once('login/cerrar_sesion.php');
                             </div> 
 
                             <div class="group-material">
+                            <?php 
+                            $conuslt=$conexion->query("select max(comprabante_n)as comp from tb_ingreso_sindicato"); 
+                            $res=mysqli_fetch_array($conuslt);?>
+
                                 
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" maxlength="10" name="ingreso_n" required value="" >
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" maxlength="10" name="ingreso_n" placeholder="<?php echo($res[0]); ?>" required value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Comprobante de Ingreso N.-</label>

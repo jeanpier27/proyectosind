@@ -33,7 +33,10 @@ require_once('login/cerrar_sesion.php');
                 $id_banco = $_POST['id_banco'];
                 $c_contable = $_POST['c_contable'];
 
-           
+           $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
+                $respcom=mysqli_fetch_array($sqlcompro);
+                if($respcom[0]!=1){
+
         $query="insert into tb_ingreso_sindicato (id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado,id_plan_cuentas)values('".$id_per."','".$id_banco."','".$fecha_registro."','".$descripcion."','".$ingreso_n."','".$comproante_bco."','".$abono."','','ACTIVO','".$c_contable."')";
         $a=$conexion->query($query);     
         if($a){
@@ -42,7 +45,9 @@ require_once('login/cerrar_sesion.php');
         echo '<script type="text/javascript">swal("Error!", "No se pudo guardar el socio!", "error")</script>';    
     }
               
-
+ }  else{
+                echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante !", "error")</script>'; 
+            }
 }
 
             ?>
@@ -153,8 +158,10 @@ require_once('login/cerrar_sesion.php');
                 
 
                             <div class="group-material">
-                                
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" maxlength="10" name="ingreso_n" required value="" >
+                                <?php 
+                            $conuslt=$conexion->query("select max(comprabante_n)as comp from tb_ingreso_sindicato"); 
+                            $res=mysqli_fetch_array($conuslt);?>
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" maxlength="10" name="ingreso_n"  placeholder="<?php echo($res[0]); ?>" required value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Comprobante de Ingreso N.-</label>
@@ -163,7 +170,7 @@ require_once('login/cerrar_sesion.php');
 
                             <div class="group-material">
                                 
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Banco N.-" maxlength="15" name="comproante_bco" value="" >
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Banco N.-" maxlength="15" name="comproante_bco"  value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Deposito de Banco N.-</label>

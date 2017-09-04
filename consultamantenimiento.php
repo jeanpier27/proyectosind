@@ -7,7 +7,7 @@ require_once('login/cerrar_sesion.php');
  <!DOCTYPE html>
  <html>
  <head>
- 	<title>Mantenimiento Vehiculos</title>
+ 	<title>Mantenimiento Vehículos</title>
 <?php 	require_once('meta.php');  ?>
  </head>
  <body background="assets/fotos/logo.png">
@@ -15,7 +15,7 @@ require_once('login/cerrar_sesion.php');
  <?php 
 require_once('login/conexion.php');
 $id_v=$_GET['id_vehi'];
-$sqlsocio=$conexion->query("select tb_mantenimiento_vehiculo.*,tb_vehiculo.* from tb_mantenimiento_vehiculo inner join tb_vehiculo on tb_mantenimiento_vehiculo.id_vehiculo=tb_vehiculo.id_vehiculo where tb_mantenimiento_vehiculo.id_vehiculo=".$id_v.""); 
+$sqlsocio=$conexion->query("select tb_mantenimiento_vehiculo.id_mant_vehiculo,tb_mantenimiento_vehiculo.n_factura,tb_mantenimiento_vehiculo.fecha_fact,tb_mantenimiento_vehiculo.descripcion,tb_mantenimiento_vehiculo.valor,tb_mantenimiento_vehiculo.id_proveedor as proveed,tb_vehiculo.* from tb_mantenimiento_vehiculo inner join tb_vehiculo on tb_mantenimiento_vehiculo.id_vehiculo=tb_vehiculo.id_vehiculo where tb_mantenimiento_vehiculo.id_vehiculo=".$id_v.""); 
 
 
 
@@ -23,14 +23,16 @@ $sqlsocio=$conexion->query("select tb_mantenimiento_vehiculo.*,tb_vehiculo.* fro
  <div class="table-responsive">   
                             <table class="table table-hover table-bordered table-responsive order-table" aling="center" id="tabladatos">
                                 <thead>
-                                	<tr class="info"><td colspan="5" align="center" >DATOS MANTENIMIENTO DE VEHICULO</td></tr>
+                                	<tr class="info"><td colspan="7" align="center" >DATOS MANTENIMIENTO DE VEHÍCULO</td></tr>
                                     <tr  class="info">
 
-                                      <th>Id</th>
+                                     <th>Id</th>
                                       <th>Vehículo</th>
+                                      <th>Proveedor</th>
                                       <th>Fecha Factura</th>
                                       <th>N.- Factura</th>
                                       <th>Descripcion</th>
+                                      <th>Valor</th>
                                       <!-- <th>Motor</th>
                                       <th>Chasis</th>
                                       <th>Año Produccion</th>
@@ -50,9 +52,11 @@ $sqlsocio=$conexion->query("select tb_mantenimiento_vehiculo.*,tb_vehiculo.* fro
                                   <tr  class="info">
                                       <th>Id</th>
                                       <th>Vehículo</th>
+                                      <th>Proveedor</th>
                                       <th>Fecha Factura</th>
                                       <th>N.- Factura</th>
                                       <th>Descripcion</th>
+                                      <th>Valor</th>
                                       <!-- <th>Motor</th>
                                       <th>Chasis</th>
                                       <th>Año Produccion</th>
@@ -75,11 +79,22 @@ $sqlsocio=$conexion->query("select tb_mantenimiento_vehiculo.*,tb_vehiculo.* fro
                                ?>
 
                                 <tr>
+                                 <?php 
+                                $consultamarca=$conexion->query("select descripcion from tb_marca where id_marca=".$consultasocio['id_marca']);
+                                $marca=mysqli_fetch_array($consultamarca);
+                                $consultamodelo=$conexion->query("select descripcion from tb_modelo where id_modelo=".$consultasocio['id_modelo']);
+                                $modelo=mysqli_fetch_array($consultamodelo);
+                                $consultaproveedor=$conexion->query("select nombres from tb_proveedores where id_proveedores=".$consultasocio['proveed']);
+                                $proveedor=mysqli_fetch_array($consultaproveedor);
+                                 ?>
                                 <td><?php echo($consultasocio['id_mant_vehiculo']); ?></td>
-                                <td><?php echo($consultasocio['placa'].' - '.$consultasocio['marca'].' - '.$consultasocio['modelo']); ?></td>
+                               
+                                <td><?php echo($consultasocio['placa'].' - '.$marca[0].' - '.$modelo[0]); ?></td>
+                                <td><?php echo($proveedor[0]); ?></td>
                                 <td><?php echo($consultasocio['fecha_fact']); ?></td>
                                 <td><?php echo($consultasocio['n_factura']); ?></td>
                                 <td><?php echo($consultasocio['descripcion']); ?></td>
+                                <td><?php echo($consultasocio['valor']); ?></td>
                                 
                                 
 
@@ -98,26 +113,26 @@ $sqlsocio=$conexion->query("select tb_mantenimiento_vehiculo.*,tb_vehiculo.* fro
  <script type="text/javascript">
  $(document).ready(function(){
     $('#tabladatos').DataTable({
-      initComplete: function () {
-            this.api().columns().every( function () {
-                var column = this;
-                var select = $('<select><option value=""></option></select>')
-                    .appendTo( $(column.footer()).empty() )
-                    .on( 'change', function () {
-                        var val = $.fn.dataTable.util.escapeRegex(
-                            $(this).val()
-                        );
+      // initComplete: function () {
+      //       this.api().columns().every( function () {
+      //           var column = this;
+      //           var select = $('<select><option value=""></option></select>')
+      //               .appendTo( $(column.footer()).empty() )
+      //               .on( 'change', function () {
+      //                   var val = $.fn.dataTable.util.escapeRegex(
+      //                       $(this).val()
+      //                   );
  
-                        column
-                            .search( val ? '^'+val+'$' : '', true, false )
-                            .draw();
-                    } );
+      //                   column
+      //                       .search( val ? '^'+val+'$' : '', true, false )
+      //                       .draw();
+      //               } );
  
-                column.data().unique().sort().each( function ( d, j ) {
-                    select.append( '<option value="'+d+'">'+d+'</option>' )
-                } );
-            } );
-        },
+      //           column.data().unique().sort().each( function ( d, j ) {
+      //               select.append( '<option value="'+d+'">'+d+'</option>' )
+      //           } );
+      //       } );
+      //   },
         "language": { 
     "sProcessing":     "Procesando...", 
     "sLengthMenu":     "Mostrar _MENU_ registros", 

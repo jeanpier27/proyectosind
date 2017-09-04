@@ -246,7 +246,7 @@ require_once('login/cerrar_sesion.php');
             events: [
                 <?php                
                 $Id_bien = isset($_REQUEST["bien"]) ? $_REQUEST["bien"]: 0; 
-                $consulta_alquiler = $conexion->query("SELECT `tb_alquiler`.`id_alquiler`, `tb_personas`.`nombre`,`tb_personas`.`apellido`, `tb_beneficios`.`beneficio`, `tb_alquiler`.`fecha_desde`, `tb_alquiler`.`fecha_hasta`, `tb_alquiler`.`estado`, `tb_beneficios`.`estado` as benefito,`tb_alquiler`.`valor`,`tb_alquiler`.`abonos` FROM `tb_personas`
+                $consulta_alquiler = $conexion->query("SELECT `tb_alquiler`.`id_alquiler`, `tb_personas`.`nombre`,`tb_personas`.`apellido`, `tb_beneficios`.`beneficio`, `tb_alquiler`.`fecha_desde`, `tb_alquiler`.`fecha_hasta`, `tb_alquiler`.`estado`, `tb_beneficios`.`estado` as benefito,`tb_alquiler`.`valor`,`tb_alquiler`.`abonos`,`tb_alquiler`.`estadogarantia` FROM `tb_personas`
                     INNER JOIN `tb_alquiler` ON `tb_alquiler`.`id_persona` = `tb_personas`.`id_persona`
                     INNER JOIN `tb_beneficios` ON `tb_alquiler`.`id_beneficio` = `tb_beneficios`.`id_beneficio` where (`tb_alquiler`.`estado` = 'ACTIVO' OR `tb_alquiler`.`estado` = 'PAGADO') AND `tb_alquiler`.`id_beneficio` = ".$Id_bien);
                                 while ($alquiler=$consulta_alquiler->fetch_array()){ 
@@ -259,6 +259,7 @@ require_once('login/cerrar_sesion.php');
                                   $valor=$alquiler['valor'];
                                   $abono=$alquiler['abonos'];
                                   $estado=$alquiler['estado'];
+                                  $estadogarantia=$alquiler['estadogarantia'];
 
                                   date_default_timezone_set('America/Bogota');
                                   $fecha_nueva_inicio = date("Y-n-d h:i:s A",strtotime($inicio));
@@ -275,23 +276,24 @@ require_once('login/cerrar_sesion.php');
                                         allDay: false,
                                     <?php } ?>
                                     url: '<?php echo $cod_alqui; ?>',
-                                    // className: 'success',
-                                    <?php if($estado=='PAGADO'){ ?>
-                                         color:'#2ecc71',
-                                         // background: 'yellow',
-                                         // textColor:'yellow',
+                                    className: 'success',
+                                    <?php 
+                                    if($Id_bien==1 and $estadogarantia=='DEVUELTO'){?>
+                                        color:'#e74c3c',
+                                     <?php 
+                                   }else{
+
+                                    if($estado=='PAGADO'){ ?>
+                                         color:'#2ecc71'
                                       <?php }elseif($abono<$valor and $abono>0){  ?>
-                                        color:'#f1c40f',
+                                        color:'#f1c40f'
                                         <?php }elseif($estado=='ACTIVO'){  ?>
-                                        color:'#2980b9',
-                                        <?php } ?>
+                                        color:'#2980b9'
+                                        <?php }} ?>
                                 },
 
 
                                <?php  } ?>             
-
-
-
 
 
 
@@ -604,6 +606,15 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
 
                     <div class="row">
                        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+                       <div >
+                       <h1>Información de colores para los bienes alquilados</h1>
+                       <div width="50px" height="50px" style="background: #2980b9; width=50px; height=50px"><h1>Alquiler Reservado</h1></div>
+                       <div width="50px" height="50px" style="background: #f1c40f;"><h1>Alquiler Abonado</h1></div>
+                       <div width="50px" heigth="50px" style="background: #2ecc71;"><h1>Alquiler Pagado</h1></div>
+                       <?php if($_REQUEST["bien"]==1){  ?>
+                       <div width="50px" heigth="50px" style="background: #e74c3c;"><h1>Devolver Garantía</h1></div>
+                         <?php } ?>
+                       </div>
                        <div class="group-material">
                                 <span>Seleccione el bien</span> 
                                 <select class="tooltips-general material-control" data-toggle="tooltip" id="carga_bienes_encontrados" onchange="carga_bienes()" data-placement="top" title="Elige el bien que alquilará el socio antes seleccionado"  required name="id_beneficio">
@@ -748,7 +759,9 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                    }
 
                    $beneficiosocio=$conexion->query("select 1 from tb_socio where id_persona=".$Id_per." and estado='ACTIVO'");
-                   if($beneficiosocio){
+                   $consultben=mysqli_fetch_array($beneficiosocio);
+
+                   if($consultben[0]==1){
                       $valors=$valors/2;
                    }
 

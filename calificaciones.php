@@ -174,7 +174,7 @@ require_once('login/cerrar_sesion.php');
                            $Mater = isset($_REQUEST["mate"]) ? $_REQUEST["mate"]: 0;
                            $paralelo = isset($_REQUEST["para"]) ? $_REQUEST["para"]: 0;
 
-                           $sqlmate=$conexion->query("SELECT `tb_asignatura_docente`.`id_asignatura`, `tb_asignatura_docente`.`id_asignatura_docente`, `tb_asignaturas`.`asignatura`, `tb_curso`.`id_curso` FROM `tb_curso` inner JOIN `tb_asignatura_docente` ON `tb_asignatura_docente`.`id_curso` = `tb_curso`.`id_curso` inner JOIN `tb_asignaturas` ON `tb_asignatura_docente`.`id_asignatura` = `tb_asignaturas`.`id_asignatura` where tb_curso.id_curso='".$paralelo."'");
+                           $sqlmate=$conexion->query("SELECT `tb_asignatura_docente`.`id_asignatura`, `tb_asignatura_docente`.`id_asignatura_docente`, `tb_asignaturas`.`asignatura`, `tb_curso`.`id_curso` FROM `tb_curso` inner JOIN `tb_asignatura_docente` ON `tb_asignatura_docente`.`id_curso` = `tb_curso`.`id_curso` inner JOIN `tb_asignaturas` ON `tb_asignatura_docente`.`id_asignatura` = `tb_asignaturas`.`id_asignatura` where tb_curso.id_curso='".$paralelo."' group by `tb_asignatura_docente`.`id_asignatura`");
 
                             while($row=$sqlmate->fetch_array()){ 
                               $id_asignatura2 = $row['id_asignatura'];
@@ -197,7 +197,7 @@ require_once('login/cerrar_sesion.php');
                            <?php
                            $Doce = isset($_REQUEST["doce"]) ? $_REQUEST["doce"]: 0;                           
                            $paralelo = isset($_REQUEST["para"]) ? $_REQUEST["para"]: 0;
-                           $sqldocente=$conexion->query("SELECT `tb_docente`.`id_docente`, `tb_personas`.`nombre`, `tb_personas`.`apellido`, `tb_usuarios`.`id_usuarios`, `tb_asignatura_docente`.`id_curso` FROM `tb_personas` inner JOIN `tb_usuarios` ON `tb_usuarios`.`id_persona` = `tb_personas`.`id_persona` inner JOIN `tb_docente` ON `tb_docente`.`id_usuarios` = `tb_usuarios`.`id_usuarios` inner JOIN `tb_asignatura_docente` ON `tb_asignatura_docente`.`id_docente` = `tb_docente`.`id_docente` where tb_asignatura_docente.id_curso='".$paralelo."'");
+                           $sqldocente=$conexion->query("SELECT `tb_docente`.`id_docente`, `tb_personas`.`nombre`, `tb_personas`.`apellido`, `tb_usuarios`.`id_usuarios`, `tb_asignatura_docente`.`id_curso` FROM `tb_personas` inner JOIN `tb_usuarios` ON `tb_usuarios`.`id_persona` = `tb_personas`.`id_persona` inner JOIN `tb_docente` ON `tb_docente`.`id_usuarios` = `tb_usuarios`.`id_usuarios` inner JOIN `tb_asignatura_docente` ON `tb_asignatura_docente`.`id_docente` = `tb_docente`.`id_docente` where tb_asignatura_docente.id_curso='".$paralelo."' and tb_asignatura_docente.id_asignatura=".$Mater." group by `tb_docente`.`id_docente`");
 
                             while($row=$sqldocente->fetch_array()){ 
                               $id_docente1 = $row['id_docente'];
@@ -213,9 +213,10 @@ require_once('login/cerrar_sesion.php');
                           </select>
                             </div>
 
-                              <div class="group-material" id="info">
-                               
-                            </div>
+                              <!-- <div class="col-sm-12 col-sm-offset-1"> -->
+                              <div  id="info"></div>
+                              <!-- </div>  -->
+                            
 
                             
                         
@@ -236,7 +237,8 @@ require_once('login/cerrar_sesion.php');
                                       <th>Nº</th>
                                       <th>Apellidos Nombres</th>
                                       <th>Nota</th>
-                                      <th>Estado</th>                                      
+                                      <th>Estado</th>   
+                                      <th>Observacion</th>                                    
                                       
                                       
                                   </tr>
@@ -252,7 +254,7 @@ require_once('login/cerrar_sesion.php');
                                $materia=$_GET['mate'];
                                // echo ("<script type='text/javascript'>alert('".$materia."');</script>");
 
-                               $sqlestudiante =mysqli_query($conexion,"SELECT `tb_estudiantes`.`id_estudiante`, `tb_personas`.`nombre`, `tb_personas`.`apellido`FROM `tb_personas` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_persona` = `tb_personas`.`id_persona` where tb_estudiantes.id_promocion='".$Promo."' and tb_estudiantes.horario='".$Jor."' and tb_estudiantes.id_curso='".$paralelo."'");
+                               $sqlestudiante =mysqli_query($conexion,"SELECT `tb_estudiantes`.`id_estudiante`, `tb_personas`.`nombre`, `tb_personas`.`apellido`FROM `tb_personas` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_persona` = `tb_personas`.`id_persona` where tb_estudiantes.id_promocion='".$Promo."' and tb_estudiantes.horario='".$Jor."' and tb_estudiantes.id_curso='".$paralelo."' and tb_estudiantes.estado='ACTIVO'");
                                // $sqlestudiant=mysqli_fetch_array($sqlestudiante);
                             
                                while($consultaestudiante=mysqli_fetch_array($sqlestudiante)){
@@ -274,27 +276,31 @@ require_once('login/cerrar_sesion.php');
                                   $bandera=0;
                                   while($resp=mysqli_fetch_array($consulta_notas)){
                                     $bandera++;
-                                    
+                                    $observacionbd=$resp['observacion'];
+                                    $id_notas=$resp['id_notas'];
                                   
                                  ?>
-
-                                <td style="color:<?php if($resp['nota']<16){ echo 'red'; } ?>"><input type="text" readonly="" maxlength="5" class="numero" style="width:40px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" name="nota[<?php echo($consultaestudiante['id_estudiante']); ?>]" value="<?php echo $resp['nota']; ?>" ></td>
+                                 <input type="hidden" name="nota_atras[<?php echo $id_notas; ?>]" value="<?php echo $resp['nota']; ?>">
+                                <input type="hidden" name="id_notas[<?php echo $id_notas; ?>]" value="<?php echo $id_notas; ?>">
+                                <td style="color:<?php if($resp['nota']<16){ echo 'red'; } ?>"><input type="number" step="0.01" max="20" min="1"  class="numero" style="width:60px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" name="nota[<?php echo($id_notas); ?>]" value="<?php echo $resp['nota']; ?>" ></td>
                                 <td style="color:<?php if($resp['nota']<16){ echo 'red'; } ?>"><?php echo($resp['estado']); ?></td>
 
                                 <?php 
                                   }
-                                  if($bandera==0){
-
-
-                                 ?>
-                                  <td><input type="text" required maxlength="5" class="numero" style="width:40px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" name="nota[<?php echo($consultaestudiante['id_estudiante']); ?>]" ></td>
+                                  if($bandera==0){?>
+                                  <td><input type="number" step="0.01" max="20" min="1" required  class="numero" style="width:60px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" name="nota[<?php echo($consultaestudiante['id_estudiante']); ?>]" ></td>
+                                <td></td>
                                 <td></td>
                                 <?php 
-                                } ?>
+                                } else{
+                                ?>
 
+                                <td><input type="text"  name="observacion[<?php echo($id_notas); ?>]" style="width:120px;padding:0.2em;border: solid 1px #ffffff;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;background-color: #fff;" placeholder="<?php echo $observacionbd; ?>" title="<?php echo $observacionbd; ?>" ></td>
+                                <input type="hidden" name="observacionbd[<?php echo($id_notas); ?>]" value="<?php echo $observacionbd; ?>">
                               
 
                       <?php 
+                            }   
                         }  
                         ?>
                          </tr>
@@ -317,25 +323,62 @@ require_once('login/cerrar_sesion.php');
                             <?php 
                                 }else{ ?>
                                  <script type="text/javascript">
-                                 $('#info').html('<div class="alert alert-warning" role="alert"><strong>Advertencia</strong> Ya se encuentra asignadas las notas para editar haga clik <a href="#">AQUÍ</a> </div>');
+                                 $('#info').html('<div class="alert alert-warning" role="alert"><h3><strong>Advertencia</strong> Ya se encuentra asignadas las notas para poder guardar los cambios es obligatorio llenar el campo observacion </h3> </div>');
 
                                </script>
+                                <p class="text-center">
+                                <!-- <button type="reset" class="btn btn-info" style="margin-right: 20px;"><i class="zmdi zmdi-roller"></i> &nbsp;&nbsp; LIMPIAR</button> -->
+                                <button  name="actualizar" id="registra" type="submit" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; Actualizar</button> &nbsp;&nbsp;
+                            </p>
                                <?php } ?>
-
+                                
                                </form>
                               
                               <?php 
 
+
+                          if (isset($_POST['actualizar'])){                                          
+
+                              foreach ($_POST['id_notas'] as $value) {
+                                // echo ("<script type='text/javascript'>alert('".$id_asig_docente[0].' '.$_POST['nota'][$value]."');</script>");
+                                if($_POST['observacion'][$value]!=""){
+                                $id=$_POST['id_notas'][$value];
+                                $notas=$_POST['nota'][$value];
+                                $nota_anter=$_POST['nota_atras'][$value];
+                                $observacionbd=$_POST['observacionbd'][$value];
+                                $observacion=$_POST['observacion'][$value];
+                                if($notas>=16){
+                                  $estado='APROBADO';
+                                }else{
+                                   $estado='REPROBADO';
+                                }
+                                $fecha=date('Y-m-d H:i:s');
+                                $observaciontotal=$observacionbd.' ('.$fecha.' Nota anterior.-'.$nota_anter.' usuario: '.$_SESSION['nombres'].'.- '.$observacion.')';
+                                // echo ("<script type='text/javascript'>alert('".$id.' '.$notas."');</script>");
+                                 $update_notas=$conexion->query("update tb_notas set nota ='".$notas."', observacion='".$observaciontotal."', estado='".$estado."' where id_notas=".$id);
+                                }
+                                 }                        
+                                                       
+
+                                if ($update_notas) {
+                                 header('location: calificaciones.php?msg=yes'); 
+                               } else {
+                                 header('location: calificaciones.php?msg=no');
+                               }
+                            
+
+                          }
+
                               if (isset($_POST['insertar_notas'])){                                
 
                                 $Promo = isset($_REQUEST["promo"]) ? $_REQUEST["promo"]: 0;
-                          $Id_cur = isset($_REQUEST["cur"]) ? $_REQUEST["cur"]: 0;
+                          // $Id_cur = isset($_REQUEST["cur"]) ? $_REQUEST["cur"]: 0;
                            $paralelo = isset($_REQUEST["para"]) ? $_REQUEST["para"]: 0;
                            $Jor = isset($_REQUEST["jor"]) ? $_REQUEST["jor"]: "";
                            $Mater = isset($_REQUEST["mate"]) ? $_REQUEST["mate"]: 0;
                            $Doce = isset($_REQUEST["doce"]) ? $_REQUEST["doce"]: 0; 
-
-                           if($Promo!=0 and $Id_cur!=0 and $paralelo!=0 and $Jor!=0 and $Mater!=0 and $Doce!=0){
+                           echo ("<script type='text/javascript'>alert('".$Doce.' '.$Mater.' '.$Promo.' '.$Jor.' '.$paralelo."');</script>");
+                           if($Promo!=0 and $paralelo!=0 and $Jor!="" and $Mater!=0 and $Doce!=0){
 
                            
                                
@@ -355,8 +398,10 @@ require_once('login/cerrar_sesion.php');
                                 }else{
                                    $estado='REPROBADO';
                                 }
+                                $fecha=date('Y-m-d H:i:s');
+                                $observaciontotal='('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
                                 // echo ("<script type='text/javascript'>alert('".$id.' '.$notas."');</script>");
-                                 $insertar_notas=$conexion->query("insert into tb_notas (id_asignatura_docente,id_estudiante,nota,estado,observacion)values('".$id_asig_docente[0]."','".$id."','".$notas."','".$estado."','')");
+                                 $insertar_notas=$conexion->query("insert into tb_notas (id_asignatura_docente,id_estudiante,nota,estado,observacion)values('".$id_asig_docente[0]."','".$id."','".$notas."','".$estado."','".$observaciontotal."')");
                                 }
                                                          
                                                        
@@ -370,6 +415,8 @@ require_once('login/cerrar_sesion.php');
                               echo '<script type="text/javascript">swal("Error!", "Debe seleccionar todos los campos!", "warning")</script>';
                              }
                           }
+
+
                              
                              ?>
                        

@@ -152,6 +152,8 @@ if ($MSG=='ss') {
     
     echo '<script type="text/javascript">swal("Error!", "No se pudo registrar este docente", "error")</script>';
 
+}elseif($MSG=='repetido'){
+    echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado este docente", "warning")</script>';
 }
 
  ?>

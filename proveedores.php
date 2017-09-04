@@ -94,15 +94,32 @@ require_once('login/cerrar_sesion.php');
 
                             </div> 
 
-                             <div class="group-material">
+                            <!--  <div class="group-material">
                                 
                                 <input type="text" class="tooltips-general material-control letras"  data-toggle="tooltip" data-placement="top" title="Ingrese el Ruc" name="actividad_co" required value="" onkeyup="javascript:this.value=this.value.toUpperCase();">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Actividad Comercial</label>
 
-                            </div>
+                            </div> -->
+                            <?php $consultar_actividad=$conexion->query("select descripcion from tb_actividad_comercial"); ?>
                             
+                             <div class="group-material">
+                                <span>Seleccione actividad comercial </span> 
+                               
+                          <select class="tooltips-general material-control" data-toggle="tooltip" data-placement="top" name="actividad_co"  required="">
+                          <option selected="" disabled="">Seleccione </option>
+                           <?php  
+
+                             while($row=$consultar_actividad->fetch_array()){ ?>
+
+                              <option value="<?php echo $row['descripcion']; ?>"><?php echo ($row['descripcion']); ?></option>
+                               <?php  
+                            }
+                            ?>
+                          </select>
+
+                            </div>
 
                          <div class="group-material">
                                 
@@ -249,7 +266,8 @@ $hoy=date('Y-m-d');
                                     for(var i in dato.datos){
                                       $('button[name=registra]').attr("name","actualizar");
                                       $('input[name=id_proveed]').val(dato.datos[i].id_proveedores);
-                                      $('input[name=actividad_co]').val(dato.datos[i].activi_comercial);
+                                      // $('input[name=actividad_co]').val(dato.datos[i].activi_comercial);                      
+                                      $("select[name=actividad_co]> option[value='"+dato.datos[i].activi_comercial+"']").attr("selected",true);
                                       $('input[name=nombres]').val(dato.datos[i].nombres);
                                       $('input[name=direccion]').val(dato.datos[i].direccion);
                                       $('input[name=telefono]').val(dato.datos[i].telefono);
