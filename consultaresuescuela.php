@@ -71,7 +71,7 @@ require_once('login/cerrar_sesion.php');
                        <form method="GET" action="">
                             <div class="group-material">
                                 Fecha de Consulta
-                                <input type="text" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Fecha Consulta" name="fecha_consulta" required value="" readonly>
+                                <input type="text" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Fecha Consulta" name="fecha_consulta" required value="  <?php if(isset($_GET['fecha_consulta'])){ echo $_GET['fecha_consulta'];} ?>" readonly>
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 
@@ -141,7 +141,7 @@ $fecha2=substr($fecha, 13);
                                ?>
 
                                 <tr>
-                                <?php $totalingre=$totalingre+$consultasocio['saldo']; ?>  
+                                <?php $totalingre=$totalingre+$consultasocio['valor']; ?>  
                                 <td></td>
                                 <td><?php echo($consultasocio['descripcion']); ?></td>
                                 <td><?php echo($consultasocio['valor']); ?></td>
@@ -198,9 +198,9 @@ $fecha2=substr($fecha, 13);
 
                                 <tr>
                                 
-                               <?php $totalegre=$totalegre+$consultasoci['saldo']; ?>  
+                               <?php $totalegre=$totalegre+$consultasoci['valor']; ?>  
                                
-                               
+                               <td></td>
                                 <td><?php echo($consultasoci['descripcion'].' '.$factur); ?></td>
                                 <td><?php echo($consultasoci['valor']); ?></td>
                                
