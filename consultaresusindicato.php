@@ -109,7 +109,7 @@ $sqlsocio=$conexion->query("SELECT sum(tb_ingreso_sindicato.saldo)as valor,tb_pl
                             </p>
                             <p class="text-center">
                             <center>
-                              <h1>INGRESOS<span id="ingr"></span></h1>
+                              <h1>INGRESOS $<span id="ingr"></span></h1>
                               </center>
                                 <!-- <button  name="consultar" id="registra" type="button" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; INGRESOS</button> &nbsp;&nbsp; -->
                             </p> 
@@ -144,7 +144,7 @@ $sqlsocio=$conexion->query("SELECT sum(tb_ingreso_sindicato.saldo)as valor,tb_pl
                                ?>
 
                                 <tr>
-                           
+                           <?php $totalingre=$totalingre+$consultasocio['valor']; ?>  
                              
                                 <td></td>
                                 <td><?php echo($consultasocio['descripcion']); ?></td>
@@ -165,7 +165,7 @@ $sqlsocio=$conexion->query("SELECT sum(tb_ingreso_sindicato.saldo)as valor,tb_pl
 
                                 <p class="text-center">
                             <center>
-                              <h1>EGRESOS <span id="egr"></span></h1>
+                              <h1>EGRESOS $<span id="egr"></span></h1>
                               </center>
                                 <!-- <button  name="consultar" id="registra" type="button" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; INGRESOS</button> &nbsp;&nbsp; -->
                             </p>
@@ -175,6 +175,7 @@ $sqlsocio=$conexion->query("SELECT sum(tb_ingreso_sindicato.saldo)as valor,tb_pl
                             <table class="table table-hover table-bordered table-responsive order-table" aling="center" id="tabladatos2">
                                 <thead>
                                     <tr  class="info">
+                                    <th></th>
                                       <th>Descripcion</th>
                                       <th>Valor</th>
 
@@ -184,6 +185,7 @@ $sqlsocio=$conexion->query("SELECT sum(tb_ingreso_sindicato.saldo)as valor,tb_pl
                               </thead>
                               <tfoot>
                                   <tr  class="info">
+                                  <th></th>
                                      <th>Descripcion</th>
                                       <th>Valor</th>
 
@@ -200,7 +202,8 @@ $sqlsocio=$conexion->query("SELECT sum(tb_ingreso_sindicato.saldo)as valor,tb_pl
                                ?>
 
                                 <tr>
-                             
+                                <?php $totalegre=$totalegre+$consultasoci['valor']; ?>
+                                <td></td>
                                 <td><?php echo($consultasoci['descripcion'].' '.$facturas); ?></td>
                                 <td><?php echo($consultasoci['valor']); ?></td>
                                 
@@ -229,6 +232,10 @@ $sqlsocio=$conexion->query("SELECT sum(tb_ingreso_sindicato.saldo)as valor,tb_pl
  </body>
  <script type="text/javascript">
  	  $(document).ready(function(){
+      var ingrest='<?php echo $totalingre; ?>';
+      var egrest='<?php echo $totalegre; ?>';
+      $('#ingr').html(ingrest);
+      $('#egr').html(egrest);
   
                    
                     $('input[name=fecha_consulta]').daterangepicker({
