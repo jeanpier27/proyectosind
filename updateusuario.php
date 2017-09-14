@@ -105,7 +105,7 @@ require_once('login/cerrar_sesion.php');
                            
                            <label>Estado</label>
                           <select  name="estado" >                                 
-                                   <option value="ACIVO" <?php if($consultasocioup['estado']=='ACTIVO'){echo 'selected';} ?> >ACIVO</option>
+                                   <option value="ACTIVO" <?php if($consultasocioup['estado']=='ACTIVO'){echo 'selected';} ?> >ACTIVO</option>
                                    <option value="INACTIVO" <?php if($consultasocioup['estado']=='INACTIVO'){echo 'selected';} ?> >INACTIVO</option>
                                   
                                    
