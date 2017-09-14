@@ -123,6 +123,23 @@ function miles($num){
 		}
 	}
 
+	if($num>=10000){
+		$prueba=$num/1000;
+		if ($prueba<100){
+			$enteros= explode('.',$prueba);
+			$a=decenas($enteros[0]);
+			$b=conversion($enteros[1]);
+			return $a.' MIL '.$b;
+		}else{
+			$enteros= explode('.',$prueba);
+			$a=centena($enteros[0]);
+			$b=conversion($enteros[1]);
+			return $a.' MIL '.$b;
+		}
+
+
+	}
+
 }
 
 function centena($num){
