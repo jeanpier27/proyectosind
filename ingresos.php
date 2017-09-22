@@ -68,6 +68,12 @@ require_once('login/cerrar_sesion.php');
         </div>
         <section class="full-reset text-center" style="padding: 10px 40PX;" id="contenedor">
 
+             <article class="tile">
+                <div class="tile-icon full-reset"><i class="zmdi zmdi-file-text"></i></div>
+                <div class="tile-name all-tittles"><a href="facturas.php">Seleccione</a></div>
+                <div class="tile-num full-reset">Factura</div>
+            </article>
+
           <article class="tile">
                 <div class="tile-icon full-reset"><i class="zmdi zmdi-book"></i></div>
                 <div class="tile-name all-tittles" style="width: 90%;"><a href="recaudaciones.php" id="addrecaudacion">Recaudaciones</a></div>
@@ -82,7 +88,7 @@ require_once('login/cerrar_sesion.php');
                 <div class="tile-icon full-reset"><i class="zmdi zmdi-folder"></i></div>
                 <div class="tile-name all-tittles"><a href="ingreso_escuela.php">Seleccione</a></div>
                 <div class="tile-num full-reset">Escuela</div>
-            </article><br>
+            </article>
         	<article class="tile">
                 <div class="tile-icon full-reset"><i class="zmdi zmdi-folder"></i></div>
                 <div class="tile-name all-tittles"><a href="addpagosalquiler.php">Seleccione</a></div>
