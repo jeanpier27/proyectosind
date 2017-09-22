@@ -255,11 +255,14 @@ require_once('login/cerrar_sesion.php');
                             </div> 
 
                             <div class="group-material">
+                                <?php 
+                                 $sqliva=$conexion->query("select valor from tb_pagos_contable where descripcion='IVA'");
+                                $resultiva=mysqli_fetch_array($sqliva);  ?>
                                 <input type="text" name="val_iva" readonly="" required="" name="">
-                                <input type="hidden" name="iva"  value="12" >%
+                                <input type="hidden" name="iva"  value="<?php echo intval($resultiva[0]); ?>" >%
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
-                                <label>IVA %</label>
+                                <label>IVA <?php echo intval($resultiva[0]); ?>%</label>
 
                             </div>
 
