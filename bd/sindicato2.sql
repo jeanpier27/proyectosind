@@ -361,10 +361,13 @@ create table tb_detalle_egreso_escuela(
 
 create table tb_factura(
   id_factura int primary key AUTO_INCREMENT,
+  n_factura int,
   id_persona int,
   fecha datetime,
   descripcion text,
   subtotal float(10,2),
+  subtotalcero float(10,2),
+  descuento float(10,2),
   iva float (10,2),
   observacion varchar(50),
   estado varchar(10),
