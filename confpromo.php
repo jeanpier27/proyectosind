@@ -70,9 +70,18 @@ require_once('login/cerrar_sesion.php');
                         <form action="" method="post">
                         <center>
                         <input type="hidden" name="id_person" value="<?php echo $_GET['id']; ?>">
-                         
+                          <label>Descripcion</label>
+                        <input type="text" name="descripcion" required="">
+                        <label>Tipo Licencia</label>
+                        <select name="tipo" >
+                          <option value="TIPO C">TIPO C</option>
+                          <option value="TIPO D">TIPO D</option>
+                          <option value="TIPO E">TIPO E</option>
+                        </select>
                          <label>Fecha</label>
-                           <input type="text" name="fecha"  value="">
+                           <input type="text" name="fecha"  value="" required="">
+                           <label>Valor</label>
+                           <input type="text" name="valor" class="numero" value="" required="">
 
                          
                                                 
@@ -99,7 +108,18 @@ require_once('login/cerrar_sesion.php');
                         <center>
                         <input type="hidden" name="id_person" value="<?php echo $_GET['id']; ?>">
                         <label>Descripcion</label>
-                        <input type="text" name="descripcion" value="<?php echo $consultasocioup['descripcion']; ?>">
+                        <input type="text" name="descripcion" value="<?php echo substr($consultasocioup['descripcion'],0, -7); ?>">
+                        <?php $tipo=$consultasocioup['descripcion'];
+                        $selec=substr($tipo, -6);
+                        // echo $selec;
+                         ?>
+
+                         <label>Tipo Licencia</label>
+                         <select name="tipo" >
+                           <option value="TIPO C" <?php if($selec=='TIPO C'){echo 'selected';} ?>>TIPO C</option>
+                          <option value="TIPO D" <?php if($selec=='TIPO D'){echo 'selected';} ?>>TIPO D</option>
+                          <option value="TIPO E" <?php if($selec=='TIPO E'){echo 'selected';} ?>>TIPO E</option>
+                         </select>
                          
                          <label>Fecha</label>
                            <input type="text" name="fecha"  value="<?php echo $consultasocioup['fecha_inicio'].' - '.$consultasocioup['fecha_fin']; ?>">
@@ -118,18 +138,40 @@ require_once('login/cerrar_sesion.php');
                       <br><br>
 
                       <?php 
+
                       if(isset($_POST['actualizar'])){
-                        $descripcion=$_GET['descripcion'];
-                        $fecha=$_GET['fecha_consulta'];
+                        $tipo=$_POST['tipo'];
+                        $descripcion=$_POST['descripcion'].' '.$tipo;
+                        $fecha=$_POST['fecha'];
                         $fecha1=substr($fecha, 0, -13);
                         $fecha2=substr($fecha, 13);
                         $id_banco=$_POST['id_person'];
-                       
-
-                        $query="update tb_promocion set descripcion='".$descripcion."', fecha_inicio='".$fecha1."',fecha_fin='".$fecha2."', where id_promocion=".$id_banco;
+                        
+                        $query="update tb_promocion set descripcion='".$descripcion."', fecha_inicio='".$fecha1."',fecha_fin='".$fecha2."' where id_promocion=".$id_banco;
                         $a=$conexion->query($query);     
                         if($a){
-                          echo '<script type="text/javascript">swal({title: "ok", text: "Actualizacion con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="confbancos.php";});</script>';   
+                          echo '<script type="text/javascript">swal({title: "ok", text: "Actualizacion con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="confpromo.php";});</script>';   
+                        }else{
+                          echo '<script type="text/javascript">swal("Error!", "No se pudo actualizar datos!", "error")</script>';
+                        }
+
+
+                      }
+
+                       if(isset($_POST['guardar'])){
+                        
+                        $fecha=$_POST['fecha'];
+                        $valor=$_POST['valor'];
+                        $tipo=$_POST['tipo'];
+                        $fecha1=substr($fecha, 0, -13);
+                        $fecha2=substr($fecha, 13);
+                        $id_banco=$_POST['id_person'];
+                        $descripcion=$_POST['descripcion'].' '.$tipo;
+                        
+                        $query="insert into tb_promocion (descripcion,valor,fecha_inicio,fecha_fin,estado,observacion)values('".$descripcion."','".$valor."' ,'".$fecha1."','".$fecha2."' ,'ACTIVO','')";
+                        $a=$conexion->query($query);     
+                        if($a){
+                          echo '<script type="text/javascript">swal({title: "ok", text: "Actualizacion con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="confpromo.php";});</script>';   
                         }else{
                           echo '<script type="text/javascript">swal("Error!", "No se pudo actualizar datos!", "error")</script>';
                         }
