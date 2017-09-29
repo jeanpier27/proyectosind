@@ -256,23 +256,32 @@ $id_per=$_GET['nombres'];
 
 
                                 <?php 
-                                $res = mysqli_query($conexion,"SELECT id_recaudaciones,mes,año,id_persona,id_pagos_socio,estado FROM tb_recaudaciones where verificacion = 0 and id_pagos_socio = 2 and id_persona = ".$id_per);
+                                $res = mysqli_query($conexion,"SELECT id_recaudaciones,mes,año,id_persona,id_pagos_socio,estado,valor FROM tb_recaudaciones where verificacion = 0 and id_pagos_socio = 2 and id_persona = ".$id_per);
                                 $c=0;
+                                 $meses_c=array('','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre');    
                                 while($row = mysqli_fetch_array($res)){
-                                 $mess[$c] = $row['mes'];
-                                $año[$c]= $row['año'];
-                                $id_recaudacion[$c]=$row['id_recaudaciones'];
-                                 $c++;
+                                //   $mess[$c] = $row['mes'];
+                                // $año[$c]= $row['año'];
+                                // $id_recaudacion[$c]=$row['id_recaudaciones'];
+                                // $valors=$row['valor'];
+                                //  $c++;
+                                 ?>
+                                
+                                  <br><div><input type="checkbox" onClick="calcular()" class="" value="<?php echo $row['id_recaudaciones']; ?>" name="meses[]"/> <?php echo $row['año'].' '.$meses_c[$row['mes']].' $'.$row['valor']; ?>
+                                    <input type="hidden" name="men[<?php echo $row['id_recaudaciones']; ?>]"></div>
+                                 <?php 
                                }  
 
-                               $meses_c=array('','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre');                            
+                                                      
 
-                               for($f=0; $f<$c; $f++){
-                                if($mess[$f] !=0){?>
-                                <br><div><input type="checkbox" onClick="calcular()" class="" value="<?php echo $id_recaudacion[$f]; ?>" name="meses[]"/> <?php echo $año[$f].' '.$meses_c[$mess[$f]]; ?></div>
-                                            
-                                <?php }         
-                              }
+                               // for($f=0; $f<$c; $f++){
+                               //  if($mess[$f] !=0){
+                               ?>
+                               <!--  <br><div><input type="checkbox" onClick="calcular()" class="" value="<?php echo $id_recaudacion[$f]; ?>" name="meses[]"/> <?php echo $año[$f].' '.$meses_c[$mess[$f]].' $'.$valors; ?></div>
+                                 -->            
+                                <?php 
+                              // }         
+                              // }
 
                               ?>                             
 
