@@ -50,6 +50,7 @@ INSERT INTO tb_tipo_usuario (`id_tipo_usuario`, `tipo_usuario`) VALUES
   contraseña varchar(15),
   id_tipo_usuario int,
   estado varchar(10),
+  acceso varchar(40)
   foreign key(id_persona) references tb_personas (id_persona),
   foreign key(id_tipo_usuario) references tb_tipo_usuario (id_tipo_usuario)
 );
@@ -555,9 +556,10 @@ create table tb_notas(
   id_notas int primary key AUTO_INCREMENT,
   id_asignatura_docente int,
   id_estudiante int,
-  nota float(2,2),
+  nota float(10,2),
   estado varchar(10),
   observacion text,
+  verifica_pago int,
   foreign key(id_asignatura_docente) references tb_asignatura_docente (id_asignatura_docente),
   foreign key(id_estudiante) references tb_estudiantes (id_estudiante)
 
@@ -568,6 +570,7 @@ create table tb_cantidad_curso(
   descripcion text,
   cantidad int
   );
+
 
 
 create table tb_actividad_comercial(
@@ -591,6 +594,12 @@ create table tb_asistencia_alumnos(
   foreign key(id_curso) references tb_curso (id_curso)
 
  );
+
+create table tb_agregar_saldo_estudiante(
+  id_agregar_saldo_estudiante int primary key AUTO_INCREMENT,
+  descripcion text,
+  cantidad float(10,2)
+  );
 
 drop procedure IF EXISTS insertar_persona;
 DELIMITER $$
