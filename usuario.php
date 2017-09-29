@@ -16,8 +16,8 @@ require_once('login/cerrar_sesion.php');
  </head>
  <body>
   <script type="text/javascript">
-    $(document).ready(function(){
-            $('#contsocio').attr("style","display:block;");
+     $(document).ready(function(){
+            $('#contconfig').attr("style","display:block;");
             $('#usuarios').attr("style","background-color:#E75A5A;");
               
             });
@@ -75,6 +75,12 @@ require_once('login/cerrar_sesion.php');
                 <div class="tile-icon full-reset"><i class="zmdi zmdi-delete"></i><i class="zmdi zmdi-time-restore"></i></div>
                 <div class="tile-name all-tittles"><a href="updateusuario.php">Seleccione</a></div>
                 <div class="tile-num full-reset">Actualizar</div>
+            </article> 
+
+                <article class="tile">
+                <div class="tile-icon full-reset"><i class="zmdi zmdi-accounts"></i></div>
+                <div class="tile-name all-tittles"><a href="cargos.php">Seleccione</a></div>
+                <div class="tile-num full-reset">Cargos</div>
             </article> 
      
            
