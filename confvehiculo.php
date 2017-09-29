@@ -264,6 +264,8 @@ require_once('login/cerrar_sesion.php');
                         }
                         ?>
 
+
+
                        </center>
                        </div>
                        </div>
@@ -271,6 +273,147 @@ require_once('login/cerrar_sesion.php');
         </div>
 
       
+                        <div class="container-flat-form">
+                    <div class="title-flat-form title-flat-blue">Valor de Supletorios</div>
+                    <div class="row">
+                       <div class="col-xs-12 col-sm-11 col-sm-offset-1">
+                       <div  class="group-material">
+                       <center>
+                       <h1>Valor de Supletorios</h1>
+                       
+                        <form autocomplete="off" method="post">
+                         
+                            <?php $consulmarca=$conexion->query("select cantidad from tb_agregar_saldo_estudiante where id_agregar_saldo_estudiante=1"); 
+                            while($row=mysqli_fetch_array($consulmarca)){?>
+                             <input type="text" name="actividad" value="<?php echo($row['cantidad']); ?>">
+                            <?php } ?>
+                                                   
+                          <input type="submit" name="agregarvalorsuple" class="btn btn-info" value="Agregar Valor Supletorio">
+                          
+                        </form>
+                       </div>
+                         <?php 
+                        if(isset($_POST['agregarvalorsuple'])){
+                          $cantidad=$_POST['actividad'];
+                          // echo ("<script type='text/javascript'>alert('".$cantidad."');</script>");
+                          // $repetido=$conexion->query("select 1 from tb_actividad_comercial where descripcion='".$cantidad."'");
+                          // $result=mysqli_fetch_array($repetido);
+                          // if($result!=1){
+                          $insert=$conexion->query("update tb_agregar_saldo_estudiante set cantidad='".$cantidad."' where id_agregar_saldo_estudiante=1 ");
+                          if($insert){
+                            echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+
+                          }else{
+                            echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"error",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                          }
+                        // }else{
+                        //    echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Ya se encuentra repetida la actividad comercial",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                        // }
+
+                        }
+                        ?>
+
+
+
+                       </center>
+                       </div>
+                       </div>
+          
+        </div>
+
+          <div class="container-flat-form">
+                    <div class="title-flat-form title-flat-blue">RECUPERACIÓN PEDAGOGICA</div>
+                    <div class="row">
+                       <div class="col-xs-12 col-sm-11 col-sm-offset-1">
+                       <div  class="group-material">
+                       <center>
+                       <h1>RECUPERACIÓN PEDAGOGICA</h1>
+                       
+                        <form autocomplete="off" method="post">
+                          
+                          <select class="" name="promo" id="promo" data-live-search="true" required="">
+                          <option value="0">Seleccione la promocion</option>
+
+                        <?php 
+                         // $Id_est = isset($_REQUEST["ides"]) ? $_REQUEST["ides"]: 0;
+                         //   $Promo = isset($_REQUEST["promo"]) ? $_REQUEST["promo"]: 0;
+                            $sqlpromo=$conexion->query("SELECT * FROM `tb_promocion` "); 
+                            // $desc=$conexion->query("select descripcion from tb_promocion where id_promocion='".$Promo."'");
+                            // $resdesc=mysqli_fetch_array($desc);
+                             while($sqlpromo=mysqli_fetch_array($sqlpromo)){
+                         ?>
+                                 
+                            <option value="<?php echo $sqlpromo['id_promocion']; ?>" <?php if($Promo==$sqlpromo['id_promocion']){ echo 'selected';} ?> ><?php echo ($sqlpromo['descripcion'].' '.$sqlpromo['fecha_inicio'].' / '.$sqlpromo['fecha_fin']); ?></option>
+                                                       
+
+                           <?php }  ?>
+                           </select>
+                              <br><br>
+                              Estudiante
+                           <select name="id_estudiante" id="">
+                           </select>
+                         <br><br>
+                          Descripción
+                             <input type="text" name="descripcion" required="">
+                             <br><br>
+                          Cantidad
+                             <input class="numero" type="text" name="actividad" required="">
+                           
+                                                   <br><br>
+                           
+                                                   <br><br>
+                          <input type="submit" name="agregarvalorestudiante" class="btn btn-info" value="Agregar Recuperación Pedagogica ">
+                          
+                        </form>
+
+                       </div>
+                         <?php 
+                        if(isset($_POST['agregarvalorestudiante'])){
+                          $promo=$_POST['promo'];
+                          $id_estudiante=$_POST['id_estudiante'];
+                          $descripción=$_POST['descripcion'];
+                          $cantidad=$_POST['actividad'];
+                          // echo ("<script type='text/javascript'>alert('".$cantidad."');</script>");
+                          // $repetido=$conexion->query("select 1 from tb_actividad_comercial where descripcion='".$cantidad."'");
+                          // $result=mysqli_fetch_array($repetido);
+                          // echo '<script type="text/javascript">alert("'.$promo.$id_estudiante.$descripción.$cantidad.'");</script>';
+                          // exit;
+                          if($promo!=0 and $id_estudiante!=0){
+
+                          $sqlestudiante=$conexion->query("SELECT tb_estudiantes.id_estudiante,tb_personas.nombre, tb_personas.apellido FROM `tb_estudiantes` inner join tb_personas on tb_estudiantes.id_persona=tb_personas.id_persona where tb_estudiantes.estado='ACTIVO' and tb_estudiantes.id_estudiante=".$id_estudiante." "); 
+                          $respnombres=mysqli_fetch_array($sqlestudiante);
+                          $nombres= $respnombres[2].' '.$respnombres[1];
+
+                          $sqlpromo=$conexion->query("select descripcion from tb_promocion where id_promocion='".$promo."'");
+                          $respromo=mysqli_fetch_array($sqlpromo);
+
+                          $insert=$conexion->query("insert into tb_agregar_saldo_estudiante (descripcion,cantidad) values ('".$respromo[0].' '.$nombres.' '.$descripción."','".$cantidad."') ");
+                          if($insert){
+                            $updatesaldo=$conexion->query("update tb_estudiantes set valor=valor+".$cantidad." where id_estudiante='".$id_estudiante."' ");
+                            if($updatesaldo){
+                                 echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                            }else{
+                               echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"error",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                            }
+                           
+
+                          }else{
+                            echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"error",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                          }
+                        }else{
+                           echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Debe seleccionar todos los campos",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                        }
+
+                        }
+                        ?>
+
+
+
+                       </center>
+                       </div>
+                       </div>
+          
+        </div>
         
  </body>
  <script type="text/javascript">
@@ -280,6 +423,20 @@ require_once('login/cerrar_sesion.php');
                     return ((key >= 48 && key <= 57) || (key==8) || (key==46)) 
                 });
  	$(document).ready(function(){
+
+    
+    $('select[name=promo]').change(function(){
+      var id_promo=$('select[name=promo]').val();
+       $.post("controler/consulta_estudiante.php",{promo:id_promo},function(data,status){
+                                 // console.log(id_promo);
+                                 //    console.log(data);
+                                 //    console.log(status);
+                                  $('select[name=id_estudiante]').html(data);
+                                                               
+                               
+                            });
+    });
+    
 
    var id_persona=$('select[name=marca]').val();
                         
