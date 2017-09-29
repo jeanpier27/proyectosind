@@ -79,6 +79,8 @@ require_once('login/cerrar_sesion.php');
                          $Id_est = isset($_REQUEST["ides"]) ? $_REQUEST["ides"]: 0;
                            $Promo = isset($_REQUEST["promo"]) ? $_REQUEST["promo"]: 0;
                             $sqlpromo=$conexion->query("SELECT * FROM `tb_promocion` "); 
+                            $desc=$conexion->query("select descripcion from tb_promocion where id_promocion='".$Promo."'");
+                            $resdesc=mysqli_fetch_array($desc);
                              while($sqlpromo=mysqli_fetch_array($sqlpromo)){
                          ?>
                                  
@@ -98,7 +100,7 @@ require_once('login/cerrar_sesion.php');
                           <option value="0" >Seleccione al estudiante</option>
 
                         <?php 
-                            $sqlestudiante=$conexion->query("SELECT tb_estudiantes.*,tb_personas.nombre, tb_personas.apellido FROM `tb_estudiantes` inner join tb_personas on tb_estudiantes.id_persona=tb_personas.id_persona where tb_estudiantes.estado='ACTIVO' and tb_estudiantes.id_promocion=".$_GET['promo']); 
+                            $sqlestudiante=$conexion->query("SELECT tb_estudiantes.*,tb_personas.nombre, tb_personas.apellido FROM `tb_estudiantes` inner join tb_personas on tb_estudiantes.id_persona=tb_personas.id_persona where tb_estudiantes.estado='ACTIVO' and tb_estudiantes.id_promocion=".$_GET['promo']." order by tb_personas.apellido"); 
                              while($consultaestudiante=mysqli_fetch_array($sqlestudiante)){
                          ?>
                                  
@@ -150,6 +152,7 @@ require_once('login/cerrar_sesion.php');
                                ?>
                                <?php if($consultasocio['descripcion']=='PSICONSENSOMETRICO'){ $psi=1;} 
                                      if($consultasocio['descripcion']=='MATRICULA'){ $mat=1;}
+                                     $total=$total+$consultasocio['saldo'];
 
                                ?>
                                 <tr>
@@ -167,32 +170,49 @@ require_once('login/cerrar_sesion.php');
 
                               </table>
                               </div>
+                              <div class="group-material">
+                                <h2>Total abonado $<?php if($total==''){echo '0';}else{ echo $total; }  ?></h2>
+                              </div>
                             <div class="group-material">
-                                Valor de la Deuda
                             <?php 
                             $sqlvalorde=$conexion->query('select valor,abono,id_persona from tb_estudiantes where id_estudiante='.$Id_est);
                             while($consulta=mysqli_fetch_array($sqlvalorde)){ ?>  
-                                <input type="text" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Valor Inscripcion" name="" required value="$ <?php echo $consulta['valor']-$consulta['abono']; ?>" readonly="">
-                                <span class="highlight"></span>
-                                <span class="bar"></span>
+                                <input type="hidden" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Valor Inscripcion" name="" required value="$ <?php echo $consulta['valor']-$consulta['abono']; ?>" readonly="">
+                                <h2>Valor de la Deuda $ <?php echo $consulta['valor']-$consulta['abono']; ?></h2>
+                                <!-- <span class="highlight"></span>
+                                <span class="bar"></span> -->
                                 <input type="hidden" name="id_persona" value="<?php echo $consulta['id_persona']; ?>">
                                 
                             </div> 
                             
-                            <?php }  ?>
+                            <?php }
+
+                              $sqlsupletorio=$conexion->query("SELECT `tb_asignatura_docente`.`id_asignatura_docente`, `tb_asignaturas`.`id_asignatura`, `tb_notas`.`id_notas`, `tb_asignaturas`.`asignatura`,tb_asignatura_docente.id_docente FROM `tb_asignaturas` inner JOIN `tb_asignatura_docente` ON `tb_asignatura_docente`.`id_asignatura` = `tb_asignaturas`.`id_asignatura` inner JOIN `tb_notas` ON `tb_notas`.`id_asignatura_docente` = `tb_asignatura_docente`.`id_asignatura_docente` where tb_notas.id_estudiante=".$Id_est." and tb_notas.estado='REPROBADO' and tb_notas.verifica_pago=0");
+                              $resp=mysqli_num_rows($sqlsupletorio);
+                              if($resp>0){
+
+
+                              ?>
 
                               <div class="group-material">
-                                
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Valor Abonar" name="abono" required value="" >
-                                <span class="highlight"></span>
-                                <span class="bar"></span>
-                                <label>Valor Abonar</label>
+                               <h2> Supletorios</h2>
+                               <?php $consulmarca=$conexion->query("select cantidad from tb_agregar_saldo_estudiante where id_agregar_saldo_estudiante=1"); 
+                            $respu=mysqli_fetch_array($consulmarca);?>
+                                    <?php 
+
+                                    while($rows=mysqli_fetch_array($sqlsupletorio)){ ?> 
+                                      <input type="checkbox" name="supletorio[<?php echo $rows['id_notas'] ?>]" value="<?php echo $rows['id_notas'] ?>"> <?php echo $rows['asignatura'].' $'.$respu[0]; ?><br>
+                                      <?php } ?>
+                            
+                               
 
                             </div> 
+                            <?php 
+                            }?>
 
                             <div class="group-material">
                                 <?php if($_GET['tipo_ingreso']=='PSICONSENSOMETRICO'){echo 'selected';} ?>
-                                Tipo de Ingreso
+                               <h4> Tipo de Ingreso</h4>
                                 <select name="tipo_ingreso" id="tipo_ingreso" onchange="carga_bienes(this.value);" class="tooltips-general material-control">
                                 <option value="0" >Seleccione</option>
                                     <?php if($psi!=1){  ?>
@@ -203,6 +223,7 @@ require_once('login/cerrar_sesion.php');
                                     <option value="MATRICULA" <?php if($_GET['tipo_ingre']=='MATRICULA'){echo 'selected';} ?> >MATRICULA</option>
                                     <?php } ?>
                                     <option value="ABONOS" <?php if($_GET['tipo_ingre']=='ABONOS'){echo 'selected';} ?> >ABONOS</option>
+                                    <option value="SUPLETORIO" <?php if($_GET['tipo_ingre']=='SUPLETORIO'){echo 'selected';} ?> >SUPLETORIO</option>
  
 
                                 </select>
@@ -210,8 +231,17 @@ require_once('login/cerrar_sesion.php');
 
                             </div> 
 
+                            <div class="group-material">
+                                
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Valor Abonar" name="abono" required value="" >
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label>Valor Abonar</label>
+
+                            </div> 
+
                              <div class="group-material">
-                                Fecha Registro
+                               <h4> Fecha Registro</h4>
                                 <input type="text" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Fecha registro" name="fecha_ingreso" required value="<?php echo date('Y-m-d'); ?>" readonly>
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
@@ -220,7 +250,7 @@ require_once('login/cerrar_sesion.php');
 
                             <div class="group-material">
                                 
-                                <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Descripcion" name="descripcion" required value="<?php if($_GET['tipo_ingre']=='PSICONSENSOMETRICO'){echo 'PAGO DE EXAMEN PSICONSEMETRICO, MEDICOS Y PSICOLOGICOS DEL CURSO DE CAPACITACION PARA CONDUCTOR PROFESIONAL';} if($_GET['tipo_ingre']=='MATRICULA'){echo 'MATRICULA DEL CURSO DE CAPACITACION PARA CONDUCTOR PROFESIONAL';} if($_GET['tipo_ingre']=='ABONOS'){echo 'ABONO CURSO DE CAPACITACION PARA CONDUCTOR PROFESIONAL';} ?>" >
+                                <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Descripcion" name="descripcion" required value="<?php if($_GET['tipo_ingre']=='PSICONSENSOMETRICO'){echo 'PAGO DE EXAMEN PSICONSEMETRICO, MEDICOS Y PSICOLOGICOS DEL CURSO DE CAPACITACION PARA CONDUCTOR PROFESIONAL '.$resdesc[0];} if($_GET['tipo_ingre']=='MATRICULA'){echo 'MATRICULA DEL CURSO DE CAPACITACION PARA CONDUCTOR PROFESIONAL '.$resdesc[0];} if($_GET['tipo_ingre']=='ABONOS'){echo 'ABONO CURSO DE CAPACITACION PARA CONDUCTOR PROFESIONAL '.$resdesc[0];} if($_GET['tipo_ingre']=='SUPLETORIO'){echo 'PAGO DE SUPLETORIO CURSO DE CAPACITACION PARA CONDUCTOR PROFESIONAL '.$resdesc[0].' EN LA MATERIA DE';} ?>" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Descripcion</label>
@@ -267,8 +297,9 @@ require_once('login/cerrar_sesion.php');
                                               ?>
                  
                     <p class="text-center">
-                        <!-- <button type="reset" class="btn btn-info" style="margin-right: 20px;"><i class="zmdi zmdi-roller"></i> &nbsp;&nbsp; LIMPIAR</button> -->
                         <button  name="registra" id="registra" type="submit" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; GUARDAR</button> &nbsp;&nbsp;
+                        <button name="facturar" type="submit" class="btn btn-primary" style="margin-right: 20px;"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; GUARDAR Y FACTURAR</button>
+
                     </p>
                     </form>
                        </div>
@@ -289,18 +320,19 @@ if(isset($_POST['registra'])){
                 $respcom=mysqli_fetch_array($sqlcompro);
                 if($respcom[0]!=1){
 
-    $squery=$conexion->query("select id_tipo_licencia from tb_estudiantes where id_estudiante=".$id_est);
+  $squery=$conexion->query("select descripcion from tb_promocion where id_promocion=".$promo);
     $resul=mysqli_fetch_array($squery);
 
-    if($resul[0]==1){
-      $id_plan_c=141;
+
+    if(stristr($resul[0],'TIPO C')!=FALSE){
+       $id_plan_c=141;
     }
 
-    if($resul[0]==2){
+    if(stristr($resul[0],'TIPO D')!=FALSE){
       $id_plan_c=142;
     }
 
-    if($resul[0]==3){
+    if(stristr($resul[0],'TIPO E')!=FALSE){
       $id_plan_c=143;
     }
 
@@ -309,13 +341,54 @@ if(isset($_POST['registra'])){
         if($a){
         echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="addpagosestudiantes.php?ingreso='.$ingreso_n.'";});</script>';    
     }else{
-        echo '<script type="text/javascript">swal("Error!", "No se pudo guardar la cuota!", "error")</script>';    
+        echo '<script type="text/javascript">swal("Error!", "No se pudo guardar!", "error")</script>';    
     }
     }  else{
                 echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante!", "error")</script>'; 
             }
 }
 
+if(isset($_POST['facturar'])){
+    $id_persona=$_POST['id_persona'];
+    $id_est=$_POST['idestudiante'];
+    $promo=$_POST['promo'];
+    $abono=$_POST['abono'];
+    $tipo_ingreso=$_POST['tipo_ingreso'];
+    $fecha_ingreso=$_POST['fecha_ingreso'];
+    $descripcion=$_POST['descripcion'];
+    $ingreso_n=$_POST['ingreso_n'];
+    $deposito=$_POST['comproante_bco'];
+    $id_banco=$_POST['id_banco'];
+    $sqlcompro=$conexion->query("select 1 from tb_ingreso_escuela where comprabante_n=".$ingreso_n);
+                $respcom=mysqli_fetch_array($sqlcompro);
+                if($respcom[0]!=1){
+    $squery=$conexion->query("select descripcion from tb_promocion where id_promocion=".$promo);
+    $resul=mysqli_fetch_array($squery);
+
+
+    if(stristr($resul[0],'TIPO C')!=FALSE){
+       $id_plan_c=141;
+    }
+
+    if(stristr($resul[0],'TIPO D')!=FALSE){
+      $id_plan_c=142;
+    }
+
+    if(stristr($resul[0],'TIPO E')!=FALSE){
+      $id_plan_c=143;
+    }
+
+     $query="call insertar_pagos_estu('$id_persona','$id_est','$promo','$abono','$tipo_ingreso','$fecha_ingreso','$descripcion','$ingreso_n','$deposito','$id_banco','$id_plan_c')";
+        $a=$conexion->query($query);     
+        if($a){
+        echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="facturas.php?ingreso='.$ingreso_n.'&descripcion='.$descripcion.'&persona='.$id_persona.'&subtcero='.$abono.'";});</script>';    
+    }else{
+        echo '<script type="text/javascript">swal("Error!", "No se pudo guardar!", "error")</script>';    
+    }
+    }  else{
+                echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante!", "error")</script>'; 
+            }
+}
 
 
  ?>
