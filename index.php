@@ -25,9 +25,9 @@
        </p>
     -->
            <h4 class="text-center all-tittles" style="margin-bottom: 30px;">Inicie sesión con su cuenta</h4>
-           <form action=""  method="post">
+           <form action="" autocomplete="off" method="post">
                 <div class="group-material-login">
-                  <input type="text" name="usuario" class="material-login-control" required="" maxlength="10" value="0928440304">
+                  <input type="text" name="usuario" class="material-login-control" required="" maxlength="10" value="">
                   <span class="highlight-login"></span>
                   <span class="bar-login"></span>
                   <label><i class="zmdi zmdi-account"></i> &nbsp; Usuario</label>
