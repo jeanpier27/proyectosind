@@ -254,7 +254,7 @@ require_once('login/cerrar_sesion.php');
                                $materia=$_GET['mate'];
                                // echo ("<script type='text/javascript'>alert('".$materia."');</script>");
 
-                               $sqlestudiante =mysqli_query($conexion,"SELECT `tb_estudiantes`.`id_estudiante`, `tb_personas`.`nombre`, `tb_personas`.`apellido`FROM `tb_personas` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_persona` = `tb_personas`.`id_persona` where tb_estudiantes.id_promocion='".$Promo."' and tb_estudiantes.horario='".$Jor."' and tb_estudiantes.id_curso='".$paralelo."' and tb_estudiantes.estado='ACTIVO'");
+                               $sqlestudiante =mysqli_query($conexion,"SELECT `tb_estudiantes`.`id_estudiante`, `tb_personas`.`nombre`, `tb_personas`.`apellido`FROM `tb_personas` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_persona` = `tb_personas`.`id_persona` where tb_estudiantes.id_promocion='".$Promo."' and tb_estudiantes.horario='".$Jor."' and tb_estudiantes.id_curso='".$paralelo."' and tb_estudiantes.estado='ACTIVO' order by tb_personas.apellido");
                                // $sqlestudiant=mysqli_fetch_array($sqlestudiante);
                             
                                while($consultaestudiante=mysqli_fetch_array($sqlestudiante)){
@@ -397,11 +397,14 @@ require_once('login/cerrar_sesion.php');
                                   $estado='APROBADO';
                                 }else{
                                    $estado='REPROBADO';
+                                   $sqlvalorsuple=$conexion->query("select cantidad from tb_agregar_saldo_estudiante where id_agregar_saldo_estudiante=1 ");
+                                   $resulvalor=mysqli_fetch_array($sqlvalorsuple);
+                                   $sqlupdatepagos=$conexion->query("update tb_estudiantes set valor=valor+".$resulvalor[0]." where id_estudiante='".$id."'");
                                 }
                                 $fecha=date('Y-m-d H:i:s');
                                 $observaciontotal='('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
                                 // echo ("<script type='text/javascript'>alert('".$id.' '.$notas."');</script>");
-                                 $insertar_notas=$conexion->query("insert into tb_notas (id_asignatura_docente,id_estudiante,nota,estado,observacion)values('".$id_asig_docente[0]."','".$id."','".$notas."','".$estado."','".$observaciontotal."')");
+                                 $insertar_notas=$conexion->query("insert into tb_notas (id_asignatura_docente,id_estudiante,nota,estado,observacion,verifica_pago)values('".$id_asig_docente[0]."','".$id."','".$notas."','".$estado."','".$observaciontotal."','')");
                                 }
                                                          
                                                        
