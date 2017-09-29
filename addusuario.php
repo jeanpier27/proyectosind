@@ -21,7 +21,7 @@ require_once('login/cerrar_sesion.php');
  <body>
  <script type="text/javascript">
     $(document).ready(function(){
-            $('#contsocio').attr("style","display:block;");
+            $('#contconfig').attr("style","display:block;");
             $('#usuarios').attr("style","background-color:#E75A5A;");
               
             });
@@ -88,9 +88,9 @@ require_once('login/cerrar_sesion.php');
                     $id_pers= $_POST['nombres'];                  
                     $contraseña=$_POST['contraseña'];
                     $tipo_usuario= $_POST['tipo_usuario'];
-                   
+                    $acceso= $_POST['acceso'];
                                 
-                        $query ="INSERT INTO tb_usuarios(id_persona,contraseña,id_tipo_usuario,estado) VALUES ('".$id_pers."','".$contraseña."','".$tipo_usuario."','ACTIVO')";
+                        $query ="INSERT INTO tb_usuarios(id_persona,contraseña,id_tipo_usuario,estado,acceso) VALUES ('".$id_pers."','".$contraseña."','".$tipo_usuario."','ACTIVO','".$acceso."')";
 
                         $resultado = $conexion->query($query); 
                         if($resultado){
@@ -140,12 +140,27 @@ require_once('login/cerrar_sesion.php');
                                 $sqltipo=$conexion->query("select * from tb_tipo_usuario ");
                                ?>
                             <div class="group-material"> 
-                             <span>Seleccione Tiempo </span> 
+                             <span>Seleccione Cargo </span> 
                                  <select style="color:red;" name="tipo_usuario" class="tooltips-general material-control " data-toggle="tooltip" data-placement="top" >
                                  <?php 
                                    while($row=$sqltipo->fetch_array()){ ?>
                                   <option value="<?php echo $row['id_tipo_usuario']; ?>"><?php echo ($row['tipo_usuario']); ?></option>
                                    <?php } ?>
+                                   
+                               </select> 
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+
+                            </div>
+
+                             <div class="group-material"> 
+                             <span>Seleccione Nivel de Acceso </span> 
+                                 <select style="color:red;" name="acceso" class="tooltips-general material-control " data-toggle="tooltip" data-placement="top" >
+                                 
+                                  <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+                                   <option value="ADMINISTRATTIVO">ADMINISTRATTIVO</option>
+                                    <option value="EDUCATIVO">EDUCATIVO</option>
+                                  
                                    
                                </select> 
                                 <span class="highlight"></span>
