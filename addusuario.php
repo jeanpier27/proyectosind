@@ -105,9 +105,9 @@ require_once('login/cerrar_sesion.php');
                   ?>       
 
                       <?php //////////CONSULTA A LA BASE DE DATOS////////    
-                            // $sql2=$conexion->query("SELECT * FROM tb_pagos_socio Group by descripcion");
+                            $sqlsocio=$conexion->query("SELECT `tb_personas`.`id_persona`, `tb_personas`.`nombre`, `tb_personas`.`apellido`, `tb_usuarios`.`id_persona` as cod FROM `tb_personas` LEFT JOIN `tb_usuarios` ON `tb_usuarios`.`id_persona` = `tb_personas`.`id_persona` where `tb_usuarios`.`id_persona` is null order by `tb_personas`.`apellido`");
 
-                            $sqlsocio=$conexion->query("SELECT * from  `tb_personas` order by apellido");   
+                            // $sqlsocio=$conexion->query("SELECT * from  `tb_personas` order by apellido");   
                          ?>
                  
 
