@@ -23,8 +23,8 @@ require_once('login/cerrar_sesion.php');
  </head>
  <body>
  <script type="text/javascript">
-    $(document).ready(function(){
-            $('#contsocio').attr("style","display:block;");
+   $(document).ready(function(){
+            $('#contconfig').attr("style","display:block;");
             $('#usuarios').attr("style","background-color:#E75A5A;");
               
             });
@@ -91,7 +91,7 @@ require_once('login/cerrar_sesion.php');
                                 $sqltipo=$conexion->query("select * from tb_tipo_usuario ");
                                ?>
                            
-                             <label>Seleccione Tipo Usuario </label> 
+                             <label>Seleccione Cargo </label> 
                                  <select  name="tipo_usuario" class="" data-toggle="tooltip" data-placement="top" >
                                  <?php 
                                    while($row=$sqltipo->fetch_array()){ ?>
@@ -100,7 +100,13 @@ require_once('login/cerrar_sesion.php');
                                    
                                </select> 
                                 
-
+                               <label>Acceso</label>
+                          <select  name="acceso" >                                 
+                                   <option value="ADMINISTRADOR" <?php if($consultasocioup['acceso']=='ADMINISTRADOR'){echo 'selected';} ?> >ADMINISTRADOR</option>
+                                   <option value="ADMINISTRATIVO" <?php if($consultasocioup['acceso']=='ADMINISTRATIVO'){echo 'selected';} ?> >ADMINISTRATIVO</option>
+                                   <option value="EDUCATIVO" <?php if($consultasocioup['acceso']=='EDUCATIVO'){echo 'selected';} ?> >EDUCATIVO</option>
+                                   
+                               </select>
                           
                            
                            <label>Estado</label>
@@ -156,7 +162,9 @@ require_once('login/cerrar_sesion.php');
                                     
                                       <th>Id</th>
                                       <th>Usuario</th>
-                                      <th>Tipo Usuario</th>
+                                      <th>Cargo</th>
+
+                                      <th>Acceso</th>
                                       <th>Estado</th>                                    
                                       
                                       <th></th>
@@ -173,7 +181,8 @@ require_once('login/cerrar_sesion.php');
                                       
                                       <th>Id</th>
                                       <th>Usuario</th>
-                                      <th>Tipo Usuario</th>
+                                      <th>Cargo</th>
+                                      <th>Acceso </th>
                                       <th>Estado</th>                                   
                                       
                                       <th></th>
@@ -195,6 +204,7 @@ require_once('login/cerrar_sesion.php');
                                 <td><?php echo($consultasocio['nombre'].' '.$consultasocio['apellido']); ?></td>
                                
                                 <td><?php echo($consultasocio['tipo_usuario']); ?></td>
+                                <td><?php echo($consultasocio['acceso']); ?></td>
                               
                                 <td><?php echo($consultasocio['estado']); ?></td>
                                 <th><a class="btn btn-info" href="updateusuario.php?id=<?php echo $consultasocio['id_usuarios']; ?>"><i class="glyphicon glyphicon-pencil"></i></a></th>
