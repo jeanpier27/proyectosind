@@ -74,61 +74,60 @@ require_once('login/conexion.php'); ?>
                            
                             <div class="group-material">
                             <input type="hidden" name="id_persona">
-                                <input type="text" class="tooltips-general material-control numero" placeholder="Escribe aquí la C&eacute;dula de Identidad del socio" 
+                                <input type="text" class="tooltips-general material-control numero" placeholder="Escribe aquí la C&eacute;dula de Identidad" 
                                 pattern="[0-9]{1,20}" required="" 
                                 onblur="" maxlength="13" id="ced"
-                                 data-toggle="tooltip" data-placement="top" title="Escribe el n&uacute;mero de cedula del socio, solamente números" name="cedula">
+                                 data-toggle="tooltip" data-placement="top" title="Escribe el n&uacute;mero de cedula, solamente números" name="cedula">
                                 <span class="highlight"></span>
                                 <span class="bar"></span> C&eacute;dula de Identidad 
                              
                             </div>
                             <div class="group-material">
-                                <input type="text" class="tooltips-general material-control letras" placeholder="Escribe aquí los nombres del socio" required="" 
-                                 maxlength="40" data-toggle="tooltip" onkeyup="javascript:this.value=this.value.toUpperCase();" data-placement="top" title="Escribe los nombres del socio" name="nombressocio"> 
+                                <input type="text" class="tooltips-general material-control letras" placeholder="Escribe aquí los nombres" required="" maxlength="40" data-toggle="tooltip" onkeyup="javascript:this.value=this.value.toUpperCase();" data-placement="top" title="Escribe los nombres" name="nombressocio"> 
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Nombres</label>
                             </div>
                             <div class="group-material">
-                                <input type="text" class="tooltips-general material-control letras" placeholder="Escribe aquí los Apellidos del socio" required="" maxlength="40" data-toggle="tooltip" data-placement="top"  onkeyup="javascript:this.value=this.value.toUpperCase();" title="Escribe los apellidos del socio" name="apellidossocio">
+                                <input type="text" class="tooltips-general material-control letras" placeholder="Escribe aquí los Apellidos" required="" maxlength="40" data-toggle="tooltip" data-placement="top"  onkeyup="javascript:this.value=this.value.toUpperCase();" title="Escribe los apellidos" name="apellidossocio">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Apellidos</label>
                             </div>
                             <div class="group-material">
-                                <input type="text" class="tooltips-general material-control numero" placeholder="Escribe aquí el número de teléfono" pattern="[0-9]{1,20}" required="" maxlength="10" data-toggle="tooltip" data-placement="top" title="Escribe el número para contactar al socio en algún caso, solamente números" name="telefono1socio" maxlength="10"  >
+                                <input type="text" class="tooltips-general material-control numero" placeholder="Escribe aquí el número de teléfono" pattern="[0-9]{1,20}" required="" maxlength="10" data-toggle="tooltip" data-placement="top" title="Escribe el número para contactar, solamente números" name="telefono1socio" maxlength="10"  >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>1er Tel&eacute;fono de Cont&aacute;cto</label>
                             </div>
                             <div class="group-material">
-                                <input type="text" class="tooltips-general material-control numero" placeholder="Escribe aquí el número de teléfono" pattern="[0-9]{1,20}" required="" maxlength="10" data-toggle="tooltip" data-placement="top" title="Escribe el número para contactar al socio en algún caso, solamente números" name="telefono2socio" maxlength="10"  >
+                                <input type="text" class="tooltips-general material-control numero" placeholder="Escribe aquí el número de teléfono" pattern="[0-9]{1,20}" required="" maxlength="10" data-toggle="tooltip" data-placement="top" title="Escribe el número para contactar, solamente números" name="telefono2socio" maxlength="10"  >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>2do Tel&eacute;fono de Cont&aacute;cto</label>
                             </div>
                             <div class="group-material">
-                                <input type="text" class="tooltips-general material-control numero" placeholder="Escribe aquí el número de teléfono" pattern="[0-9]{1,20}" required="" maxlength="10" data-toggle="tooltip" data-placement="top" title="Escribe el número para contactar al socio en algún caso, solamente números" name="telefono3socio" maxlength="10"  >
+                                <input type="text" class="tooltips-general material-control numero" placeholder="Escribe aquí el número de teléfono" pattern="[0-9]{1,20}" required="" maxlength="10" data-toggle="tooltip" data-placement="top" title="Escribe el número para contactar, solamente números" name="telefono3socio" maxlength="10"  >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>3er Tel&eacute;fono de Cont&aacute;cto</label>
                             </div>
                            
                             <div class="group-material">
-                                <input type="text" class="tooltips-general material-control" placeholder="Escribe aquí la dirección domiciliaria del socio" required="" maxlength="40" data-toggle="tooltip" data-placement="top"  onkeyup="javascript:this.value=this.value.toUpperCase();" title="Escriba la dirección" name="direccionsocio">
+                                <input type="text" class="tooltips-general material-control" placeholder="Escribe aquí la dirección domiciliaria" required="" maxlength="40" data-toggle="tooltip" data-placement="top"  onkeyup="javascript:this.value=this.value.toUpperCase();" title="Escriba la dirección" name="direccionsocio">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Direcci&oacute;n Domiciliaria</label>
                             </div>
                             <div class="group-material">
-                                <input type="email" class="tooltips-general material-control" placeholder="Escribe aquí la dirección domiciliaria del socio"  maxlength="40" data-toggle="tooltip" data-placement="top" title="Escriba la dirección de correo" name="correo">
+                                <input type="email" class="tooltips-general material-control" placeholder="Escribe aquí la dirección domiciliaria"  maxlength="40" data-toggle="tooltip" data-placement="top" title="Escriba la dirección de correo" name="correo">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Direcci&oacute;n de correo </label>
                             </div>
                             <div class="group-material">
                                <select style="color:red;" name="estado_civil" id="estado_civil" class="tooltips-general material-control" data-toggle="tooltip" data-placement="top" >
-                                   <option value="" disabled="" selected="">Seleccione el estado civíl</option>
+                                   <option value="0" disabled="" selected="">Seleccione el estado civíl</option>
                                    <option value="SOLTERO/A">SOLTERO/A</option>
                                    <option value="CASADO/A">CASADO/A</option>
                                    <option value="VIUDO/A">VIUDO/A</option>
@@ -138,7 +137,25 @@ require_once('login/conexion.php'); ?>
                                </select> 
                                 <span class="highlight"></span>
                                 <span class="bar"></span> 
-                           </div>                    
+                           </div>       
+
+                           <div class="group-material">
+                                  Fecha Nacimiento
+                                <input type="text" class="tooltips-general material-control" placeholder="Escribe aquí fecha de nacimiento" data-toggle="tooltip" data-placement="top" title="Escriba fecha de nacimiento" name="fecha_n" readonly="">
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <!-- <label>Direcci&oacute;n de correo </label> -->
+                            </div>
+
+                           <div class="group-material">
+                               <select style="color:red;" name="sexo" id="sexo" class="tooltips-general material-control" data-toggle="tooltip" data-placement="top" >
+                                   <option value="0" disabled="" selected="">Seleccione Sexo</option>
+                                   <option value="HOMBRE">HOMBRE</option>
+                                   <option value="MUJER">MUJER</option>
+                               </select> 
+                                <span class="highlight"></span>
+                                <span class="bar"></span> 
+                           </div>                 
                   
                            
                             <p class="text-center">
@@ -164,14 +181,25 @@ require_once('login/conexion.php'); ?>
             $direccionsocio = $_POST['direccionsocio']; 
             $correo = $_POST['correo']; 
             $estado_civil = $_POST['estado_civil']; 
+            $fecha_n = $_POST['fecha_n']; 
+            $sexo = $_POST['sexo']; 
+
+
+            if($estado_civil!="" and $fecha_n!="" and $sexo!=""){
+
               
-        $query="call insertar_persona('$cedulasocio','$nombressocio','$apellidossocio','$telefonousocio','$telefonodsocio','$telefonotsocio', '$direccionsocio','$correo','$estado_civil')";
+        $query="call insertar_persona('$cedulasocio','$nombressocio','$apellidossocio','$telefonousocio','$telefonodsocio','$telefonotsocio', '$direccionsocio','$correo','$estado_civil','$fecha_n','$sexo')";
         $a=$conexion->query($query);     
         if($a){
         echo '<script type="text/javascript">swal("Ok!", "Agregado con exito!", "success")</script>';    
+        header('Location: addrecursohumano.php');
+            
     }else{
         echo '<script type="text/javascript">swal("Error!", "No se pudo guardar el socio!", "error")</script>';    
     }
+  }else{
+    echo '<script type="text/javascript">swal("Error!", "Debe seleccionar todos los campos!", "error")</script>'; 
+  }
   }
  
  if(isset($_POST['actualizar'])){
@@ -185,11 +213,14 @@ require_once('login/conexion.php'); ?>
             $direccionsocio = $_POST['direccionsocio']; 
             $correo = $_POST['correo']; 
             $estado_civil = $_POST['estado_civil']; 
+            $fecha_n = $_POST['fecha_n']; 
+            $sexo = $_POST['sexo'];
               
-        $query="update tb_personas set nombre='".$nombressocio."',apellido='".$apellidossocio."',telefono1='".$telefonousocio."',telefono2='".$telefonodsocio."',telefono3='".$telefonotsocio."',direccion= '".$direccionsocio."',correo='".$correo."',estado_civil='".$estado_civil."' where id_persona='".$id_persona."'";
+        $query="update tb_personas set nombre='".$nombressocio."',apellido='".$apellidossocio."',telefono1='".$telefonousocio."',telefono2='".$telefonodsocio."',telefono3='".$telefonotsocio."',direccion= '".$direccionsocio."',correo='".$correo."',estado_civil='".$estado_civil."',fecha_n='".$fecha_n."',sexo='".$sexo."' where id_persona='".$id_persona."'";
         $a=$conexion->query($query);     
         if($a){
-        echo '<script type="text/javascript">swal("Ok!", "Actualizado con exito!", "success")</script>';    
+        echo '<script type="text/javascript">swal("Ok!", "Actualizado con exito!", "success")</script>';  
+        header('Location: addrecursohumano.php') ; 
     }else{
         echo '<script type="text/javascript">swal("Error!", "No se pudo ctualizar el socio!", "error")</script>';    
     }
@@ -200,6 +231,23 @@ require_once('login/cerrar_conexion.php');}
 
             <script type="text/javascript">
                 $(document).ready(function(){
+
+                  $('input[name=fecha_n]').daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        drops: "up",
+                        locale: {
+                          cancelLabel: 'Clear',
+                          format: 'YYYY-MM-DD',
+                          "separator": " - ",
+                          "applyLabel": "Aceptar",
+                          "cancelLabel": "Cancelar",
+                          "daysOfWeek": ["Do","Lu","Ma","Mi","Ju","Vi","Sa"],
+                          "monthNames": ["Enero","Febrero","Marzo","Abril","Mayo",
+                          "Junio","Julio","Agosto","Septiembre","Octubre","Noviembre",
+                          "Diciembre"]
+                      }
+                  });
                    
                 
 
@@ -265,6 +313,9 @@ require_once('login/cerrar_conexion.php');}
                                       $('input[name=direccionsocio]').val(dato.datos[i].direccion);     
                                       $('input[name=correo]').val(dato.datos[i].correo);
                                       $("#estado_civil> option[value='"+dato.datos[i].estado_civil+"']").attr("selected",true);
+                                      $('input[name=fecha_n]').val(dato.datos[i].fecha_n);
+                                      $("#sexo> option[value='"+dato.datos[i].sexo+"']").attr("selected",true);
+
 
                                       // $("#estado_civil option[value="+dato.datos[i].estado_civil+"]").attr("selected",true);
 
