@@ -56,20 +56,26 @@ require_once('login/cerrar_sesion.php');
             </div>
             <section class="full-reset text-center" style="padding: 40px 0;">
             <article class="tile">
+                <div class="tile-icon full-reset"><i class="zmdi zmdi-accounts"></i></div>
+                <div class="tile-name all-tittles"><a href="addsocio.php" id="addsocio">Socios</a></div>
+                <div class="tile-num full-reset">Registro Nuevos</div>
+            </article>
+            <article class="tile">
+                <div class="tile-icon full-reset"><i class="zmdi zmdi-accounts"></i></div>
+                <div class="tile-name all-tittles"><a href="addsocioantiguo.php" id="addsocio">Socios</a></div>
+                <div class="tile-num full-reset">Registro Antiguo</div>
+            </article>
+            <article class="tile">
                 <div class="tile-icon full-reset"><i class="zmdi zmdi-face"></i></div>
                 <div class="tile-name all-tittles"><a href="consultasocio.php">Socios</a></div>
                 <div class="tile-num full-reset">Consulta</div>
             </article>
-            <article class="tile">
-                <div class="tile-icon full-reset"><i class="zmdi zmdi-accounts"></i></div>
-                <div class="tile-name all-tittles"><a href="addsocio.php" id="addsocio">Socios</a></div>
-                <div class="tile-num full-reset">Registro</div>
-            </article>
+            <br>
             <article class="tile">
                 <div class="tile-icon full-reset"><i class="zmdi zmdi-delete"></i><i class="zmdi zmdi-time-restore"></i></div>
                 <div class="tile-name all-tittles"><a href="updatesocio.php">Socios</a></div>
                 <div class="tile-num full-reset">Actualizar datos</div>
-            </article>  <br>
+            </article>  
              
             <article class="tile">
                 <div class="tile-icon full-reset"><i class="zmdi zmdi-calendar"></i></div>

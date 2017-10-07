@@ -21,88 +21,34 @@ require_once('login/cerrar_sesion.php');
             $('#socio').attr("style","background-color:#E75A5A;");
               
             });
-</script>
+</script> 
  <?php   
  if(isset($_POST['registra'])){
                 $id_per=$_POST['nombres'];
                 $tipo_licenciansocio = $_POST['tipo_licenciansocio'];
                 $fecha_naci = $_POST['fecha_nacimiento'];    
                 $fecha_ingreso = $_POST['fecha_ingreso'];
-                $valor = $_POST['inscripcion'];
-                $abono = $_POST['abono'];
-                $fecha_registro = $_POST['fecha_registro'];
-                $descripcion = $_POST['descripcion'];
-                $ingreso_n = $_POST['ingreso_n'];
-                $comproante_bco = $_POST['comproante_bco'];
-                $id_banco = $_POST['id_banco'];
-                $beneficiario = $_POST['beneficiario'];
-                $pla_cuent=70;
+                $beneficiario=$_POST['beneficiario'];
 
-                $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
-                $respcom=mysqli_fetch_array($sqlcompro);
-                if($respcom[0]!=1){
-                    $update=$conexion->query("update tb_personas set fecha_n='".$fecha_naci."' where id_persona=".$id_per);
 
-                    if($update){
+           $update=$conexion->query("update tb_personas set fecha_n='".$fecha_naci."' where id_persona=".$id_per);
+        $query="insert into tb_socio (id_persona,tipo_licencia,fecha_ingreso,estado,id_pagos_socio,fecha_naci,fecha_registro,beneficiario)values('".$id_per."','".$tipo_licenciansocio."','".$fecha_ingreso."','ACTIVO','1','".$fecha_naci."','".$fecha_ingreso."','')";
 
-                               
-        $query="call insertar_socio('$id_per','$tipo_licenciansocio','$fecha_naci','$fecha_ingreso','$valor','$abono', '$fecha_registro','$descripcion','$ingreso_n','$comproante_bco','$id_banco','$beneficiario','$pla_cuent')";
-        $a=$conexion->query($query);     
+        $a=$conexion->query($query);  
+        if($update){
+
         if($a){
-            $sqlsocio=$conexion->query("select id_persona,fecha_ingreso from tb_socio where id_persona ='".$id_per."'"); 
-            $mensualidad= $conexion->query("SELECT * FROM `tb_pagos_socio` WHERE descripcion='CUOTAS MENSUALES'"); 
-            $cesantia=$conexion->query("SELECT * FROM `tb_pagos_socio` WHERE descripcion='FONDO DE CESANTIA'"); 
-
-            while($consultamen=mysqli_fetch_array($mensualidad)){
-                $mensua=$consultamen['id_pagos_socio'];
-                $valormens=$consultamen['valor'];
-            }
-
-            while($consultacesa=mysqli_fetch_array($cesantia)){
-                $cesan=$consultacesa['id_pagos_socio'];
-                $valorcesa=$consultacesa['valor'];
-            }
-            $hoy=date('Y-m-d');
-            $añoactual=date('Y');
-            $mesactual=date('n');
-
-            while($consult=mysqli_fetch_array($sqlsocio)){  
-                $mes=date('n',strtotime($consult['fecha_ingreso']));
-                $año=date('Y',strtotime($consult['fecha_ingreso']));
-                $mesess=(int)$mes;
-                for($i=1;$i<=12;$i++){
-                    if($i>=(int)$mesess and $año>=2017){
-                        $insertar_recaudam=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$consult['id_persona']."','".$consult['fecha_ingreso']."','".$añoactual."','".$i."','".$mensua."','','0','ACTIVO','','".$valormens."','' )");
-
-                        $insertar_recaudac=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$consult['id_persona']."','".$consult['fecha_ingreso']."','".$añoactual."','".$i."','".$cesan."','','0','ACTIVO','','".$valorcesa."','' )");
-
-                    }
-                    // if($año<2017){
-                    //     $insertar_recaudam=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$consult['id_persona']."','".$consult['fecha_ingreso']."','".$añoactual."','".$i."','".$mensua."','','0','ACTIVO','','".$valormens."','' )");
-
-                    //     $insertar_recaudac=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$consult['id_persona']."','".$consult['fecha_ingreso']."','".$añoactual."','".$i."','".$cesan."','','0','ACTIVO','','".$valorcesa."','' )");
-
-                    // }
-                }
-              
-
-
-            }
-
-        echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="addsocio.php?ingreso='.$ingreso_n.'";});</script>';    
+            
+        echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="addsocioantiguo.php";});</script>';    
     }else{
         echo '<script type="text/javascript">swal("Error!", "No se pudo guardar el socio!", "error")</script>';    
     }
-
-}else{
-    echo '<script type="text/javascript">swal("Error!", "No se pudo guardar el socio!", "error")</script>'; 
-}
-            }  else{
-                echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante socio!", "error")</script>'; 
-            }
+  }else{
+      echo '<script type="text/javascript">swal("Error!", "No se pudo guardar el socio!", "error")</script>'; 
+  }
+              
 
 }
-
 
             ?>
 
@@ -208,99 +154,17 @@ require_once('login/cerrar_sesion.php');
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                             </div> 
-                            <?php 
-                            require_once("login/conexion.php"); 
+                            <div class="group-material">
+                          Beneficiario
+                                <input type="text" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Beneficiario" name="beneficiario" >
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
 
-                            $sql=mysqli_query($conexion,"SELECT * FROM `tb_pagos_socio` WHERE descripcion='INSCRIPCION'");
+                            </div> 
+                           
+
                         
-                            ?>
-
-                            <div class="group-material">
-                             Valor de la Inscripcion
-                            <?php while($consulta=mysqli_fetch_array($sql)){ $valorpa=$consulta['valor']; ?>  
-                                <input type="text" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Valor Inscripcion" name="" required value="<?php echo $consulta['valor']; ?>" readonly="">
-                                <span class="highlight"></span>
-                                <span class="bar"></span>
-                                
-                            </div> 
-                            <input type="hidden" name="inscripcion" value="<?php echo $consulta['id_pagos_socio']; ?>">
-                            <?php } 
-                                             // require_once('login/cerrar_conexion.php'); 
-                                             ?>
-
-                             <div class="group-material">
-                                
-                                <input type="number" class="tooltips-general material-control numero" step="0.01" max="<?php echo $valorpa; ?>" data-toggle="tooltip" data-placement="top" title="Valor Abonar" name="abono" required  >
-                                <span class="highlight"></span>
-                                <span class="bar"></span>
-                                <label>Valor Abonar</label>
-
-                            </div> 
-
-                            <div class="group-material">
-                                Fecha Registro
-                                <input type="text" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Fecha registro" name="fecha_registro" required value="<?php echo date('Y-m-d'); ?>" readonly>
-                                <span class="highlight"></span>
-                                <span class="bar"></span>
-                                
-                            </div> 
-
-                            <div class="group-material">
-                                
-                                <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Descripcion" name="descripcion" required value="INGRESO POR NUEVO SOCIO" >
-                                <span class="highlight"></span>
-                                <span class="bar"></span>
-                                <label>Descripcion</label>
-
-                            </div> 
-
-                            <div class="group-material">
-                                
-                                <input type="text" onkeyup="javascript:this.value=this.value.toUpperCase();" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Beneficiario" name="beneficiario" required value="" >
-                                <span class="highlight"></span>
-                                <span class="bar"></span>
-                                <label>Beneficiario</label>
-
-                            </div> 
-
-                            <div class="group-material">
                             <?php 
-                            $conuslt=$conexion->query("select max(comprabante_n)as comp from tb_ingreso_sindicato"); 
-                            $res=mysqli_fetch_array($conuslt);?>
-
-                                
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Ingreso N.-" maxlength="10" name="ingreso_n" placeholder="<?php echo($res[0]); ?>" required value="" >
-                                <span class="highlight"></span>
-                                <span class="bar"></span>
-                                <label>Comprobante de Ingreso N.-</label>
-
-                            </div> 
-
-                            <div class="group-material">
-                                
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Banco N.-" maxlength="15" name="comproante_bco" value="" >
-                                <span class="highlight"></span>
-                                <span class="bar"></span>
-                                <label>Deposito de Banco N.-</label>
-
-                            </div> 
-                            <?php 
-                            // require_once("login/conexion.php"); 
-
-                            $sql2=mysqli_query($conexion,"SELECT * FROM `tb_bancos` WHERE descripcion='CUENTA ADMINISTRATIVA'");
-                        
-                            ?>
-
-                            <div class="group-material">
-                             BANCO A ACREDITARSE
-                            <?php while($consult=mysqli_fetch_array($sql2)){ ?>  
-                                <input type="text" class="tooltips-general material-control"  data-toggle="tooltip" data-placement="top" title="Cuenta Bancaria" name="" required value="<?php echo $consult['descripcion'].' N.-'.$consult['n_cuenta']; ?>" readonly="">
-                                <span class="highlight"></span>
-                                <span class="bar"></span>
-                                
-                            </div> 
-                            <input type="hidden" name="id_banco" value="<?php echo $consult['id_banco']; ?>">
-                            <?php } 
                                              require_once('login/cerrar_conexion.php'); ?>
 
 
@@ -340,11 +204,9 @@ $hoy=date('Y/m/d');
                           "Diciembre"]
                       }
                   });
-                    var hoys="<?php echo $hoy; ?>";
                     $('input[name=fecha_ingreso]').daterangepicker({
                         singleDatePicker: true,
                         showDropdowns: true,
-                        minDate:hoys,
                         locale: {
                           cancelLabel: 'Clear',
                           format: 'YYYY-MM-DD',
@@ -374,8 +236,13 @@ $hoy=date('Y/m/d');
                       }
                   });
 
+                // $('input[name=fecha_nacimiento]').change(function(){
+                //     console.log($(this).val());
+                // });
 
-                 $('select[name=nombres]').change(function(){
+
+
+                $('select[name=nombres]').change(function(){
                         // alert($('select[name=nombres]').val());s
                         var id_persona=$('select[name=nombres]').val();
                         
@@ -405,6 +272,8 @@ $hoy=date('Y/m/d');
                        
                     
                 });
+
+
 
                 $(".numero").keypress(function(e){
                     var key = window.Event ? e.which : e.keyCode 
