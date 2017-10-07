@@ -101,7 +101,14 @@ require_once('login/cerrar_sesion.php');
                         <label for="nombres">Fecha:</label>
                         <input type="text" class="form-control" id="fecha" name="fecha"  value="<?php echo($rows['fecha']); ?>" readonly ><span ></span>
                     </div> 
-                    
+                    <div class="form-group ">
+                        <label for="tipo_asamblea">Tipo de Asamblea:</label>
+                        <select name="tipo_reunion" class="form-control">
+                          <option value="ASAMBLEA ORDINARIA" <?php if($rows['tipo_reunion']=="ASAMBLEA ORDINARIA"){ echo ('selected');} ?> >ASAMBLEA ORDINARIA</option>
+                          <option value="ASAMBLEA EXTRAORDINARIA" <?php if($rows['tipo_reunion']=="ASAMBLEA EXTRAORDINARIA"){ echo ('selected');} ?> >ASAMBLEA EXTRAORDINARIA</option>
+                        </select>
+                        
+                    </div>
                     <div class="form-group ">
                         <label for="nombres">Descripcion:</label>
                         <textarea name="descripcion" id="descripcion" class="form-control" required="" ><?php echo($rows['descripcion']); ?></textarea>
@@ -116,7 +123,8 @@ require_once('login/cerrar_sesion.php');
 
                     <div class="form-group ">
                         <label for="nombres">Observacion:</label>
-                        <input type="text" class="form-control" id="observacion" name="observacion" value="<?php echo($rows['observacion']); ?>" required>
+                        <input type="text" class="form-control" id="observacion" name="observacion" placeholder="<?php echo($rows['observacion']); ?>" required title="<?php echo($rows['observacion']); ?>">
+                        <input type="hidden" name="observacionbd" value="<?php echo($rows['observacion']); ?>">
                     </div> 
 
                     <br><br>
@@ -133,13 +141,16 @@ require_once('login/cerrar_sesion.php');
         }
 
         if(isset($_POST['actuali'])){
+            $fechanueva=date('Y-m-d H:i:s');
             $fecha=$_POST['fecha'];
             $descripcion=$_POST['descripcion'];
             $estado=$_POST['estado'];
             $observa=$_POST['observacion'];
+            $observabd=$_POST['observacionbd'];
+            $tipo_reunion=$_POST['tipo_reunion'];
             $id_re=$_POST['id_re'];
-            
-            $queryUpdate="update tb_reunion set fecha='".$fecha."', descripcion='".$descripcion."',estado='". $estado."',observacion='".$observa."' where id_reunion='".$id_re."'";
+            $observaciontotal=$observabd.' ('.$fechanueva.' usuario: '.$_SESSION['nombres'].'.- '.$observa.')';
+            $queryUpdate="update tb_reunion set fecha='".$fecha."', descripcion='".$descripcion."',estado='". $estado."',observacion='".$observaciontotal."', tipo_reunion='".$tipo_reunion."' where id_reunion='".$id_re."'";
              $resultUpdate = mysqli_query($conexion, $queryUpdate); 
 
                                  if($resultUpdate)
@@ -161,17 +172,19 @@ require_once('login/cerrar_sesion.php');
          $reunion=$conexion->query("SELECT *  FROM  tb_reunion order by fecha,estado"); 
 
          ?>
-        <div class="table-responsive col-md-10 col-md-offset-1">
+        <div class="table-responsive col-md-12">
   
   <table class="table table-hover table-striped table-border display nowrap" id="tablaempleado">
     <thead>
         <tr  class="info">
           <th>Codigo</th>
+          <th class='text-right'>Imprimir</th>
+          <th class='text-right'>Editar</th>
+          <th>Asamblea</th>
           <th>Fecha</th>
           <th>Descripcion</th>
           <th>Estado</th>
           <th>Observacion</th>
-          <th class='text-right'>Editar</th>
          
         </tr>
         </thead>
@@ -193,6 +206,32 @@ require_once('login/cerrar_sesion.php');
                 
             </td>
             <!-- fecha -->
+             <td>
+              <span class="pull-right">
+
+      <a href="asambleaprinter.php?id=<?php echo $id; ?>"   class="btn btn-info" target="_blank" ><i class="glyphicon glyphicon-print"></i></a>
+       <?php 
+        // include('editar_empleado.php');
+        ?>
+
+     </span>
+     </td>
+             <td>
+              <span class="pull-right">
+
+      <a href="reuniones.php?id=<?php echo $id; ?>"  data-toggle="modal"  class="btn btn-info" ><i class="glyphicon glyphicon-pencil"></i></a>
+       <?php 
+        // include('editar_empleado.php');
+        ?>
+
+     </span>
+     </td>
+            <td>
+            <?php 
+            echo $row['tipo_reunion']; 
+            ?>
+                
+            </td>
             <td>
             <?php 
             echo $row['fecha']; 
@@ -214,16 +253,7 @@ require_once('login/cerrar_sesion.php');
             echo $row['observacion']; 
             ?>
             </td>
-            <td>
-              <span class="pull-right">
-
-      <a href="reuniones.php?id=<?php echo $id; ?>"  data-toggle="modal"  class="btn btn-info" ><i class="glyphicon glyphicon-pencil"></i></a>
-       <?php 
-        // include('editar_empleado.php');
-        ?>
-
-     </span>
-     </td>
+           
  
 
           

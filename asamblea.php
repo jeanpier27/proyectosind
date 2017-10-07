@@ -14,7 +14,11 @@
          <label for="nombres">Fecha:</label>
       <input type="text" class="form-control" id="fecha" name="fecha" ><span  class="error" disabled></span>
 
-
+      <label>Tipo De Asamblea</label>
+      <select name="tipo_asamblea" id="tipo_reunion" class="form-control">
+        <option value="ASAMBLEA ORDINARIA">ASAMBLEA ORDINARIA</option>
+        <option value="ASAMBLEA EXTRAORDINARIA">ASAMBLEA EXTRAORDINARIA</option>
+      </select>
       <label for="nombres">Descripcion:</label>
       <textarea name="descripcion" id="descripcion" class="form-control" required=""></textarea>
       <!-- <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Escriba los nombres" required=""><span  class="error"></span> -->
@@ -49,7 +53,10 @@ $hoy=date('Y/m/d');
             e.preventDefault();
             var fecha=$('#fecha').val();
             var descripcion =$('#descripcion').val();
-            $.post('controler/inserta_reunion.php',{fecha:fecha,descripcion:descripcion},function(data,status){
+            var tipo_reunion =$('#tipo_reunion').val();
+            if(fecha!="" && descripcion!=""){
+            
+            $.post('controler/inserta_reunion.php',{fecha:fecha,descripcion:descripcion,tipo_reunion:tipo_reunion},function(data,status){
                 // $('#nueva_asamblea').html(data);
                 if(data=='ok'){
                   swal({title: "ok", text: "Registrado con exito...!", type: "success",  confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="reuniones.php";});
@@ -58,21 +65,26 @@ $hoy=date('Y/m/d');
                         
                     });
                 }else{
-                  swal({title: "Error", text: "Ah ocurrido un error al momento de guardar..!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  
-                        $('#fecha').val("");
+                  swal({title: "Error", text: "Ah ocurrido un error al momento de guardar..!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: true},function(){  
+                        // $('#fecha').val("");
                     });
                 }
                 // console.log(data);
                 // console.log(status);
 
             });
+            }else{
+               swal({title: "Error", text: "Debe rellenar todos los campos..!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: true},function(){  
+                        // $('#fecha').val("");
+                    });               
+            }
         });
 
        $('input[name=fecha]').daterangepicker({
                         singleDatePicker: true,
                         showDropdowns: true,
                          autoUpdateInput: false,
-                        minDate: hoys,
+                        // minDate: hoys,
                         timePicker: true,
                         timePicker24Hour: true,
                         timePickerIncrement: 30,
