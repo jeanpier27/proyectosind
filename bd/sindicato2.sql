@@ -12,7 +12,9 @@ CREATE TABLE tb_personas (
   telefono3 varchar(10),
   direccion varchar(50),
   correo varchar(25),
-  estado_civil varchar(20)
+  estado_civil varchar(20),
+  fecha_n date,
+  sexo varchar(10)
 );
 
 insert into tb_personas (cedula_ruc,nombre,apellido,telefono1,telefono2,telefono3,direccion,correo,estado_civil) values('0916410350','DONALD UBALDO','PASTOR ASTUDILLO','0992971839','0','0','NARANAJL','donalubaldo@hotmail.com','CASADO(A)');
@@ -613,12 +615,14 @@ CREATE PROCEDURE insertar_persona(
            IN telefono3 varchar(10),
            IN direccion varchar(50), 
            IN correo varchar(30), 
-           IN estado_civil varchar(20) 
+           IN estado_civil varchar(20),
+           IN fecha_n date,
+           IN sexo varchar(10)
          )
 BEGIN
 
 START TRANSACTION;
-INSERT INTO tb_personas(cedula_ruc, nombre, apellido, telefono1, telefono2, telefono3, direccion,correo,estado_civil)VALUES(cedula,nombre,apellido,telefon1,telefono2,telefono3, direccion,correo,estado_civil);
+INSERT INTO tb_personas(cedula_ruc, nombre, apellido, telefono1, telefono2, telefono3, direccion,correo,estado_civil,fecha_n,sexo)VALUES(cedula,nombre,apellido,telefon1,telefono2,telefono3, direccion,correo,estado_civil,fecha_n,sexo);
 
 COMMIT;    
 
