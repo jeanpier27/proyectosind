@@ -663,6 +663,20 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
                             <legend><strong>Información básica</strong></legend> <br>
                             <div class="group-material">
+                                <span>Seleccione la Persona </span> <br>
+                                <select class="selectpicker" data-live-search="true"  required name="id_socio">
+                                    <option value="" disabled="" selected="">Selecciona</option>
+                                        <?php
+                                          while($f = $sql->fetch_array()){ 
+                                            echo '<option value="'.$f['id_persona'].'">'.$f['apellido'].' '.$f['nombre'].' </option>';
+                                            } 
+                                        ?> 
+                                </select>
+                            </div>         
+
+                            <div class="gruop-material" id="msj"></div>                   
+                              
+                            <div class="group-material">
                                 <label>Fecha y Hora que comenzar&aacute; a utilizar</label><br>
                                 <input type="text" class="tooltips-general material-control" id="iniciando" readonly="true" required title="Seleccione la fecha que se alquilará" name="fecha_desde">
                                 <span class="highlight"></span>
@@ -684,20 +698,26 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                                 <span class="highlight"></span>
                                 <span class="bar"></span> -->
                                 <!-- <label>Fecha y hora que dejar&aacute; disponible el bien</label> -->
-                            </div>  <br><br>
+                            </div> 
                            
                             <div class="group-material">
-                                <span>Seleccione </span> <br>
-                                <select class="selectpicker" data-live-search="true"  required name="id_socio">
-                                    <option value="" disabled="" selected="">Selecciona</option>
-                                        <?php
-                                          while($f = $sql->fetch_array()){ 
-                                            echo '<option value="'.$f['id_persona'].'">'.$f['apellido'].' '.$f['nombre'].' </option>';
-                                            } 
-                                        ?> 
-                                </select>
-                            </div>                            
-                              
+                            <label>Valor a Pagar</label><br>
+                            <?php 
+                              $bien=$_GET['bien']; 
+                              $consul=$conexion->query("select valor from tb_beneficios where id_beneficio=".$bien);
+                              $resp=mysqli_fetch_array($consul);
+                            ?> 
+                                <input type="text" class="tooltips-general material-control numero" required="" id="valor_pagar"  required title="Valor a pagar" name="valor_pagar" value="<?php echo $resp[0]; ?>">
+                                <span class="highlight"></span>
+                                <span class="bar"></span> 
+                                
+                                <!-- <input type="time" class="tooltips-general material-control"  required=""  data-toggle="tooltip" data-placement="top" title="Seleccione la fecha que se alquilará" name="hora_hasta">
+                                <span class="highlight"></span>
+                                <span class="bar"></span> -->
+                                <!-- <label>Fecha y hora que dejar&aacute; disponible el bien</label> -->
+                            </div>
+                            <br><br>
+                            
                             <p class="text-center">
                                 <!-- <button type="reset" class="btn btn-info" style="margin-right: 20px;"><i class="zmdi zmdi-roller"></i> &nbsp;&nbsp; LIMPIAR</button> -->
                                 <button  name="registro" id="registro" type="submit" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; GUARDAR</button> &nbsp;&nbsp;  
@@ -714,7 +734,8 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                   $Id_per=$_POST['id_socio']; 
                   $Id_beneficio=$_POST['id_beneficio'];
                   $Fecha_desde=$_POST['fecha_desde'];                 
-                  $Fecha_hasta=$_POST['fecha_hasta'];                  
+                  $Fecha_hasta=$_POST['fecha_hasta'];
+                  $valor_pagar=$_POST['valor_pagar'];
                   $Estado="ACTIVO"; 
 
 
@@ -753,19 +774,19 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                                   
                               } 
 
-                  $valorbien=$conexion->query("select valor from tb_beneficios where id_beneficio=".$Id_beneficio);
-                   while($row=$valorbien->fetch_array()){ 
-                      $valors=$row['valor'];
-                   }
+                  // $valorbien=$conexion->query("select valor from tb_beneficios where id_beneficio=".$Id_beneficio);
+                  //  while($row=$valorbien->fetch_array()){ 
+                  //     $valors=$row['valor'];
+                  //  }
 
-                   $beneficiosocio=$conexion->query("select 1 from tb_socio where id_persona=".$Id_per." and estado='ACTIVO'");
-                   $consultben=mysqli_fetch_array($beneficiosocio);
+                  //  $beneficiosocio=$conexion->query("select 1 from tb_socio where id_persona=".$Id_per." and estado='ACTIVO'");
+                  //  $consultben=mysqli_fetch_array($beneficiosocio);
 
-                   if($consultben[0]==1){
-                      $valors=$valors/2;
-                   }
+                  //  if($consultben[0]==1){
+                  //     $valors=$valors/2;
+                  //  }
 
-                  $consulta = "insert into tb_alquiler (id_persona, id_beneficio, fecha_desde, fecha_hasta, estado,valor,abonos) values (".$Id_per.", ".$Id_beneficio.", '".$Fecha_desde."', '".$Fecha_hasta."', '".$Estado."','".$valors."',0)";    
+                  $consulta = "insert into tb_alquiler (id_persona, id_beneficio, fecha_desde, fecha_hasta, estado,valor,abonos) values (".$Id_per.", ".$Id_beneficio.", '".$Fecha_desde."', '".$Fecha_hasta."', '".$Estado."','".$valor_pagar."',0)";    
                   $ingreso = mysqli_query($conexion,$consulta);                       
                   
 
@@ -788,7 +809,79 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
             </section>
           </div>
 <script type="text/javascript" src="js/agenda.js"></script>
+<script type="text/javascript"> 
+      $('select[name=id_socio]').change(function(){
+          var id_persona=$('select[name=id_socio]').val();
+                        
+                            $.post("controler/consulta_socio.php",{socio:id_persona},function(data,status){
+                                if(data=='ok'){
+                                    // console.log(data);
+                                    // console.log(status);
+                                    $('#msj').html('<div class="alert alert-warning" role="alert"><h3><strong>Aviso!..</strong> Es socio activo del sindicato</h3></div>');
+                                    // $('input[name=fecha_nacimiento]').val(data);
+                                }else{
+                                  $('#msj').empty();
+                                }
+                            });
 
+      });
+      $('input[name=fecha_desde]').daterangepicker({
+                        singleDatePicker: true,
+                        timePicker: true,
+                        showDropdowns: true,
+                        autoUpdateInput: false,
+                        timePicker24Hour: true,
+                        locale: {
+                          cancelLabel: 'Clear',
+                          // format: 'YYYY-MM-DD',
+                          "separator": " - ",
+                          "applyLabel": "Aceptar",
+                          "cancelLabel": "Cancelar",
+                          "daysOfWeek": ["Do","Lu","Ma","Mi","Ju","Vi","Sa"],
+                          "monthNames": ["Enero","Febrero","Marzo","Abril","Mayo",
+                          "Junio","Julio","Agosto","Septiembre","Octubre","Noviembre",
+                          "Diciembre"]
+                      }
+                  });
+      $('input[name="fecha_desde"]').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('YYYY-MM-DD H:mm:00'));
+      });
+
+      $('input[name="fecha_desde"]').on('cancel.daterangepicker', function(ev, picker) {
+          $(this).val('');
+      });
+
+      $('input[name=fecha_hasta]').daterangepicker({
+                        singleDatePicker: true,
+                        timePicker: true,
+                        showDropdowns: true,
+                        autoUpdateInput: false,
+                        timePicker24Hour: true,
+                        locale: {
+                          cancelLabel: 'Clear',
+                          // format: 'YYYY-MM-DD',
+                          "separator": " - ",
+                          "applyLabel": "Aceptar",
+                          "cancelLabel": "Cancelar",
+                          "daysOfWeek": ["Do","Lu","Ma","Mi","Ju","Vi","Sa"],
+                          "monthNames": ["Enero","Febrero","Marzo","Abril","Mayo",
+                          "Junio","Julio","Agosto","Septiembre","Octubre","Noviembre",
+                          "Diciembre"]
+                      }
+                  });
+      $('input[name="fecha_hasta"]').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('YYYY-MM-DD H:mm:00'));
+      });
+
+      $('input[name="fecha_hasta"]').on('cancel.daterangepicker', function(ev, picker) {
+          $(this).val('');
+      });
+
+      $(".numero").keypress(function(e){
+          var key = window.Event ? e.which : e.keyCode 
+          return ((key >= 48 && key <= 57) || (key==8) || (key==46)) 
+      });
+</script>
 </body>
 </html>
 <?php

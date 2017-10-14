@@ -5,9 +5,9 @@
     <link rel="stylesheet" href="css/sweet-alert.css">
     <link rel="stylesheet" href="css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css"/>
     <link href="css/agenda.css" rel="stylesheet" >
     <!-- <link href="css/fullcalendar.min.css" rel="stylesheet" id="bootstrap-css" > -->

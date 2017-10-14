@@ -70,64 +70,88 @@ require_once('login/cerrar_sesion.php');
                             // $sql2=$conexion->query("SELECT * FROM tb_pagos_socio Group by descripcion");
                $meses=array('','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre');
 
-                            $sqlsocio=$conexion->query("SELECT `tb_personas`.`id_persona`as id_per, `tb_personas`.`cedula_ruc`, `tb_personas`.`nombre`, `tb_personas`.`apellido`, `tb_personas`.`telefono1`, `tb_personas`.`telefono2`, `tb_personas`.`telefono3`, `tb_personas`.`direccion`, `tb_personas`.`correo`, `tb_personas`.`estado_civil`, `tb_socio`.* FROM `tb_personas` LEFT JOIN `tb_socio` ON `tb_socio`.`id_persona` = `tb_personas`.`id_persona` where tb_socio.estado='ACTIVO'");   
+                            $sqlsocio=$conexion->query("SELECT `tb_personas`.`id_persona`as id_per, `tb_personas`.`cedula_ruc`, `tb_personas`.`nombre`, `tb_personas`.`apellido`, `tb_socio`.* FROM `tb_personas` inner JOIN `tb_socio` ON `tb_socio`.`id_persona` = `tb_personas`.`id_persona` where tb_socio.estado='ACTIVO'");   
                          ?>
                          <center>
                          <form method="post">
-        <div class="group-material">
+                        
 
-                                <span>Seleccione al Socio </span> <br>
-                               
-                          <select class="selectpicker" name="nombres" data-live-search="true" required="">
-                          <option selected="" disabled="">Seleccione </option>
-                           <?php  
-
-                             while($row=$sqlsocio->fetch_array()){ 
-                                $consulre=$conexion->query("SELECT ifnull(max(cast(mes as unsigned)),0) FROM `tb_recaudaciones` WHERE id_persona='".$row['id_per']."' and id_pagos_socio=2");
-                               $resp=mysqli_fetch_array($consulre);
-                               if($resp[0]==0){
-                                ?>
-
-                              <option value="<?php echo $row['id_per']; ?>"><?php echo ($row['apellido'].' '.$row['nombre']); ?></option>
-                               <?php  
-                               }
-                            }
-                            ?>
-                          </select>
-
-                            </div>
-
-                            <div class="group-material">    
+                            <div class="group-material">
                               <span>Año </span> 
                                 <br>
                                
-                          <select class="selectpicker material-control" name="año" required="">
-                          <option selected="" disabled>Seleccione </option> 
-                             <?php 
-                                // $sqlcuotas=$conexion->query("SELECT max(YEAR(fecha)) as year FROM `tb_recaudaciones` ");
-                                // $resul=mysqli_fetch_array($sqlcuotas);
-                                // // $hoy=date('Y');
-                                // $atras=$resul[0]-15;
-                                for($i=2017;$i>=2016;$i--){?>
-                                     <option value="<?php echo $i; ?>"><?php echo ($i); ?></option>
- 
-                              <?php    }
-                              ?>                      
-                               </select>
+                                <select class="selectpicker material-control" name="año" required="">
+                                <option selected="" disabled>Seleccione </option> 
+                                   <?php 
+                                      // $sqlcuotas=$conexion->query("SELECT max(YEAR(fecha)) as year FROM `tb_recaudaciones` ");
+                                      // $resul=mysqli_fetch_array($sqlcuotas);
+                                      $hoy=date('Y');
+                                      // $atras=$resul[0]-15;
+                                      for($i=2016;$i<=(int)$hoy;$i++){?>
+                                           <option value="<?php echo $i; ?>"><?php echo ($i); ?></option>
+       
+                                <?php    }
+                                ?>                      
+                                 </select>
+                            </div>
 
-                           <br> 
+                            <div class="group-material" id="des_cuotas">
+
+                                <span>Seleccione Tipo de cuota </span> <br>
+                               
+                                <select class="selectpicker" name="cuotas" required="">
+                                <option selected="" disabled="">Seleccione </option>
+                                 <?php  
+                                  $squerycoutas=$conexion->query('select * from tb_pagos_socio ');
+                                   while($row=$squerycoutas->fetch_array()){ 
+                                      // $consulre=$conexion->query("SELECT ifnull(max(cast(mes as unsigned)),0) FROM `tb_recaudaciones` WHERE id_persona='".$row['id_per']."' and id_pagos_socio=2");
+                                     // $resp=mysqli_fetch_array($consulre);
+                                     if($row['descripcion']!='MULTAS'){
+                                      ?>
+
+                                    <option value="<?php echo $row['id_pagos_socio']; ?>"><?php echo ($row['descripcion']); ?></option>
+                                     <?php  
+                                     }
+                                  }
+                                  ?>
+                                </select>
+
+                            </div>
+
+                            <div class="group-material" id="socio">
+
+                                <span>Seleccione al Socio </span> <br>
+                               
+                                <select class="selectpicker" name="nombres" data-live-search="true" required="">
+                                <option selected="" disabled="">Seleccione </option>
+                                <?php 
+                                    while($socio=mysqli_fetch_array($sqlsocio)){
+                                 ?>
+
+                                 <option value="<?php echo $socio['id_per']; ?>"><?php echo $socio['apellido'].' '.$socio['nombre']; ?></option>
+                                <?php 
+                                    }
+                                 ?> 
+                                </select>
+
+                            </div>
+
+                            
+
+                            <div class="group-material" id="others_cuotas" style="display: none">    
+                              
                               <span>Mes</span> 
                                 <br>
                                
-                          <select class="selectpicker material-control" name="mes" required="">
-                          <option selected="" disabled>Seleccione </option> 
-                             <?php 
-                               
-                                for($i=12;$i>=1;$i--){?>
-                                     <option value="<?php echo $i; ?>"><?php echo ($meses[$i]); ?></option>
- 
-                              <?php    }
-                              ?>                      
+                                <select class="selectpicker material-control" name="mes" required="">
+                                <option selected="" disabled>Seleccione </option> 
+                                   <?php 
+                                     
+                                      for($i=12;$i>=1;$i--){?>
+                                           <option value="<?php echo $i; ?>"><?php echo ($meses[$i]); ?></option>
+       
+                                    <?php    }
+                                    ?>                      
                                </select>
 
                             </div>
@@ -139,67 +163,151 @@ require_once('login/cerrar_sesion.php');
          
             <p class="text-center">
                                 <!-- <button type="reset" class="btn btn-info" style="margin-right: 20px;"><i class="zmdi zmdi-roller"></i> &nbsp;&nbsp; LIMPIAR</button> -->
-                                <button  name="registra" id="registra" type="submit" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; Generar Cuotas</button> &nbsp;&nbsp;
+                                <button  name="" id="registra" type="submit" class="btn btn-primary"><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; Generar Cuotas</button> &nbsp;&nbsp;
                             </p>
 </form>
       <?php 
+
+       if(isset($_POST['INSCRIPCION'])){
+        $id_per=$_POST['nombres'];
+        // $añoingreso=$_POST['año'];
+        $cuotas=$_POST['cuotas'];
+        $valor=$_POST['valor_inscripcion'];
+        $hoy=date('Y-m-d');
+
+        if($id_per!='' and $cuotas!=''){
+          $consul=$conexion->query("SELECT 1 from tb_recaudaciones where id_pagos_socio='".$cuotas."' and id_persona=".$id_per." GROUP BY 1");
+          $r=mysqli_fetch_array($consul);
+          if($r[0]==0){
+
+
+          // echo '<script type="text/javascript">alert("'.$hoy.'");</script>';
+          $inscripcion=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$id_per."','".$hoy."','','','".$cuotas."','','1','ACTIVO','','".$valor."',0)");
+
+                  if($inscripcion){
+                        echo '<script type="text/javascript">swal({title: "ok", text: "Cuota generadas con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="generarcuotasindividual.php";});</script>';
+                      // $conexion->rollback();
+                  }else{
+                       // $conexion->commit();
+                        echo '<script type="text/javascript">swal({title: "Error", text: "Error al generar cuotas...!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="generarcuotasindividual.php";});</script>';
+
+                  }
+        }else{
+          echo '<script type="text/javascript">swal({title: "Error", text: "Ya se encuentra registrada esta cuota...!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: true},function(){  });</script>';
+
+        }
+      }else{
+           echo '<script type="text/javascript">swal({title: "Error", text: "Debe Seleccionar todos los campos...!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: true},function(){  });</script>';
+
+      }
+
+}
       
-      if(isset($_POST['registra'])){
+      if(isset($_POST['MENSUALIDAD'])){
+        $id_per=$_POST['nombres'];
+        $añoingreso=$_POST['año'];
+        $mes=$_POST['mes'];
+              // $sqlsocio=$conexion->query("select id_persona,fecha_ingreso from tb_socio where id_persona ='".$id_per."'"); 
+        if($id_per!='' and $añoingreso!='' and $mes!=''){
+              $mensualidad= $conexion->query("SELECT * FROM `tb_pagos_socio` WHERE descripcion='CUOTAS MENSUALES'"); 
+              
+              while($consultamen=mysqli_fetch_array($mensualidad)){
+                  $mensua=$consultamen['id_pagos_socio'];
+                  $valormens=$consultamen['valor'];
+              }
+            $consul=$conexion->query("SELECT 1 from tb_recaudaciones where id_pagos_socio='".$mensua."' and id_persona=".$id_per." and año='".$añoingreso."' GROUP BY 1");
+            $r=mysqli_fetch_array($consul);
+             // echo '<script type="text/javascript">alert('.$r[0].');</script>';
+          if($r[0]==0){
+
+           
+            $hoy=date('Y-m-d');
+                $mesess=(int)$mes;
+                for($i=1;$i<=12;$i++){
+                  
+                    $conexion->autocommit(false);
+                    $error=0;
+                    if($i>=(int)$mesess){
+                        $insertar_recaudam=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$id_per."','".$hoy."','".$añoingreso."','".$i."','".$mensua."','','0','ACTIVO','','".$valormens."','' )");
+
+                        if(!$insertar_recaudam){
+                          $error=1;
+                        }
+                       
+
+                    } 
+
+  
+                }
+
+                if($error){
+                    $conexion->rollback();
+                }else{
+                     $conexion->commit();
+                      echo '<script type="text/javascript">swal({title: "ok", text: "Cuotas generadas con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="generarcuotasindividual.php";});</script>';
+                }
+              }else{
+                 echo '<script type="text/javascript">swal({title: "Error", text: "Ya se encuentra registrada esta cuota...!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: true},function(){  });</script>';
+              }
+            }else{
+              echo '<script type="text/javascript">swal({title: "Error", text: "Debe Seleccionar todos los campos...!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: true},function(){  });</script>';
+
+            }
+
+}
+
+      if(isset($_POST['CESANTIA'])){
         $id_per=$_POST['nombres'];
       $añoingreso=$_POST['año'];
       $mes=$_POST['mes'];
             // $sqlsocio=$conexion->query("select id_persona,fecha_ingreso from tb_socio where id_persona ='".$id_per."'"); 
-            $mensualidad= $conexion->query("SELECT * FROM `tb_pagos_socio` WHERE descripcion='CUOTAS MENSUALES'"); 
+      if($id_per!='' and $añoingreso!='' and $mes!=''){
             $cesantia=$conexion->query("SELECT * FROM `tb_pagos_socio` WHERE descripcion='FONDO DE CESANTIA'"); 
-
-            while($consultamen=mysqli_fetch_array($mensualidad)){
-                $mensua=$consultamen['id_pagos_socio'];
-                $valormens=$consultamen['valor'];
-            }
 
             while($consultacesa=mysqli_fetch_array($cesantia)){
                 $cesan=$consultacesa['id_pagos_socio'];
                 $valorcesa=$consultacesa['valor'];
             }
+
+             $consul=$conexion->query("SELECT 1 from tb_recaudaciones where id_pagos_socio='".$mensua."' and id_persona=".$id_per." and año='".$añoingreso."' GROUP BY 1");
+             $r=mysqli_fetch_array($consul);
+          if($r[0]==0){
             $hoy=date('Y-m-d');
                 $mesess=(int)$mes;
-                for($j=(int)$añoingreso;$j<=2017;$j++){
                 for($i=1;$i<=12;$i++){
-                        if((int)$añoingreso==2016){
-                    if($i>=(int)$mesess and $añoingreso==$j){
-                        $insertar_recaudam=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$id_per."','".$hoy."','".$j."','".$i."','".$mensua."','','0','ACTIVO','','".$valormens."','' )");
+                  
+                    $conexion->autocommit(false);
+                    $error=0;
+                    if($i>=(int)$mesess){
 
+                        $insertar_recaudac=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$id_per."','".$hoy."','".$añoingreso."','".$i."','".$cesan."','','0','ACTIVO','','".$valorcesa."','' )");
 
-                        $insertar_recaudac=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$id_per."','".$hoy."','".$j."','".$i."','".$cesan."','','0','ACTIVO','','".$valorcesa."','' )");
-                            // echo $j.' '.$i.' '.$valormens.' '.$valorcesa.'-<br>';
-
-                    } 
-
-                    if($j>=2017){
-                       // echo $j.' '.$i.' '.$valormens.' '.$valorcesa.'+<br>';
-                        $insertar_recaudam=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$id_per."','".$hoy."','".$j."','".$i."','".$mensua."','','0','ACTIVO','','".$valormens."','' )");
-
-                        $insertar_recaudac=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$id_per."','".$hoy."','".$j."','".$i."','".$cesan."','','0','ACTIVO','','".$valorcesa."','' )");
-
-                    }
-                    }else{
-                         if($i>=(int)$mesess and $añoingreso==$j){
-                        $insertar_recaudam=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$id_per."','".$hoy."','".$j."','".$i."','".$mensua."','','0','ACTIVO','','".$valormens."','' )");
-
-                        $insertar_recaudac=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$id_per."','".$hoy."','".$j."','".$i."','".$cesan."','','0','ACTIVO','','".$valorcesa."','' )");
-                          // echo $j.' '.$i.' '.$valormens.' '.$valorcesa.'+<br>';
+                        if(!$insertar_recaudac){
+                          $error=1;
+                        }
+                       
 
                     } 
 
-                    }
+  
                 }
 
+                if($error){
+                    $conexion->rollback();
+                }else{
+                     $conexion->commit();
+                      echo '<script type="text/javascript">swal({title: "ok", text: "Cuotas generadas con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="generarcuotasindividual.php";});</script>';
+
                 }
+                 }else{
+                 echo '<script type="text/javascript">swal({title: "Error", text: "Ya se encuentra registrada esta cuota...!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: true},function(){  });</script>';
+              }
 
-                echo '<script type="text/javascript">swal({title: "ok", text: "Cuotas generadas con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="generarcuotasindividual.php";});</script>';
+                }else{
+                  echo '<script type="text/javascript">swal({title: "Error", text: "Debe Seleccionar todos los campos...!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: true},function(){  });</script>';
 
+            }
 
-            // }
 }
 
        ?>
@@ -218,7 +326,29 @@ $(document).ready(function(){
             $('#contconfig').attr("style","display:block;");
             $('#confcuotassocio').attr("style","background-color:#E75A5A;");
 
-   
+   $('select[name=cuotas]').change(function(){
+    var descrip=$('select[name=cuotas] option:selected').text();
+
+      if(descrip=='INSCRIPCION'){
+         $('#registra').attr('name',descrip);
+        $('#des_cuotas').after('<div class="group-material" id="valor_insc">Valor de Inscripcion<br><input type="number" min=0 required="" name="valor_inscripcion"></div>');
+                              
+      }else{
+        $('#valor_insc').remove();
+      }
+      if(descrip=='CUOTAS MENSUALES' || descrip=='FONDO DE CESANTIA'){
+        $('#others_cuotas').css('display','block');
+      }else{
+        $('#others_cuotas').css('display','none');
+      }
+      if(descrip=='CUOTAS MENSUALES'){
+        $('#registra').attr('name','MENSUALIDAD');
+      }
+      if(descrip=='FONDO DE CESANTIA'){
+        $('#registra').attr('name','CESANTIA');
+      }
+     
+   });
         });
 
  </script>

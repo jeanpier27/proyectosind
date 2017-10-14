@@ -138,10 +138,10 @@ $id_re=$_POST['id_re'];
                                
                           
                            <?php  
-
+                              $i=1;
                              while($row=$sqlsocio->fetch_array()){ ?>
                                 <tr>
-                                 <td><?php echo ($row['id_persona']); ?></td>
+                                 <td><?php echo ($i++); ?></td>
                                  <input type="hidden" name="id[<?php echo ($row['id_persona']); ?>]" value="<?php echo ($row['id_persona']); ?>" readonly>
                                 <td><?php echo ($row['apellido'].' '.$row['nombre']); ?></td>
                                 <?php 

@@ -129,31 +129,35 @@ $id_per=$_GET['nombres'];
                                 $socioinsc=$conexion->query("SELECT * FROM `tb_recaudaciones` WHERE id_persona=".$id_per." and id_pagos_socio=1");
                                 while ($ins=$socioinsc->fetch_array()){ 
                                   $insc=$ins['abonos']+$insc;
-                                  $consulta10=$conexion->query("SELECT valor FROM `tb_pagos_socio` WHERE id_pagos_socio='".$ins['id_pagos_socio']."'");
-                                  while($consu=$consulta10->fetch_array()){
-                                    $val=$consu['valor'];
-                                  }
+                                  // $consulta10=$conexion->query("SELECT valor FROM `tb_pagos_socio` WHERE id_pagos_socio='".$ins['id_pagos_socio']."'");
+                                  // while($consu=$consulta10->fetch_array()){
+                                  //   $val=$consu['valor'];
+                                  // }
                                 }
+                                  $consulta10=$conexion->query("SELECT max(valor) as valor FROM `tb_recaudaciones` WHERE id_persona=".$id_per." and id_pagos_socio=1");
+                                  while($consult=$consulta10->fetch_array()){
+                                    $val=$consult['valor'];
+                                  }
 
                                 $sql2=mysqli_query($conexion,"SELECT * FROM `tb_bancos` WHERE descripcion='CUENTA ADMINISTRATIVA'");                
                             }
 
                             if(isset($_GET['MENSUALIDADES'])){
-                              $consultabeneficio=$conexion->query("SELECT fecha_ingreso FROM `tb_socio` WHERE id_persona=".$id_per." ");
-                                while($benefi=$consultabeneficio->fetch_array()){
-                                  $bene=$benefi['fecha_ingreso'];
-                                }
-                                $fechab = date('Y');
-                                $nuevafecha = strtotime ( '-20 year' , strtotime ( $fechab ) ) ;
-                                $nuevafecha =  date ( 'Y' , $nuevafecha );
-                                $fecha_socio= date('Y',strtotime($bene));
+                              // $consultabeneficio=$conexion->query("SELECT fecha_ingreso FROM `tb_socio` WHERE id_persona=".$id_per." ");
+                              //   while($benefi=$consultabeneficio->fetch_array()){
+                              //     $bene=$benefi['fecha_ingreso'];
+                              //   }
+                              //   $fechab = date('Y');
+                              //   $nuevafecha = strtotime ( '-20 year' , strtotime ( $fechab ) ) ;
+                              //   $nuevafecha =  date ( 'Y' , $nuevafecha );
+                              //   $fecha_socio= date('Y',strtotime($bene));
                                 $sociomen=$conexion->query("SELECT * FROM `tb_recaudaciones` WHERE id_persona=".$id_per." and id_pagos_socio=2 and verificacion=0");
                                 while($mens=$sociomen->fetch_array()){
                                   $totalme=$mens['valor']+$totalme;
                                   }
-                                  if($fecha_socio<=$nuevafecha){
-                                    $totalme=($totalme/2);
-                                  }
+                                  // if($fecha_socio<=$nuevafecha){
+                                  //   $totalme=($totalme/2);
+                                  // }
                                 $sql2=mysqli_query($conexion,"SELECT * FROM `tb_bancos` WHERE descripcion='CUENTA ADMINISTRATIVA'");
                             }
 
@@ -244,15 +248,15 @@ $id_per=$_GET['nombres'];
                                 <?php
                                 
 
-                                 $pension=mysqli_query($conexion,"SELECT valor FROM `tb_recaudaciones` where id_pagos_socio = 2");
-                                 $consulta_pension=mysqli_fetch_array($pension);
-                                 $valor_pagar = $consulta_pension['valor'];
-                                 if($fecha_socio<=$nuevafecha){
-                                  $valor_pagar = ($valor_pagar/2) ;
-                                }
+                                 // $pension=mysqli_query($conexion,"SELECT valor FROM `tb_recaudaciones` where id_pagos_socio = 2");
+                                 // $consulta_pension=mysqli_fetch_array($pension);
+                                 // $valor_pagar = $consulta_pension['valor'];
+                                 // if($fecha_socio<=$nuevafecha){
+                                 //  $valor_pagar = ($valor_pagar/2) ;
+                                // }
                                  
                                  ?>
-                                <div>Pensiones, valor mensual: $<?php echo $valor_pagar.' '.''; ?></div>
+                                <!-- <div>Pensiones, valor mensual: $<?php echo $valor_pagar.' '.''; ?></div> -->
 
 
                                 <?php 
@@ -267,7 +271,7 @@ $id_per=$_GET['nombres'];
                                 //  $c++;
                                  ?>
                                 
-                                  <br><div><input type="checkbox" onClick="calcular()" class="" value="<?php echo $row['id_recaudaciones']; ?>" name="meses[]"/> <?php echo $row['año'].' '.$meses_c[$row['mes']].' $'.$row['valor']; ?>
+                                  <br><div><input type="checkbox" onClick="" class="" value="<?php echo $row['id_recaudaciones']; ?>" name="meses[]"/> <?php echo $row['año'].' '.$meses_c[$row['mes']].' $<strong>'.$row['valor'].'</strong>'; ?>
                                     <input type="hidden" name="men[<?php echo $row['id_recaudaciones']; ?>]"></div>
                                  <?php 
                                }  
@@ -301,20 +305,20 @@ $id_per=$_GET['nombres'];
 
                             <div class="acciones">
                                 <?php
-                                 $pension=mysqli_query($conexion,"SELECT valor FROM `tb_recaudaciones` where id_pagos_socio = 4");
-                                 $consulta_pension=mysqli_fetch_array($pension);
-                                 $valor_pagar = $consulta_pension['valor'];
+                                 // $pension=mysqli_query($conexion,"SELECT valor FROM `tb_recaudaciones` where id_pagos_socio = 4");
+                                 // $consulta_pension=mysqli_fetch_array($pension);
+                                 // $valor_pagar = $consulta_pension['valor'];
                                  ?>
-                                <div>Pensiones, valor mensual: $<?php echo $valor_pagar; ?></div>
+                                <!-- <div>Pensiones, valor mensual: $<?php echo $valor_pagar; ?></div> -->
 
                                 <?php 
-                                $res = mysqli_query($conexion,"SELECT id_recaudaciones,mes,año,id_persona,id_pagos_socio,estado FROM tb_recaudaciones where verificacion = 0 and id_pagos_socio = 4 and id_persona = ".$id_per);
+                                $res = mysqli_query($conexion,"SELECT id_recaudaciones,mes,año,id_persona,id_pagos_socio,estado,valor FROM tb_recaudaciones where verificacion = 0 and id_pagos_socio = 4 and id_persona = ".$id_per);
                                 $c=0;
                                 while($row = mysqli_fetch_array($res)){
                                  $mess[$c] = $row['mes'];
                                  $año[$c]= $row['año'];
                                  $id_recaudacion[$c]=$row['id_recaudaciones'];
-                                
+                                 $valor[$c]= $row['valor'];
                                  $c++;
                                }  
 
@@ -322,7 +326,7 @@ $id_per=$_GET['nombres'];
 
                                for($f=0; $f<$c; $f++){
                                 if($mess[$f] !=0){?>
-                                <br><div><input type="checkbox" onClick="calcular()" class="" value="<?php echo $id_recaudacion[$f]; ?>" name="meses[]"/> <?php echo $año[$f].' '.$meses_c[$mess[$f]]; ?></div>
+                                <br><div><input type="checkbox" onClick="" class="" value="<?php echo $id_recaudacion[$f]; ?>" name="meses[]"/> <?php echo $año[$f].' '.$meses_c[$mess[$f]].' $<strong>'.$valor[$f].'</strong>'; ?></div>
                                            
                                 <?php }         
                               }
@@ -346,22 +350,23 @@ $id_per=$_GET['nombres'];
 
                             <div class="acciones">
                                 <?php
-                                 $pension=mysqli_query($conexion,"SELECT valor FROM `tb_recaudaciones` where id_pagos_socio = 3");
-                                 $consulta_pension=mysqli_fetch_array($pension);
-                                 $valor_pagar = $consulta_pension['valor'];
+                                 // $pension=mysqli_query($conexion,"SELECT valor FROM `tb_recaudaciones` where id_pagos_socio = 3");
+                                 // $consulta_pension=mysqli_fetch_array($pension);
+                                 // $valor_pagar = $consulta_pension['valor'];
                                  ?>
-                                <div>Multa por faltas, valor de la multa: $<?php echo $valor_pagar; ?></div>
+                                <!-- <div>Multa por faltas, valor de la multa: $<?php echo $valor_pagar; ?></div> -->
 
                                 <?php 
-                                $res = mysqli_query($conexion,"SELECT id_recaudaciones,fecha,mes,año,id_persona,id_pagos_socio,estado FROM tb_recaudaciones where verificacion = 0 and id_pagos_socio = 3 and id_persona = ".$id_per);
+                                $res = mysqli_query($conexion,"SELECT id_recaudaciones,fecha,mes,año,id_persona,id_pagos_socio,estado,valor FROM tb_recaudaciones where verificacion = 0 and id_pagos_socio = 3 and id_persona = ".$id_per);
                                 
                                 while($row = mysqli_fetch_array($res)){
-                                 
+                                 $asamblea=$conexion->query("select tipo_reunion from tb_reunion where date(fecha)='".$row['fecha']."'");
+                                 $resp=mysqli_fetch_array($asamblea);
                                  ?>
 
                                  <br>
                                  <div>
-                                   <input type="checkbox" value="<?php echo $row['id_recaudaciones']; ?>" onClick="calcular()" name="mesesm[]"><?php echo $row['fecha']; ?>
+                                   <input type="checkbox" value="<?php echo $row['id_recaudaciones']; ?>" onClick="" name="mesesm[]"><?php echo $row['fecha'].' '.$resp[0].' $<strong>'.$row['valor'].'</strong>'; ?>
                                  </div>
 
 
@@ -387,13 +392,34 @@ $id_per=$_GET['nombres'];
 
                           <script type="text/javascript">                          
                             
-                            function calcular(){                              
-                              var numero_marcas=0;                              
-                              var cuota = '<?php echo $valor_pagar; ?>'; 
-                              numerito = ($(".acciones input:checked").length);
-                              total = numerito * cuota;
-                              $("#valor_abonar").val(""+total.toFixed(2));
-                            };
+                            // function calcular(){                              
+                            //   var numero_marcas=0;                              
+                            //   var cuota = '<?php echo $valor_pagar; ?>'; 
+                            //   numerito = ($(".acciones input:checked").length);
+                            //   total = numerito * cuota;
+                            //   $("#valor_abonar").val(""+total.toFixed(2));
+                            // };
+                            $('input[type=checkbox]').on('click',function(){
+                              var $inpu=$('input[type=checkbox]');
+                              var $valor;
+                              var $total=0.0;
+                              $.each($inpu,function(){
+                                
+                                if( $(this).is(':checked') ) {
+                                  
+                                  $valor=parseFloat($(this).next().text());
+                                  $total=$total+$valor;
+                                  // console.log($(this).next().text());
+                                  //console.log($(this).next().text());
+                                  //console.log($total);
+                                }
+                                 
+                              });
+                              $('#valor_abonar').val($total.toFixed(2));
+                              //console.log($total);
+                            });
+
+
 
                           </script>
 

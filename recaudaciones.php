@@ -124,8 +124,8 @@ require_once('login/cerrar_sesion.php');
             if(id!=""){
                      $.post("controler/recaudacioncobros.php",{id:id},function(data,status){
                     $("#pagos").html(data);
-                    console.log(data);
-                    console.log(status);
+                    // console.log(data);
+                    // console.log(status);
                 });
             }
                

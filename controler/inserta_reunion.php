@@ -1,4 +1,5 @@
 <?php 
+session_start();
 require_once('../login/conexion.php');
 error_reporting(0);
 if(isset($_POST['fecha'])){
@@ -7,14 +8,15 @@ if(isset($_POST['fecha'])){
   $tipo_reunion=$_POST['tipo_reunion'];
   $c=new datetime($fecha);
   $fechac=date_format($c,'Y-m-d');
-
+  $hoy=date('Y-m-d');
+  $observaciontotal='('.$hoy.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
   $fech="SELECT * FROM `tb_reunion` WHERE date(fecha)='".$fechac."'";
   $b=$conexion->query($fech); 
 
   $rowcount=mysqli_num_rows($b);
 
   if($rowcount<1){
-  $query="insert into tb_reunion (fecha,descripcion,estado,observacion,verificado,tipo_reunion)values('".$fecha."','".$descripcion."','ACTIVO','','0','".$tipo_reunion."')";
+  $query="insert into tb_reunion (fecha,descripcion,estado,observacion,verificado,tipo_reunion)values('".$fecha."','".$descripcion."','ACTIVO','".$observaciontotal."','0','".$tipo_reunion."')";
  // echo "<script type='text/javascript'> alert('si');</script>";
   // $codigo=htmlspecialchars($_POST['cedula'],ENT_QUOTES,'UTF-8');
   // $nombres=htmlspecialchars($_POST['nombres'],ENT_QUOTES,'UTF-8');

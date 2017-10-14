@@ -40,12 +40,13 @@ require_once('login/cerrar_sesion.php');
 
                 $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
                 $respcom=mysqli_fetch_array($sqlcompro);
+                $conexion->autocommit(false);
+                $error=0;            
                 if($respcom[0]!=1){
                     $update=$conexion->query("update tb_personas set fecha_n='".$fecha_naci."' where id_persona=".$id_per);
 
                     if($update){
 
-                               
         $query="call insertar_socio('$id_per','$tipo_licenciansocio','$fecha_naci','$fecha_ingreso','$valor','$abono', '$fecha_registro','$descripcion','$ingreso_n','$comproante_bco','$id_banco','$beneficiario','$pla_cuent')";
         $a=$conexion->query($query);     
         if($a){
@@ -71,32 +72,40 @@ require_once('login/cerrar_sesion.php');
                 $año=date('Y',strtotime($consult['fecha_ingreso']));
                 $mesess=(int)$mes;
                 for($i=1;$i<=12;$i++){
-                    if($i>=(int)$mesess and $año>=2017){
+                    if($i>=(int)$mesess){
                         $insertar_recaudam=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$consult['id_persona']."','".$consult['fecha_ingreso']."','".$añoactual."','".$i."','".$mensua."','','0','ACTIVO','','".$valormens."','' )");
 
                         $insertar_recaudac=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$consult['id_persona']."','".$consult['fecha_ingreso']."','".$añoactual."','".$i."','".$cesan."','','0','ACTIVO','','".$valorcesa."','' )");
 
                     }
-                    // if($año<2017){
-                    //     $insertar_recaudam=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$consult['id_persona']."','".$consult['fecha_ingreso']."','".$añoactual."','".$i."','".$mensua."','','0','ACTIVO','','".$valormens."','' )");
 
-                    //     $insertar_recaudac=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$consult['id_persona']."','".$consult['fecha_ingreso']."','".$añoactual."','".$i."','".$cesan."','','0','ACTIVO','','".$valorcesa."','' )");
-
-                    // }
+                    if(!$insertar_recaudam or !$insertar_recaudac){
+                        $error=1;
+                    }
+                    
                 }
               
 
 
             }
 
-        echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="addsocio.php?ingreso='.$ingreso_n.'";});</script>';    
     }else{
+        $error=1;
         echo '<script type="text/javascript">swal("Error!", "No se pudo guardar el socio!", "error")</script>';    
     }
 
 }else{
+    $error=1;
     echo '<script type="text/javascript">swal("Error!", "No se pudo guardar el socio!", "error")</script>'; 
 }
+
+            if($error){
+                    $conexion->rollback();
+                }else{
+                    $conexion->commit();
+                    echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="addsocio.php?ingreso='.$ingreso_n.'";});</script>';    
+
+                     }
             }  else{
                 echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante socio!", "error")</script>'; 
             }

@@ -69,6 +69,8 @@ require_once('login/cerrar_sesion.php');
         $sqlcuotas=$conexion->query("SELECT max(YEAR(fecha)) as year FROM `tb_recaudaciones` ");
         $resul=mysqli_fetch_array($sqlcuotas);
         if($resul[0]==date('Y')){echo '<div class="alert alert-danger" role="alert"><h3><strong>Nota:</strong> Ya se encuentra generadas las cuotas anuales de este año </h3></div>';}else{ 
+        // if($resul[0]=='2018'){echo '<div class="alert alert-danger" role="alert"><h3><strong>Nota:</strong> Ya se encuentra generadas las cuotas anuales de este año </h3></div>';}else{ 
+
         ?>
 
             
@@ -81,13 +83,78 @@ require_once('login/cerrar_sesion.php');
             <p class="text-center">
                                 <!-- <button type="reset" class="btn btn-info" style="margin-right: 20px;"><i class="zmdi zmdi-roller"></i> &nbsp;&nbsp; LIMPIAR</button> -->
                                 <button  name="registra" id="registra" type="submit" class="btn btn-primary"  <?php if($resul[0]==date('Y')){echo 'disabled';} ?> ><i class="zmdi zmdi-floppy"></i> &nbsp;&nbsp; Generar Cuotas</button> &nbsp;&nbsp;
-                            </p>
-                             </div>
-            
-        </section>
+            </p>
+            <br><br>
+            <!-- <div class="row">
+                <div class="col-md-12">
+                    
+                    <div class="progress">
+                      <div class="progress-bar progress-bar-success progress-bar-striped" id="barra" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: 2%;">
+                        2%
+                      </div>
+                    </div>
+                </div>
+            </div> -->
         </div>
 
-      
+            
+        
+        </div>
+        <?php 
+        // for($i=1;$i<=10000;$i++){
+        //     $total=($i*100)/10000;               
+        //     echo "<script type='text/javascript'>$('#barra').empty();$('#barra').append('".$total."%Completado');$('#barra').attr('style','width:".$total."%;'); </script>";
+           
+
+        // }
+         ?>
+        
+
+      <?php 
+        if(isset($_POST['registra'])){
+            $socio=$conexion->query("select * from tb_socio where estado='ACTIVO'");
+
+                $conexion->autocommit(false);
+                $error=0; 
+            while($row=mysqli_fetch_array($socio)){
+                $mensualidad= $conexion->query("SELECT * FROM `tb_pagos_socio` WHERE descripcion='CUOTAS MENSUALES'"); 
+                $cesantia=$conexion->query("SELECT * FROM `tb_pagos_socio` WHERE descripcion='FONDO DE CESANTIA'"); 
+
+                while($consultamen=mysqli_fetch_array($mensualidad)){
+                    $mensua=$consultamen['id_pagos_socio'];
+                    $valormens=$consultamen['valor'];
+                }
+
+                while($consultacesa=mysqli_fetch_array($cesantia)){
+                    $cesan=$consultacesa['id_pagos_socio'];
+                    $valorcesa=$consultacesa['valor'];
+                }
+                $hoy=date('Y-m-d');
+                $añoactual=date('Y');
+                for($i=1;$i<=12;$i++){
+                        $insertar_recaudam=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$row['id_persona']."','".$hoy."','".$añoactual."','".$i."','".$mensua."','','0','ACTIVO','','".$valormens."','' )");
+
+                        $insertar_recaudac=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$row['id_persona']."','".$hoy."','".$añoactual."','".$i."','".$cesan."','','0','ACTIVO','','".$valorcesa."','' )");
+
+                   
+                    if(!$insertar_recaudam or !$insertar_recaudac){
+                        $error=1;
+                    }
+                    
+                }
+
+            }
+
+            if($error){
+                    $conexion->rollback();
+                }else{
+                    $conexion->commit();
+                    echo '<script type="text/javascript">swal({title: "ok", text: "Generadas cuotas con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="generarcuotasanual.php";});</script>';    
+
+                     }
+
+        }
+       ?>
         
  </body>
  <script type="text/javascript">
@@ -95,8 +162,12 @@ require_once('login/cerrar_sesion.php');
 $(document).ready(function(){
             $('#contconfig').attr("style","display:block;");
             $('#confcuotassocio').attr("style","background-color:#E75A5A;");
-
-   
+            // $('#a').click();
+            // $('#progreso').attr('style','display:none;');
+            // var bar=$('#barra');
+            // bar.empty();
+            // bar.append('7%'); 
+            // bar.attr('style','width:7%;'); 
         });
 
  </script>

@@ -12,21 +12,31 @@ require_once("fpdf/fpdf.php");
  require_once('login/conexion.php');
 
 $sqlingreso=$conexion->query("SELECT fecha,tipo_reunion from tb_reunion where id_reunion=".$id); 
+$sqlre=mysqli_fetch_array($sqlingreso);
 
 class PDF extends FPDF
 {
 	
 	function Header()
 	{
-     
-
+    $conexion = new mysqli("localhost","root","1234567890","sindicato2"); 
+     $id= $_GET['id'];
+     $sqlingreso=$conexion->query("SELECT fecha,tipo_reunion from tb_reunion where id_reunion=".$id); 
 		$this->Image('assets/img/logo.png',10,10,-900);
 		$this->Image('assets/img/logo.png',175,10,-900);
     $this->SetFont('Arial','',14);
     $this->setX(45);
     $this->MultiCell(120,7,utf8_decode('SINDICATO DE CHOEFERES PROFESIONALES DEL CANTÓN NARANJAL'),0,'C',0);
-   
-    $this->ln(20);
+    $meses=array('','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre');
+    $dias=array('Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado');
+    while($consultasocio=mysqli_fetch_array($sqlingreso)){
+    $this->setXY(45,30);
+    $this->MultiCell(120,7,'ASISTENCIA '.$consultasocio['tipo_reunion'],0,'C',0);  
+    $this->setX(45);
+    $this->MultiCell(120,7,utf8_decode('Día ').utf8_decode($dias[date('w',strtotime($consultasocio['fecha']))]).' '.date('d',strtotime($consultasocio['fecha']))." de ".$meses[date('n',strtotime($consultasocio['fecha']))]." de ". date('Y',strtotime($consultasocio['fecha'])),0,'C',0);
+    }
+
+    $this->ln(5);
 	}
 
 	function Footer()
@@ -47,15 +57,7 @@ class PDF extends FPDF
  $pdf=new PDF('P','mm','A4');
  $pdf->AliasNbPages();
  $pdf->AddPage();
- $meses=array('','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre');
-  $dias=array('Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado');
- while($consultasocio=mysqli_fetch_array($sqlingreso)){
-  $pdf->setXY(45,30);
-  $pdf->MultiCell(120,7,'ASISTENCIA '.$consultasocio['tipo_reunion'],0,'C',0);  
-  $pdf->setX(45);
-  $pdf->MultiCell(120,7,utf8_decode('Día ').utf8_decode($dias[date('w',strtotime($consultasocio['fecha']))]).' '.date('d',strtotime($consultasocio['fecha']))." de ".$meses[date('n',strtotime($consultasocio['fecha']))]." de ". date('Y',strtotime($consultasocio['fecha'])),0,'C',0);
-
-}
+ 
 
 $querysocio=$conexion->query("SELECT `tb_socio`.`id_socio`, `tb_personas`.`cedula_ruc`, `tb_personas`.`nombre`, `tb_personas`.`apellido`
 FROM `tb_personas`  INNER JOIN `tb_socio` ON `tb_socio`.`id_persona` = `tb_personas`.`id_persona` WHERE `tb_socio`.`estado`='ACTIVO' ORDER BY tb_personas.apellido");

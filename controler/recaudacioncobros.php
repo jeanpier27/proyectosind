@@ -1,29 +1,29 @@
 <?php 
 require_once("../login/conexion.php"); 
 $id_persona=$_POST['id'];
-$consultabeneficio=$conexion->query("SELECT fecha_ingreso FROM `tb_socio` WHERE id_persona=".$id_persona." ");
+// $consultabeneficio=$conexion->query("SELECT fecha_ingreso FROM `tb_socio` WHERE id_persona=".$id_persona." ");
 $socioinsc=$conexion->query("SELECT * FROM `tb_recaudaciones` WHERE id_persona=".$id_persona." and id_pagos_socio=1");
 $sociomen=$conexion->query("SELECT * FROM `tb_recaudaciones` WHERE id_persona=".$id_persona." and id_pagos_socio=2 and verificacion=0");
 $sociocesan=$conexion->query("SELECT * FROM `tb_recaudaciones` WHERE id_persona=".$id_persona." and id_pagos_socio=4 and verificacion=0");
 $sociocmultas=$conexion->query("SELECT * FROM `tb_recaudaciones` WHERE id_persona=".$id_persona." and id_pagos_socio=3 and verificacion=0");
 
-while($benefi=$consultabeneficio->fetch_array()){
- 		$bene=$benefi['fecha_ingreso'];
- 	}
- 	$fecha = date('Y');
-$nuevafecha = strtotime ( '-20 year' , strtotime ( $fecha ) ) ;
-$nuevafecha =  date ( 'Y' , $nuevafecha );
-$fecha_socio= date('Y',strtotime($bene));
+// while($benefi=$consultabeneficio->fetch_array()){
+//  		$bene=$benefi['fecha_ingreso'];
+//  	}
+//  	$fecha = date('Y');
+// $nuevafecha = strtotime ( '-20 year' , strtotime ( $fecha ) ) ;
+// $nuevafecha =  date ( 'Y' , $nuevafecha );
+// $fecha_socio= date('Y',strtotime($bene));
 
  while ($ins=$socioinsc->fetch_array()){ 
 
  	$insc=$ins['abonos']+$insc;
- 	$consulta1=$conexion->query("SELECT valor FROM `tb_pagos_socio` WHERE id_pagos_socio='".$ins['id_pagos_socio']."'");
+ }
+ 	$consulta1=$conexion->query("SELECT max(valor) as valor FROM `tb_recaudaciones` WHERE id_persona=".$id_persona." and id_pagos_socio=1");
  	while($consult=$consulta1->fetch_array()){
  		$val=$consult['valor'];
  	}
  	
- }
 
 
 
@@ -31,9 +31,9 @@ while($mens=$sociomen->fetch_array()){
 $totalme=$mens['valor']+$totalme;
 }
 
- if($fecha_socio<=$nuevafecha){
-	$totalme=($totalme/2);
-}
+//  if($fecha_socio<=$nuevafecha){
+// 	$totalme=($totalme/2);
+// }
 
 while($cesan=$sociocesan->fetch_array()){
 $totalcesan=$cesan['valor']+$totalcesan;
