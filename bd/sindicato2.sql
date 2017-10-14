@@ -653,7 +653,7 @@ CREATE PROCEDURE insertar_socio(
 BEGIN
 declare a float(10,2);
 declare pago_socio float(10,2);
-START TRANSACTION;
+-- START TRANSACTION;
 insert into tb_socio(id_persona,tipo_licencia,fecha_ingreso,estado,id_pagos_socio,fecha_naci,fecha_registro,observacion,beneficiario)values(id_pers,tipo_li,fecha_ingre,'ACTIVO',id_pagos_so,fecha_na,fecha_regis,'',beneficiarios);
 set pago_socio=(select valor from tb_pagos_socio where id_pagos_socio=id_pagos_so);
 INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES(id_pers,fecha_regis,'','',id_pagos_so,ingreso_n,'1','ACTIVO','',pago_socio,abono);
@@ -662,7 +662,7 @@ insert into tb_ingreso_sindicato(id_persona,id_banco,fecha,descripcion,compraban
 set a =(select saldo from tb_bancos where id_banco=id_bancos);
 update tb_bancos set saldo=a+abono where id_banco=id_bancos;
 
-COMMIT;    
+-- COMMIT;    
 
 END
 $$
