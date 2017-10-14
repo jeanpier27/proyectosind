@@ -135,8 +135,9 @@ require_once('login/cerrar_sesion.php');
                         $descripcion = $_POST['descripcion'];
                         $tipo = $_POST['tipo_usuario'];                       
                         $estado = $_POST['estado'];
+                        $acceso = $_POST['acceso'];
                        
-                        $query="update tb_usuarios set contraseña='".$descripcion."',id_tipo_usuario='".$tipo."',estado='".$estado."' where id_usuarios=".$id_per;
+                        $query="update tb_usuarios set contraseña='".$descripcion."',id_tipo_usuario='".$tipo."',estado='".$estado."', acceso='".$acceso."' where id_usuarios=".$id_per;
                         $a=$conexion->query($query);     
                         if($a){
                           echo '<script type="text/javascript">swal({title: "ok", text: "Actualizacion con exito...!", type: "success", showCancelButton: true,  confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="updateusuario.php";});</script>';   

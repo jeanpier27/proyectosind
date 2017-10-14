@@ -86,6 +86,11 @@ require_once('login/cerrar_sesion.php');
                 <div class="tile-icon full-reset"><i class="zmdi zmdi-calendar"></i></div>
                 <div class="tile-name all-tittles"><a href="asambleas.php">Registro</a></div>
                 <div class="tile-num full-reset">Asambleas</div>
+            </article><br>
+             <article class="tile">
+                <div class="tile-icon full-reset"><i class="zmdi zmdi-accounts"></i></div>
+                <div class="tile-name all-tittles"><a href="confcuotassocio.php" id="addsocio">Socios</a></div>
+                <div class="tile-num full-reset">Cuotas</div>
             </article>
            
            <!--  <article class="tile">
