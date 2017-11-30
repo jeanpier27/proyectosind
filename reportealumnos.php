@@ -128,7 +128,7 @@ require_once('login/cerrar_sesion.php');
                               // $Id_cur = isset($_REQUEST["cur"]) ? $_REQUEST["cur"]: 0;
                               // $Jor = isset($_REQUEST["jor"]) ? $_REQUEST["jor"]: "";
 
-                              $sqlestudiante=$conexion->query("select `tb_estudiantes`.`id_estudiante`, `tb_personas`.`apellido`, `tb_personas`.`nombre`, `tb_estudiantes`.`horario`, `tb_estudiantes`.`id_curso`, `tb_curso`.`curso`, `tb_estudiantes`.`estado`, `tb_estudiantes`.`observacion`,`tb_estudiantes`.`estado` FROM `tb_personas` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_persona` = `tb_personas`.`id_persona` inner JOIN `tb_curso` ON `tb_estudiantes`.`id_curso` = `tb_curso`.`id_curso` WHERE tb_estudiantes.id_promocion='".$Promo."' ");
+                              $sqlestudiante=$conexion->query("select `tb_estudiantes`.`id_estudiante`, `tb_personas`.`apellido`, `tb_personas`.`nombre`, `tb_estudiantes`.`horario`, `tb_estudiantes`.`id_curso`, `tb_curso`.`curso`, `tb_estudiantes`.`estado`, `tb_estudiantes`.`observacion`,`tb_estudiantes`.`estado` FROM `tb_personas` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_persona` = `tb_personas`.`id_persona` inner JOIN `tb_curso` ON `tb_estudiantes`.`id_curso` = `tb_curso`.`id_curso` WHERE tb_estudiantes.id_promocion='".$Promo."' order by `tb_personas`.`apellido` asc");
 
                                // $numero_estudiantes = mysqli_num_rows($sqlestudiante);
                                

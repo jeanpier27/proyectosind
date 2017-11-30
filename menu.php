@@ -9,7 +9,7 @@
                  <ul class="list-unstyled selectable" id="contsocio">
                 <li><a href="socios.php" id="socio"><i class="zmdi zmdi-balance zmdi-hc-fw"></i>&nbsp;&nbsp; Socios</a></li>
                 <li><a href="vehiculos.php" id="vehiculo"><i class="zmdi zmdi-truck zmdi-hc-fw"></i>&nbsp;&nbsp; Vehículos</a></li> 
-                <li><a href="beneficio.php" id="alquiler"><i class="zmdi zmdi-assignment-account zmdi-hc-fw"></i>&nbsp;&nbsp;  Beneficios</a></li>
+                <!-- <li><a href="beneficio.php" id="alquiler"><i class="zmdi zmdi-assignment-account zmdi-hc-fw"></i>&nbsp;&nbsp;  Beneficios</a></li> -->
                
          <li><a href="recursoshumanos.php" id="rh"><i class="zmdi zmdi-assignment-account zmdi-hc-fw"></i>&nbsp;&nbsp; Recursos humanos</a></li>
                 </ul>

@@ -543,3 +543,14 @@ input.material-control:focus ~ .highlight {
     .form-container{ width: 370px; }
     .navbar-lateral{ display: inherit !important; }
 }
+
+
+/*contenedor para las cuentas contables*/
+
+/*#contenedor_cta{
+    height: 50%;
+    weight:50%;
+    position: absolute;
+    top:30px;
+    background: yellow;
+}*/

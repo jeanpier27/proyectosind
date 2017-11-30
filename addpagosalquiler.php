@@ -828,6 +828,8 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                   $valdescuento=$_POST['descuento'];
                   $estado=$_POST['estado'];
                   $garantia=$_POST['garantia'];
+                  $fecha=date('Y-m-d H:i:s');
+                  $observaciontotal='('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
                   if($garantia>0){
                     $garantia=1;
                   }else{
@@ -839,16 +841,16 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                     $descuento=0;
                   }
                   if($bien==1){
-                    $id_plan_cu=61;
+                    $id_plan_cu="410210";
                   }
                   if($bien==2){
-                    $id_plan_cu=69;
+                    $id_plan_cu="410218";
                   }
                   if($bien==3){
-                    $id_plan_cu=66;
+                    $id_plan_cu="410215";
                   }
                   if($bien==4){
-                    $id_plan_cu=64;
+                    $id_plan_cu="410214";
                   }
                     $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
                 $respcom=mysqli_fetch_array($sqlcompro);
@@ -868,7 +870,7 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
                         }
                   }
             
-                  $consulta2 = "call insertar_pagos_alquiler(".$id_per.",'".$comprobante_ingreso."', ".$Id_banco.", '".$Fecha."', '".$Descripcion."','".$Comprobante_banco."',   ".$Saldo.", '".$idalq."','".$id_plan_cu."','".$bienes."')";    
+                  $consulta2 = "call insertar_pagos_alquiler(".$id_per.",'".$comprobante_ingreso."', ".$Id_banco.", '".$Fecha."', '".$Descripcion."','".$Comprobante_banco."',   ".$Saldo.", '".$idalq."','".$id_plan_cu."','".$bienes."','".$observaciontotal."')";    
                   $ingreso2 = mysqli_query($conexion,$consulta2);
                   if($ingreso2){
                      header('location: addpagosalquiler.php?msg=yes&ingreso='.$comprobante_ingreso);
@@ -879,7 +881,7 @@ box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
 
 
                   }  else{
-                echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante socio!", "error")</script>'; 
+                echo '<script type="text/javascript">swal("Error!", "Ya se encuentra registrado ese comprobante!", "error")</script>'; 
             }
 
                

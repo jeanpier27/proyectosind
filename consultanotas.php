@@ -182,7 +182,7 @@ if($Promo!=0 and $Jor!="" and $paralelo!=0){
   $resultid=mysqli_fetch_array($consulidasignaturadocente);
 
 // $consulidasignaturadocente=$conexion->query("select id_asignatura_docente where id_promocion='".$Promo."' and horario='".$jor."' and id_curso='".$paralelo."'");
-$consultnotas=$conexion->query("SELECT `tb_personas`.`nombre`, `tb_personas`.`apellido`, `tb_estudiantes`.`id_estudiante`, `tb_notas`.`nota`, `tb_asignatura_docente`.`id_asignatura_docente` FROM `tb_personas` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_persona` = `tb_personas`.`id_persona` inner JOIN `tb_notas` ON `tb_notas`.`id_estudiante` = `tb_estudiantes`.`id_estudiante` inner JOIN `tb_asignatura_docente` ON `tb_notas`.`id_asignatura_docente` = `tb_asignatura_docente`.`id_asignatura_docente` where tb_asignatura_docente.id_promocion='".$Promo."' and tb_asignatura_docente.horario='".$Jor."' and tb_asignatura_docente.id_curso='".$paralelo."' group by `tb_estudiantes`.`id_estudiante`");
+$consultnotas=$conexion->query("SELECT `tb_personas`.`nombre`, `tb_personas`.`apellido`, `tb_estudiantes`.`id_estudiante`, `tb_notas`.`nota`, `tb_asignatura_docente`.`id_asignatura_docente` FROM `tb_personas` inner JOIN `tb_estudiantes` ON `tb_estudiantes`.`id_persona` = `tb_personas`.`id_persona` inner JOIN `tb_notas` ON `tb_notas`.`id_estudiante` = `tb_estudiantes`.`id_estudiante` inner JOIN `tb_asignatura_docente` ON `tb_notas`.`id_asignatura_docente` = `tb_asignatura_docente`.`id_asignatura_docente` where tb_asignatura_docente.id_promocion='".$Promo."' and tb_asignatura_docente.horario='".$Jor."' and tb_asignatura_docente.id_curso='".$paralelo."' group by `tb_estudiantes`.`id_estudiante` order by `tb_personas`.`apellido` ASC");
 
 // if(isset($_GET['consultar'])){ 
 

@@ -147,6 +147,26 @@ require_once('login/cerrar_sesion.php');
 
                             </div> 
 
+
+                             <div class="group-material">
+                                <center>
+                                  <span>Seleccione cuenta contable </span> <br>
+                                 
+                                    <select class="selectpicker" name="c_contable" data-live-search="true" required="">
+                                        <option selected="" disabled="">Seleccione </option>
+                                     <?php  
+                                       $sql5=mysqli_query($conexion,"SELECT * FROM `tb_plan_subcuentas`");
+                                       while($row=$sql5->fetch_array()){ ?>
+
+                                        <option value="<?php echo $row['id_plan_subcuentas']; ?>"><?php echo ($row['descripcion']); ?></option>
+                                         <?php  
+                                      }
+                                      ?>
+                                    </select>
+                                </center>
+                              </div>
+
+
                             <?php 
                             // require_once("login/conexion.php"); 
 
@@ -222,6 +242,7 @@ require_once('login/cerrar_sesion.php');
                     <div >
                      <p> <h4 id="subtotal" >Subtotal: $0</h4> </p>                     
                      <p> <h4 id="ivaTotal" >IVA: 0%</h4> </p>
+                     <!-- <p> <h4 id="total">Descuento    <input type="text" id="descuento" value="0" style="border-radius: 5px;"></h4> </p> -->
                      <p> <h4 id="total">Total: $<input type="text" id="val_total" value="0" style="border: 0px;" readonly></h4> </p>
                    </div>
 
@@ -269,6 +290,7 @@ require_once('login/cerrar_sesion.php');
     $("#subtotal").append("Subtotal sin iva: $ "+ subtotal_obtenido);    
     $("#ivaTotal").empty();
     $("#ivaTotal").append("IVA: "+ iva +"%");    
+    // var des=$('#descuento').val();
     total = subtotal_obtenido + (subtotal_obtenido * iva /100);
     val_totales=total;
     $("#val_total").val(""+total.toFixed(2));
@@ -321,11 +343,14 @@ require_once('login/cerrar_sesion.php');
         var id_banco=$('input[name=id_banco]').val();
         var totalapagar=$('input[name=totalapagar]').val();
         var fecharegistro=$('input[name=fecharegistro]').val();
-        console.log(id_persona);
+        var plan_cta=$('select[name=c_contable]').val();
+        // console.log(id_persona);
         if(id_persona===null || descripcion==="" || comprobante_n===""){
           sweetAlert("Error..", "Debe rellenar todos los campos!", "warning");
         }else{
-        $.post("controler/salidaproducto.php",{cant:cant,id:id,id_persona:id_persona,descripcion:descripcion,comprobante_n:comprobante_n,deposito:deposito,id_banco:id_banco,totalapagar:totalapagar,fecharegistro:fecharegistro},function(data,status){
+          // console.log(plan_cta);
+
+        $.post("controler/salidaproducto.php",{cant:cant,id:id,id_persona:id_persona,descripcion:descripcion,comprobante_n:comprobante_n,deposito:deposito,id_banco:id_banco,totalapagar:totalapagar,fecharegistro:fecharegistro,plan_cta:plan_cta},function(data,status){
                                 // console.log(data);
                                 // console.log(status);
                                 if(data=='ok'){

@@ -277,6 +277,29 @@ require_once('login/cerrar_sesion.php');
 
                             </div> 
 
+                              <?php 
+
+                            $sql5=mysqli_query($conexion,"SELECT * FROM `tb_plan_subcuentas`");
+                        
+                            ?>
+
+                           <div class="group-material">
+                                <span>Seleccione cuenta contable </span> 
+                               
+                          <select class="selectpicker" name="c_contable" data-live-search="true" required="">
+                          <option selected="" disabled="">Seleccione </option>
+                           <?php  
+
+                             while($row=$sql5->fetch_array()){ ?>
+
+                              <option value="<?php echo $row['id_plan_subcuentas']; ?>"><?php echo ($row['descripcion']); ?></option>
+                               <?php  
+                            }
+                            ?>
+                          </select>
+
+                            </div>
+
                              <?php 
                             // require_once("login/conexion.php"); 
 
@@ -316,27 +339,39 @@ if(isset($_POST['registra'])){
     $ingreso_n=$_POST['ingreso_n'];
     $deposito=$_POST['comproante_bco'];
     $id_banco=$_POST['id_banco'];
+    $id_plan_c=$_POST['c_contable'];
+    $fecha=date('Y-m-d H:i:s');
+    $observaciontotal='('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
     $sqlcompro=$conexion->query("select 1 from tb_ingreso_escuela where comprabante_n=".$ingreso_n);
                 $respcom=mysqli_fetch_array($sqlcompro);
                 if($respcom[0]!=1){
 
-  $squery=$conexion->query("select descripcion from tb_promocion where id_promocion=".$promo);
-    $resul=mysqli_fetch_array($squery);
+  // $squery=$conexion->query("select descripcion from tb_promocion where id_promocion=".$promo);
+  //   $resul=mysqli_fetch_array($squery);
 
 
-    if(stristr($resul[0],'TIPO C')!=FALSE){
-       $id_plan_c=141;
-    }
+  //   if(stristr($resul[0],'TIPO C')!=FALSE){
+  //      $id_plan_c=141;
+  //   }
 
-    if(stristr($resul[0],'TIPO D')!=FALSE){
-      $id_plan_c=142;
-    }
+  //   if(stristr($resul[0],'TIPO D')!=FALSE){
+  //     $id_plan_c=142;
+  //   }
 
-    if(stristr($resul[0],'TIPO E')!=FALSE){
-      $id_plan_c=143;
-    }
+  //   if(stristr($resul[0],'TIPO E')!=FALSE){
+  //     $id_plan_c=143;
+  //   }
+     if (is_array($_POST['supletorio'])){ 
+          while (list($key,$valor) = each($_POST['supletorio'])) {      
+                                                                                                   
+              $consultanot = "update tb_notas set verifica_pago=1 where id_notas = ".$valor;    
+              $rescon = mysqli_query($conexion,$consultanot);
+              
+          }
+    
+      }     
 
-     $query="call insertar_pagos_estu('$id_persona','$id_est','$promo','$abono','$tipo_ingreso','$fecha_ingreso','$descripcion','$ingreso_n','$deposito','$id_banco','$id_plan_c')";
+     $query="call insertar_pagos_estu('$id_persona','$id_est','$promo','$abono','$tipo_ingreso','$fecha_ingreso','$descripcion','$ingreso_n','$deposito','$id_banco','$id_plan_c','$observaciontotal')";
         $a=$conexion->query($query);     
         if($a){
         echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="addpagosestudiantes.php?ingreso='.$ingreso_n.'";});</script>';    
@@ -359,26 +394,38 @@ if(isset($_POST['facturar'])){
     $ingreso_n=$_POST['ingreso_n'];
     $deposito=$_POST['comproante_bco'];
     $id_banco=$_POST['id_banco'];
+    $id_plan_c=$_POST['c_contable'];
+    $fecha=date('Y-m-d H:i:s');
+    $observaciontotal='('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
     $sqlcompro=$conexion->query("select 1 from tb_ingreso_escuela where comprabante_n=".$ingreso_n);
                 $respcom=mysqli_fetch_array($sqlcompro);
                 if($respcom[0]!=1){
-    $squery=$conexion->query("select descripcion from tb_promocion where id_promocion=".$promo);
-    $resul=mysqli_fetch_array($squery);
+    // $squery=$conexion->query("select descripcion from tb_promocion where id_promocion=".$promo);
+    // $resul=mysqli_fetch_array($squery);
 
 
-    if(stristr($resul[0],'TIPO C')!=FALSE){
-       $id_plan_c=141;
-    }
+    // if(stristr($resul[0],'TIPO C')!=FALSE){
+    //    $id_plan_c=141;
+    // }
 
-    if(stristr($resul[0],'TIPO D')!=FALSE){
-      $id_plan_c=142;
-    }
+    // if(stristr($resul[0],'TIPO D')!=FALSE){
+    //   $id_plan_c=142;
+    // }
 
-    if(stristr($resul[0],'TIPO E')!=FALSE){
-      $id_plan_c=143;
-    }
+    // if(stristr($resul[0],'TIPO E')!=FALSE){
+    //   $id_plan_c=143;
+    // }
+     if (is_array($_POST['supletorio'])){ 
+          while (list($key,$valor) = each($_POST['supletorio'])) {      
+                                                                                                   
+              $consultanot = "update tb_notas set verifica_pago=1 where id_notas = ".$valor;    
+              $rescon = mysqli_query($conexion,$consultanot);
+              
+          }
+    
+      }  
 
-     $query="call insertar_pagos_estu('$id_persona','$id_est','$promo','$abono','$tipo_ingreso','$fecha_ingreso','$descripcion','$ingreso_n','$deposito','$id_banco','$id_plan_c')";
+     $query="call insertar_pagos_estu('$id_persona','$id_est','$promo','$abono','$tipo_ingreso','$fecha_ingreso','$descripcion','$ingreso_n','$deposito','$id_banco','$id_plan_c','$observaciontotal')";
         $a=$conexion->query($query);     
         if($a){
         echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="facturas.php?ingreso='.$ingreso_n.'&descripcion='.$descripcion.'&persona='.$id_persona.'&subtcero='.$abono.'";});</script>';    

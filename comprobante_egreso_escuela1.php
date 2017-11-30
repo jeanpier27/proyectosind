@@ -2,7 +2,7 @@
 $id= $_GET['id'];
 require_once("fpdf/fpdf.php");
  require_once('login/conexion.php');
-$sqlingreso=$conexion->query("SELECT tb_egreso_escuela.*,tb_proveedores.nombres,tb_bancos.n_cuenta,tb_bancos.banco, tb_plan_cuentas.descripcion as des FROM `tb_egreso_escuela` inner join tb_proveedores on tb_egreso_escuela.id_proveedor=tb_proveedores.id_proveedores inner join tb_bancos on tb_egreso_escuela.id_banco=tb_bancos.id_banco inner join tb_plan_cuentas on tb_egreso_escuela.id_plan_cuentas=tb_plan_cuentas.id_plan_cuentas where tb_egreso_escuela.comprabante_n=".$id); 
+$sqlingreso=$conexion->query("SELECT tb_egreso_escuela.*,tb_proveedores.nombres,tb_bancos.n_cuenta,tb_bancos.banco, tb_plan_subcuentas.descripcion as des FROM `tb_egreso_escuela` inner join tb_proveedores on tb_egreso_escuela.id_proveedor=tb_proveedores.id_proveedores inner join tb_bancos on tb_egreso_escuela.id_banco=tb_bancos.id_banco inner join tb_plan_subcuentas on tb_egreso_escuela.id_plan_subcuentas=tb_plan_subcuentas.id_plan_subcuentas where tb_egreso_escuela.comprabante_n=".$id); 
 require_once('prueba2.php');
  $pdf=new FPDF('P','mm','A4');
  $pdf->AddPage();

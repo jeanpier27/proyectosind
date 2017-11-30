@@ -84,25 +84,47 @@ require_once('login/cerrar_sesion.php');
                             $c_contable=$_POST['c_contable'];
                             $fecha=$_POST['fecha_registro'];
                             $cheque=$_POST['cheque'];
-                            
-                            if(isset($_POST['id_factu'])){
-                            foreach ($_POST['id_factu'] as $value) {
-                              $updatefactura="update tb_facturasxcobrar set estado='PAGADO' where id_facturasxcobrar=".$_POST['id_factu'][$value];
-                                $u=$conexion->query($updatefactura);
-                              $insertdetalle="insert into tb_detalle_egreso_sindi (comp_egreso_sindicato,id_facturasxcobrar) values('".$comp_egre."','".$_POST['id_factu'][$value]."')";
-                              $d=$conexion->query($insertdetalle);
-                              }
-                              }
+                            $fecha1=date('Y-m-d H:i:s');
+                            $observaciontotal='('.$fecha1.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
 
-                              $updatebanco="update tb_bancos set saldo=saldo-$v_egreso where id_banco=".$id_banco;
-                              $banc=$conexion->query($updatebanco);
 
-                            $insertegre="insert into tb_egreso_sindicato (id_proveedor,id_banco,id_plan_cuentas,fecha,descripcion,comprabante_n,cheque,saldo,observacion,estado)values('".$id_proveed."','".$id_banco."','".$c_contable."','".$fecha."','".$descripcion."','".$comp_egre."','".$cheque."','".$v_egreso."','','ACTIVO')";
-                            $g=$conexion->query($insertegre);
-                            if($g){
-                                 echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="egreso_sindicato.php?egreso='.$comp_egre.'";});</script>'; 
+                            if($comp_egre=="" or $cheque=="" or $c_contable==""){
+                                 echo '<script type="text/javascript">swal({title: "error", text: "Revisar el numero de comprobante o cheque porque ya se encuentra registrado!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="egreso_sindicato.php";});</script>'; 
+
                             }else{
-                                echo '<script type="text/javascript">swal("Error !", "No se guardaron los registros!", "error")</script>';
+
+                            $consultegreso=$conexion->query("select 1 from tb_egreso_sindicato where comprabante_n='".$comp_egre."'");
+                            $resegreso=mysqli_fetch_array($consultegreso);
+
+                            $consulcheque=$conexion->query("select 1 from tb_egreso_sindicato where cheque='".$cheque."'");
+                            $rescheque=mysqli_fetch_array($consulcheque);
+
+                            if($resegreso[0] or $rescheque[0]){
+                               echo '<script type="text/javascript">swal({title: "error", text: "Revisar el numero de comprobante o cheque porque ya se encuentra registrado!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="egreso_sindicato.php";});</script>'; 
+                            }else{
+
+                            
+                                  if(isset($_POST['id_factu'])){
+                                  foreach ($_POST['id_factu'] as $value) {
+                                    $updatefactura="update tb_facturasxcobrar set estado='PAGADO' where id_facturasxcobrar=".$_POST['id_factu'][$value];
+                                      $u=$conexion->query($updatefactura);
+                                    $insertdetalle="insert into tb_detalle_egreso_sindi (comp_egreso_sindicato,id_facturasxcobrar) values('".$comp_egre."','".$_POST['id_factu'][$value]."')";
+                                    $d=$conexion->query($insertdetalle);
+                                    }
+                                    }
+
+                                    $updatebanco="update tb_bancos set saldo=saldo-$v_egreso where id_banco=".$id_banco;
+                                    $banc=$conexion->query($updatebanco);
+
+                                  $insertegre="insert into tb_egreso_sindicato (id_proveedor,id_banco,id_plan_subcuentas,fecha,descripcion,comprabante_n,cheque,saldo,observacion,estado)values('".$id_proveed."','".$id_banco."','".$c_contable."','".$fecha."','".$descripcion."','".$comp_egre."','".$cheque."','".$v_egreso."','".$observaciontotal."','ACTIVO')";
+
+                                  $g=$conexion->query($insertegre);
+                                  if($g){
+                                       echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="egreso_sindicato.php?egreso='.$comp_egre.'";});</script>'; 
+                                  }else{
+                                      echo '<script type="text/javascript">swal("Error !", "No se guardaron los registros!", "error")</script>';
+                                  }
+                              }
                             }
 
                         }
@@ -197,8 +219,12 @@ exit;
                             </div>
 
                             <div class="group-material">
+                              <?php 
+                                $consul=$conexion->query("select max(comprabante_n) as egreso from tb_egreso_sindicato");
+                                $resulegreso=mysqli_fetch_array($consul);
+                               ?>
                                 
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Egreso N.-" maxlength="10" name="egreso_n" required value="" >
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Comprobante de Egreso N.-" placeholder="<?php echo $resulegreso[0]; ?>" maxlength="10" name="egreso_n" required value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Comprobante de Egreso N.-</label>
@@ -206,8 +232,12 @@ exit;
                             </div> 
 
                             <div class="group-material">
+                              <?php 
+                                $consult=$conexion->query("select max(cheque) as cheque from tb_egreso_sindicato");
+                                $resulcheque=mysqli_fetch_array($consult);
+                               ?>
                                 
-                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Cheque N.-" maxlength="10" name="cheque" required value="" >
+                                <input type="text" class="tooltips-general material-control numero"  data-toggle="tooltip" data-placement="top" title="Cheque N.-" maxlength="10" placeholder="<?php echo $resulcheque[0]; ?>" name="cheque" required value="" >
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label>Cheque N.-</label>
@@ -217,7 +247,7 @@ exit;
                             <?php 
                             // require_once("login/conexion.php"); 
 
-                            $sql5=mysqli_query($conexion,"SELECT * FROM `tb_plan_cuentas`");
+                            $sql5=mysqli_query($conexion,"SELECT * FROM `tb_plan_subcuentas`");
                         
                             ?>
 
@@ -230,7 +260,7 @@ exit;
 
                              while($row=$sql5->fetch_array()){ ?>
 
-                              <option value="<?php echo $row['id_plan_cuentas']; ?>"><?php echo ($row['descripcion']); ?></option>
+                              <option value="<?php echo $row['id_plan_subcuentas']; ?>"><?php echo ($row['descripcion']); ?></option>
                                <?php  
                             }
                             ?>

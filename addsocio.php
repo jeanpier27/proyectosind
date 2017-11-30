@@ -36,7 +36,9 @@ require_once('login/cerrar_sesion.php');
                 $comproante_bco = $_POST['comproante_bco'];
                 $id_banco = $_POST['id_banco'];
                 $beneficiario = $_POST['beneficiario'];
-                $pla_cuent=70;
+                $pla_cuent="410219";
+                $fecha=date('Y-m-d H:i:s');
+                $observaciontotal='('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
 
                 $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
                 $respcom=mysqli_fetch_array($sqlcompro);
@@ -47,7 +49,7 @@ require_once('login/cerrar_sesion.php');
 
                     if($update){
 
-        $query="call insertar_socio('$id_per','$tipo_licenciansocio','$fecha_naci','$fecha_ingreso','$valor','$abono', '$fecha_registro','$descripcion','$ingreso_n','$comproante_bco','$id_banco','$beneficiario','$pla_cuent')";
+        $query="call insertar_socio('$id_per','$tipo_licenciansocio','$fecha_naci','$fecha_ingreso','$valor','$abono', '$fecha_registro','$descripcion','$ingreso_n','$comproante_bco','$id_banco','$beneficiario','$pla_cuent','$observaciontotal')";
         $a=$conexion->query($query);     
         if($a){
             $sqlsocio=$conexion->query("select id_persona,fecha_ingreso from tb_socio where id_persona ='".$id_per."'"); 
@@ -76,13 +78,15 @@ require_once('login/cerrar_sesion.php');
                         $insertar_recaudam=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$consult['id_persona']."','".$consult['fecha_ingreso']."','".$añoactual."','".$i."','".$mensua."','','0','ACTIVO','','".$valormens."','' )");
 
                         $insertar_recaudac=$conexion->query("INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES('".$consult['id_persona']."','".$consult['fecha_ingreso']."','".$añoactual."','".$i."','".$cesan."','','0','ACTIVO','','".$valorcesa."','' )");
-
-                    }
-
-                    if(!$insertar_recaudam or !$insertar_recaudac){
-                        $error=1;
-                    }
+                        
+                        if(!$insertar_recaudam or !$insertar_recaudac){
+                            $error=1;
+                        }
                     
+
+                    }
+
+                   
                 }
               
 
@@ -101,6 +105,7 @@ require_once('login/cerrar_sesion.php');
 
             if($error){
                     $conexion->rollback();
+                    echo '<script type="text/javascript">swal({title: "error", text: "Error al guardar!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="addsocio.php?error";});</script>';   
                 }else{
                     $conexion->commit();
                     echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="addsocio.php?ingreso='.$ingreso_n.'";});</script>';    

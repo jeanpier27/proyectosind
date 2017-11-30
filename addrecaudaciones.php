@@ -486,6 +486,8 @@ $id_per=$_GET['nombres'];
                   $Comprobante_banco=$_POST['comproante_bco'];
                   $Saldo=$_POST['abono'];                  
                   $Estado="ACTIVO";
+                  $fecha=date('Y-m-d H:i:s');
+                  $observaciontotal='('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
 
                   $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
                 $respcom=mysqli_fetch_array($sqlcompro);
@@ -495,19 +497,19 @@ $id_per=$_GET['nombres'];
                   $ingreso3 = mysqli_query($conexion,$consulta3);
 
                   if(isset($_GET['INSCRIPCION'])){
-                    $id_plan_c=70;
+                    $id_plan_c="410219";
                   }
                   if(isset($_GET['MENSUALIDADES'])){
-                    $id_plan_c=71;
+                    $id_plan_c="410220";
                   }
                   if(isset($_GET['CESANTIA'])){
-                    $id_plan_c=48;
+                    $id_plan_c="410221";
                   }
                   if(isset($_GET['MULTA'])){
-                    $id_plan_c=75;
+                    $id_plan_c="410224";
                   }
 
-                  $consulta2 = "insert into tb_ingreso_sindicato (id_persona, id_banco, fecha, descripcion, comprabante_n, comprabante_banco, saldo, estado,id_plan_cuentas) values (".$id_per.", ".$Id_banco.", '".$Fecha."', '".$Descripcion."', '".$comprobante_ingreso."', '".$Comprobante_banco."', ".$Saldo.", '".$Estado."','".$id_plan_c."')";    
+                  $consulta2 = "insert into tb_ingreso_sindicato (id_persona, id_banco, fecha, descripcion, comprabante_n, comprabante_banco, saldo, observacion, estado,id_plan_subcuentas) values (".$id_per.", ".$Id_banco.", '".$Fecha."', '".$Descripcion."', '".$comprobante_ingreso."', '".$Comprobante_banco."', ".$Saldo.",'".$observaciontotal."', '".$Estado."','".$id_plan_c."')";    
                   $ingreso2 = mysqli_query($conexion,$consulta2);
                    
                    if(isset($_GET['INSCRIPCION'])){

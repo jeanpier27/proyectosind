@@ -5,10 +5,6 @@ require_once('login/cerrar_sesion.php');
 }
  ?>
 
-
-
-
-
  <!DOCTYPE html>
  <html>
  <head>
@@ -161,6 +157,8 @@ require_once('login/cerrar_sesion.php');
                                 </tr>
                               </table>
                       </div>
+
+                             
 
 
                     <p class="text-center">

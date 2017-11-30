@@ -32,11 +32,13 @@ require_once('login/cerrar_sesion.php');
                 $comproante_bco = $_POST['comproante_bco'];
                 $id_banco = $_POST['id_banco'];
                 $c_contable = $_POST['c_contable'];
- $sqlcompro=$conexion->query("select 1 from tb_ingreso_escuela where comprabante_n=".$ingreso_n);
+                $fecha=date('Y-m-d H:i:s');
+                $observaciontotal='('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
+                $sqlcompro=$conexion->query("select 1 from tb_ingreso_escuela where comprabante_n=".$ingreso_n);
                 $respcom=mysqli_fetch_array($sqlcompro);
                 if($respcom[0]!=1){
            
-        $query="insert into tb_ingreso_escuela(id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado)values('".$id_per."','".$id_banco."','".$fecha_registro."','".$descripcion."','".$ingreso_n."','".$comproante_bco."','".$abono."','','ACTIVO','".$c_contable."')";
+        $query="insert into tb_ingreso_escuela(id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado,id_plan_subcuentas)values('".$id_per."','".$id_banco."','".$fecha_registro."','".$descripcion."','".$ingreso_n."','".$comproante_bco."','".$abono."','".$observaciontotal."','ACTIVO','".$c_contable."')";
         $a=$conexion->query($query);     
         if($a){
         echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="ingreso_escuela.php?ingreso='.$ingreso_n.'";});</script>';    
@@ -183,10 +185,10 @@ require_once('login/cerrar_sesion.php');
                           <select class="selectpicker" name="c_contable" data-live-search="true" required="">
                           <option selected="" disabled="">Seleccione </option>
                            <?php  
-                             $sql5=mysqli_query($conexion,"SELECT * FROM `tb_plan_cuentas`");
+                             $sql5=mysqli_query($conexion,"SELECT * FROM `tb_plan_subcuentas`");
                              while($row=$sql5->fetch_array()){ ?>
 
-                              <option value="<?php echo $row['id_plan_cuentas']; ?>"><?php echo ($row['descripcion']); ?></option>
+                              <option value="<?php echo $row['id_plan_subcuentas']; ?>"><?php echo ($row['descripcion']); ?></option>
                                <?php  
                             }
                             ?>

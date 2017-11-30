@@ -264,8 +264,10 @@ if(isset($_POST['registra'])){
     $subtotal_cero=$_POST['subtotal_cero'];
     $descuento=$_POST['descuento'];
     $ivas=$_POST['iva'];
+    $fecha=date('Y-m-d H:i:s');
+    $observaciontotal='('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
 
-    $resultins=$conexion->query("insert into tb_factura (id_persona,n_factura,fecha,descripcion,subtotal,subtotalcero,descuento,iva,observacion,estado)values('".$id_proveedor."','".$n_fact_nv."','".$fecha_factu1."','".$descripcion."','".$subtotal."','".$subtotal_cero."','".$descuento."','".$ivas."','','ACTIVO')");
+    $resultins=$conexion->query("insert into tb_factura (id_persona,n_factura,fecha,descripcion,subtotal,subtotalcero,descuento,iva,observacion,estado)values('".$id_proveedor."','".$n_fact_nv."','".$fecha_factu1."','".$descripcion."','".$subtotal."','".$subtotal_cero."','".$descuento."','".$ivas."','".$observaciontotal."','ACTIVO')");
      
              if($resultins){
                         header('location: facturas.php?msg=yes&fact='.$n_fact_nv);

@@ -71,20 +71,16 @@ insert into tb_usuarios (id_persona,contraseña,id_tipo_usuario,estado) values(1
     foreign key(id_persona) references tb_personas (id_persona)
     );
 
-  CREATE TABLE tb_plan_cuentas (
-    id_plan_cuentas int primary key AUTO_INCREMENT ,
-    codigo varchar(50),
-    descripcion text NOT NULL,
-    saldo float(10,2),
-    observacion text
+  CREATE TABLE tb_plan_cuenta (
+    id_plan_cuenta varchar(40) primary key,
+    descripcion text NOT NULL
     );
 
-   CREATE TABLE tb_plan_cuentas_ingre (
-    id_plan_cuentas int primary key AUTO_INCREMENT ,
-    codigo varchar(50),
+   CREATE TABLE tb_plan_subcuentas (
+    id_plan_subcuentas varchar(40) primary key ,
+    id_plan_cuenta varchar(40),
     descripcion text NOT NULL,
-    saldo float(10,2),
-    observacion text
+    foreign key(id_plan_cuenta) references tb_plan_cuenta (id_plan_cuenta)
     );
 
    create table tb_marca(
@@ -289,8 +285,10 @@ create table tb_ingreso_escuela(
   saldo float(10,2),
   observacion text,
   estado varchar(10),
+  id_plan_subcuentas varchar(40),
   foreign key(id_banco) references tb_bancos (id_banco),
-  foreign key(id_persona) references tb_personas (id_persona)
+  foreign key(id_persona) references tb_personas (id_persona),
+  foreign key(id_plan_subcuentas) references tb_plan_subcuentas (id_plan_subcuentas)
 );
 
 create table tb_ingreso_sindicato(
@@ -304,15 +302,16 @@ create table tb_ingreso_sindicato(
   saldo float(10,2),
   observacion text,
   estado varchar(10),
+  id_plan_subcuentas varchar(40),
   foreign key(id_banco) references tb_bancos (id_banco),
-  foreign key(id_persona) references tb_personas (id_persona)
+  foreign key(id_persona) references tb_personas (id_persona),
+  foreign key(id_plan_subcuentas) references tb_plan_subcuentas (id_plan_subcuentas)
 );
 
 create table tb_egreso_escuela(
   id_egreso_escuela int primary key AUTO_INCREMENT,
   id_proveedor int,
   id_banco int,
-  id_plan_cuentas int,
   fecha date,
   descripcion text,
   comprabante_n int,
@@ -648,7 +647,8 @@ CREATE PROCEDURE insertar_socio(
            IN comprobante_bco varchar(20),
            IN id_bancos int,
            IN beneficiarios text,
-           IN plan_cuent int
+           IN plan_cuent varchar(40),
+           IN observaciont text
          )
 BEGIN
 declare a float(10,2);
@@ -658,7 +658,7 @@ insert into tb_socio(id_persona,tipo_licencia,fecha_ingreso,estado,id_pagos_soci
 set pago_socio=(select valor from tb_pagos_socio where id_pagos_socio=id_pagos_so);
 INSERT INTO tb_recaudaciones(id_persona, fecha, año,mes, id_pagos_socio, comprabante_n, verificacion, estado,observacion,valor,abonos)VALUES(id_pers,fecha_regis,'','',id_pagos_so,ingreso_n,'1','ACTIVO','',pago_socio,abono);
 
-insert into tb_ingreso_sindicato(id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado,id_plan_cuentas)values(id_pers,id_bancos,fecha_regis,descripcion,ingreso_n,comprobante_bco,abono,'','ACTIVO',plan_cuent);
+insert into tb_ingreso_sindicato(id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado,id_plan_subcuentas)values(id_pers,id_bancos,fecha_regis,descripcion,ingreso_n,comprobante_bco,abono,observaciont,'ACTIVO',plan_cuent);
 set a =(select saldo from tb_bancos where id_banco=id_bancos);
 update tb_bancos set saldo=a+abono where id_banco=id_bancos;
 
@@ -854,8 +854,9 @@ CREATE PROCEDURE insertar_pagos_alquiler(
            IN deposito varchar(50),
            IN saldos float(10,2),
            IN id_alqui int,
-           IN id_plan_c int,
-           IN id_bien int
+           IN id_plan_c varchar(40),
+           IN id_bien int,
+           IN observaciont text
 
          )
 BEGIN
@@ -873,7 +874,7 @@ update tb_alquiler set estado='PAGADO' where id_alquiler=id_alqui;
     update tb_alquiler set estadogarantia='DEVUELTO' where id_alquiler=id_alqui;
   end if;
 end if;
-insert into tb_ingreso_sindicato (id_persona, id_banco, fecha, descripcion, comprabante_n, comprabante_banco, saldo, estado,id_plan_cuentas) values (id_per, Id_banco, Fechas,Descripcion, comprobante_ingreso, deposito, saldos,'ACTIVO',id_plan_c );
+insert into tb_ingreso_sindicato (id_persona, id_banco, fecha, descripcion, comprabante_n, comprabante_banco, saldo,observacion, estado,id_plan_subcuentas) values (id_per, Id_banco, Fechas,Descripcion, comprobante_ingreso, deposito, saldos,observaciont,'ACTIVO',id_plan_c );
 insert into tb_alquiler_pagos (saldo,comprobante_ingre,id_alquiler,estado) values(saldos,comprobante_ingreso,id_alqui,'ACTIVO');
 COMMIT;    
 
@@ -895,12 +896,13 @@ CREATE PROCEDURE insertar_pagos_estu(
            IN ingreso_n int, 
            IN comprobante_bco varchar(20),
            IN id_bancos int,
-           IN id_plan_c int
+           IN id_plan_c varchar(40),
+           IN observaciont text
          )
 BEGIN
 declare a int;
 START TRANSACTION;
-insert into tb_ingreso_escuela(id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado,id_plan_cuentas)values(id_pers,id_bancos,fecha_ingre,descripcion,ingreso_n,comprobante_bco,valor,'','ACTIVO',id_plan_c);
+insert into tb_ingreso_escuela(id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado,id_plan_subcuentas)values(id_pers,id_bancos,fecha_ingre,descripcion,ingreso_n,comprobante_bco,valor,observaciont,'ACTIVO',id_plan_c);
 set a =(select id_ingreso_escuela from tb_ingreso_escuela where comprabante_n=ingreso_n);
 
 insert into tb_detalle_estudiante_pago(id_estudiante,descripcion,fecha,id_ingreso_escuela,factura,estado,observacion)values(id_estudi,tipo_ingreso,fecha_ingre,a,'','ACTIVO','');

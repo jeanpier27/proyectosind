@@ -9,6 +9,7 @@ $deposito=$_POST['deposito'];
 $id_banco=$_POST['id_banco'];
 $totalapagar=$_POST['totalapagar'];
 $fecha=$_POST['fecharegistro'];
+$plan_cta=$_POST['plan_cta'];
 $count=0;
 $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
                 $respcom=mysqli_fetch_array($sqlcompro);
@@ -34,7 +35,7 @@ $count=$count+1;
 }
 if($resul=='ok'){
 
-$insert="insert into tb_ingreso_sindicato(id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado)values('".$id_persona."','".$id_banco."','".$fecha."','".$descripcion."','".$comprobante_n."','".$deposito."','".$totalapagar."','','ACTIVO')";
+$insert="insert into tb_ingreso_sindicato(id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado,id_plan_subcuentas)values('".$id_persona."','".$id_banco."','".$fecha."','".$descripcion."','".$comprobante_n."','".$deposito."','".$totalapagar."','','ACTIVO','".$plan_cta."')";
 $b=$conexion->query($insert); 
 if($b){
           echo 'ok';  

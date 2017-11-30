@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
+     <link rel="stylesheet" href="css/highcharts.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
     <link rel="stylesheet" href="css/login.css"/>
@@ -60,8 +61,15 @@
       <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
 
  <script src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
-
+<!-- 
  <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/data.js"></script>
     <script src="https://code.highcharts.com/modules/drilldown.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script> -->
+
+    <script src="js/highcharts.js"></script>
+<script src="js/code/highcharts-3d.js"></script>
+<script src="js/exporting.js"></script>
+
+<script src="js/data.js"></script>
+<script src="js/drilldown.js"></script>

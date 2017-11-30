@@ -276,10 +276,14 @@ require_once('login/cerrar_sesion.php');
                             </div>
 
                             <h3>RETENCION</h3>
-
+                            <?php 
+                                $consul=$conexion->query("select max(n_retenc)as retencion from tb_facturasxcobrar");
+                                $resp=mysqli_fetch_array($consul);
+                             ?>
+                                
                             <div class="group-material">
                                 
-                                <input type="text" class="material-control numero" id="n_retencion" onkeyup="javascript:this.value=this.value.toUpperCase();activar();"  onkeyup="activar();"  name="numero_ret" required maxlength="10">
+                                <input type="text" class="material-control numero" id="n_retencion" onkeyup="javascript:this.value=this.value.toUpperCase();activar();" placeholder="<?php echo $resp[0]; ?>"  onkeyup="activar();"  name="numero_ret" required maxlength="10">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label >N.- Retencion</label>

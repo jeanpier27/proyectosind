@@ -93,7 +93,7 @@ if(isset($_GET['consultar'])){
 $fecha=$_GET['fecha_consulta'];
 $fecha1=substr($fecha, 0, -13);
 $fecha2=substr($fecha, 13);
-    $sqlsocio=$conexion->query("SELECT sum(tb_ingreso_escuela.saldo)as valor,tb_plan_cuentas.descripcion FROM `tb_ingreso_escuela` inner join tb_plan_cuentas on tb_ingreso_escuela.id_plan_cuentas=tb_plan_cuentas.id_plan_cuentas where tb_ingreso_escuela.fecha>='".$fecha1."' and tb_ingreso_escuela.fecha<='".$fecha2."' GROUP by tb_ingreso_escuela.id_plan_cuentas"); 
+    $sqlsocio=$conexion->query("SELECT sum(tb_ingreso_escuela.saldo)as valor,tb_plan_subcuentas.descripcion FROM `tb_ingreso_escuela` inner join tb_plan_subcuentas on tb_ingreso_escuela.id_plan_subcuentas=tb_plan_subcuentas.id_plan_subcuentas where tb_ingreso_escuela.fecha>='".$fecha1."' and tb_ingreso_escuela.fecha<='".$fecha2."' GROUP by tb_ingreso_escuela.id_plan_subcuentas"); 
 
  
     ?>  
@@ -192,7 +192,7 @@ $fecha2=substr($fecha, 13);
                               <tbody>
                               <?php 
                               
-                              $sqlegreso=$conexion->query("SELECT sum(tb_egreso_escuela.saldo)as valor,tb_plan_cuentas.descripcion FROM `tb_egreso_escuela` inner join tb_plan_cuentas on tb_egreso_escuela.id_plan_cuentas=tb_plan_cuentas.id_plan_cuentas where tb_egreso_escuela.fecha>='".$fecha1."' and tb_egreso_escuela.fecha<='".$fecha2."' GROUP by tb_egreso_escuela.id_plan_cuentas");
+                              $sqlegreso=$conexion->query("SELECT sum(tb_egreso_escuela.saldo)as valor,tb_plan_subcuentas.descripcion FROM `tb_egreso_escuela` inner join tb_plan_subcuentas on tb_egreso_escuela.id_plan_subcuentas=tb_plan_subcuentas.id_plan_subcuentas where tb_egreso_escuela.fecha>='".$fecha1."' and tb_egreso_escuela.fecha<='".$fecha2."' GROUP by tb_egreso_escuela.id_plan_subcuentas");
                                 while($consultasoci=mysqli_fetch_array($sqlegreso)){
                                ?>
 

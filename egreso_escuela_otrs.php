@@ -84,6 +84,8 @@ require_once('login/cerrar_sesion.php');
                             $c_contable=$_POST['c_contable'];
                             $fecha=$_POST['fecha_registro'];
                             $cheque=$_POST['cheque'];
+                            $fecha1=date('Y-m-d H:i:s');
+                            $observaciontotal='('.$fecha1.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
                             
 
                             // foreach ($_POST['id_factu'] as $value) {
@@ -93,17 +95,25 @@ require_once('login/cerrar_sesion.php');
                             //   $d=$conexion->query($insertdetalle);
                             //   }
 
-                              $updatebanco="update tb_bancos set saldo=saldo-$v_egreso where id_banco=".$id_banco;
-                              $banc=$conexion->query($updatebanco);
-
-                            $insertegre="insert into tb_egreso_escuela (id_proveedor,id_banco,id_plan_cuentas,fecha,descripcion,comprabante_n,cheque,saldo,observacion,estado)values('".$id_proveed."','".$id_banco."','".$c_contable."','".$fecha."','".$descripcion."','".$comp_egre."','".$cheque."','".$v_egreso."','','ACTIVO')";
-                            $g=$conexion->query($insertegre);
-                            if($g){
-                                 echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="egreso_escuela.php?egreso='.$comp_egre.'";});</script>'; 
+                            $consultegreso=$conexion->query("select 1 from tb_egreso_escuela where comprabante_n='".$comp_egre."'");
+                            $resegreso=mysqli_fetch_array($consultegreso);
+                             if($resegreso[0]){
+                               echo '<script type="text/javascript">swal({title: "error", text: "Revisar el numero de comprobante porque ya se encuentra registrado!", type: "error",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="egreso_escuela.php";});</script>'; 
                             }else{
-                                echo '<script type="text/javascript">swal("Error !", "No se guardaron los registros!", "error")</script>';
-                            }
+                            
 
+
+                                    $updatebanco="update tb_bancos set saldo=saldo-$v_egreso where id_banco=".$id_banco;
+                                    $banc=$conexion->query($updatebanco);
+
+                                  $insertegre="insert into tb_egreso_escuela (id_proveedor,id_banco,id_plan_subcuentas,fecha,descripcion,comprabante_n,cheque,saldo,observacion,estado)values('".$id_proveed."','".$id_banco."','".$c_contable."','".$fecha."','".$descripcion."','".$comp_egre."','".$cheque."','".$v_egreso."','".$observaciontotal."','ACTIVO')";
+                                  $g=$conexion->query($insertegre);
+                                  if($g){
+                                       echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="egreso_escuela.php?egreso='.$comp_egre.'";});</script>'; 
+                                  }else{
+                                      echo '<script type="text/javascript">swal("Error !", "No se guardaron los registros!", "error")</script>';
+                                  }
+                            }
                         }
 
 
@@ -169,7 +179,7 @@ require_once('login/cerrar_sesion.php');
                             <?php 
                             // require_once("login/conexion.php"); 
 
-                            $sql5=mysqli_query($conexion,"SELECT * FROM `tb_plan_cuentas`");
+                            $sql5=mysqli_query($conexion,"SELECT * FROM `tb_plan_subcuentas`");
                         
                             ?>
 
@@ -182,7 +192,7 @@ require_once('login/cerrar_sesion.php');
 
                              while($row=$sql5->fetch_array()){ ?>
 
-                              <option value="<?php echo $row['id_plan_cuentas']; ?>"><?php echo ($row['descripcion']); ?></option>
+                              <option value="<?php echo $row['id_plan_subcuentas']; ?>"><?php echo ($row['descripcion']); ?></option>
                                <?php  
                             }
                             ?>

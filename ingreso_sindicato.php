@@ -32,12 +32,14 @@ require_once('login/cerrar_sesion.php');
                 $comproante_bco = $_POST['comproante_bco'];
                 $id_banco = $_POST['id_banco'];
                 $c_contable = $_POST['c_contable'];
+                $fecha=date('Y-m-d H:i:s');
+                $observaciontotal='('.$fecha.' usuario: '.$_SESSION['nombres'].'.- Ingreso)';
 
            $sqlcompro=$conexion->query("select 1 from tb_ingreso_sindicato where comprabante_n=".$ingreso_n);
                 $respcom=mysqli_fetch_array($sqlcompro);
                 if($respcom[0]!=1){
 
-        $query="insert into tb_ingreso_sindicato (id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado,id_plan_cuentas)values('".$id_per."','".$id_banco."','".$fecha_registro."','".$descripcion."','".$ingreso_n."','".$comproante_bco."','".$abono."','','ACTIVO','".$c_contable."')";
+        $query="insert into tb_ingreso_sindicato (id_persona,id_banco,fecha,descripcion,comprabante_n,comprabante_banco,saldo,observacion,estado,id_plan_subcuentas)values('".$id_per."','".$id_banco."','".$fecha_registro."','".$descripcion."','".$ingreso_n."','".$comproante_bco."','".$abono."','".$observaciontotal."','ACTIVO','".$c_contable."')";
         $a=$conexion->query($query);     
         if($a){
         echo '<script type="text/javascript">swal({title: "ok", text: "Registrado con exito...!", type: "success",   confirmButtonText: "Aceptar!",  closeOnConfirm: false},function(){  location.href="ingreso_sindicato.php?ingreso='.$ingreso_n.'";});</script>';    
@@ -178,22 +180,42 @@ require_once('login/cerrar_sesion.php');
                             </div> 
 
                               <div class="group-material">
-                              <center>
-                                <span>Seleccione cuenta contable </span> <br>
-                               
-                          <select class="selectpicker" name="c_contable" data-live-search="true" required="">
-                          <option selected="" disabled="">Seleccione </option>
-                           <?php  
-                             $sql5=mysqli_query($conexion,"SELECT * FROM `tb_plan_cuentas`");
-                             while($row=$sql5->fetch_array()){ ?>
+                                <center>
+                                  <span>Seleccione cuenta contable </span> <br>
+                                 
+                                    <select class="selectpicker" name="c_contable" data-live-search="true" required="">
+                                        <option selected="" disabled="">Seleccione </option>
+                                     <?php  
+                                       $sql5=mysqli_query($conexion,"SELECT * FROM `tb_plan_subcuentas`");
+                                       while($row=$sql5->fetch_array()){ ?>
 
-                              <option value="<?php echo $row['id_plan_cuentas']; ?>"><?php echo ($row['descripcion']); ?></option>
-                               <?php  
-                            }
-                            ?>
-                          </select>
-                            </center>
-                            </div>
+                                        <option value="<?php echo $row['id_plan_subcuentas']; ?>"><?php echo ($row['descripcion']); ?></option>
+                                         <?php  
+                                      }
+                                      ?>
+                                    </select>
+                          <!-- <button class="btn btn-primary" id="agregar_cta">Agregar</button> -->
+                                </center>
+                              </div>
+
+                            <style>
+                              #contenedor_cta{
+
+                                  width: 50%;
+                                  height: 350px;
+                                  background: red;
+                                  position: fixed;
+                                  top:15px;
+                                  /*right: 25%;*/
+                                  
+                                }
+                             </style>
+
+                          <!--   <div id="contenedor_cta" style="display: none;">
+                              <button id="cerrar_cta">Cerrar</button>
+                            </div> -->
+
+
                             <?php 
                             // require_once("login/conexion.php"); 
 
@@ -231,6 +253,17 @@ require_once('login/cerrar_sesion.php');
 
 <?php require_once('login/cerrar_conexion.php'); ?>
             <script type="text/javascript">
+
+              $('#agregar_cta').on('click',function(e){
+                e.preventDefault();
+                $('#contenedor_cta').attr('style','display:block;');
+              });
+
+              $('#cerrar_cta').on('click',function(e){
+                e.preventDefault();
+                $('#contenedor_cta').attr('style','display:none;');
+              });
+
 
 
        var comprob = '<?php echo $Comprob = isset($_REQUEST["ingreso"]) ? $_REQUEST["ingreso"]: "nada"; ?>';
