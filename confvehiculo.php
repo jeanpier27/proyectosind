@@ -414,6 +414,154 @@ require_once('login/cerrar_sesion.php');
                        </div>
           
         </div>
+
+        <div class="container-flat-form">
+                    <div class="title-flat-form title-flat-blue">CUENTAS CONTABLES</div>
+                    <div class="row">
+                       <div class="col-xs-12 col-sm-11 col-sm-offset-1">
+                       <div  class="group-material">
+                       <center>
+                       <h1>CUENTAS CONTABLE</h1>
+                       
+                        <form autocomplete="off" method="post">
+                          
+                          
+                              <br><br>
+                          
+                          Codigo cuenta contable
+                             <input type="text" name="codigocuentap" required="">
+                             <br><br>
+                          Nueva cuenta contable
+                             <input class="numero" type="text" name="cuentap" required="">
+                           
+                                                   <br><br>
+                           
+                                                   <br><br>
+                          <input type="submit" name="agregarcuentaprincipal" class="btn btn-info" value="Agregar cuenta contable principal ">
+                          
+                        </form>
+
+                       </div>
+                         <?php 
+                        if(isset($_POST['agregarcuentaprincipal'])){
+                          // $promo=$_POST['promo'];
+                          $codigo=$_POST['codigocuentap'];
+                          $cuenta=$_POST['cuentap'];
+                          // $cantidad=$_POST['actividad'];
+                          // echo ("<script type='text/javascript'>alert('".$cantidad."');</script>");
+                          // $repetido=$conexion->query("select 1 from tb_actividad_comercial where descripcion='".$cantidad."'");
+                          // $result=mysqli_fetch_array($repetido);
+                          // echo '<script type="text/javascript">alert("'.$promo.$id_estudiante.$descripción.$cantidad.'");</script>';
+                          // exit;
+                          if($codigo!="" and $cuenta!=""){
+
+                         
+                          $insert=$conexion->query("insert into tb_plan_cuenta (id_plan_cuenta,descripcion) values ('".$codigo.', '.$cuenta."') ");
+                          if(!$insert){
+                            
+                                 echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                           
+
+                          }else{
+                            echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"error",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                          }
+                        }else{
+                           echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Debe seleccionar todos los campos",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                        }
+
+                        }
+                        ?>
+
+
+
+                       </center>
+                       </div>
+                       </div>
+          
+        </div>
+
+        <div class="container-flat-form">
+                    <div class="title-flat-form title-flat-blue">SUBCUENTAS CONTABLES</div>
+                    <div class="row">
+                       <div class="col-xs-12 col-sm-11 col-sm-offset-1">
+                       <div  class="group-material">
+                       <center>
+                       <h1>SUBCUENTAS CONTABLE</h1>
+                       
+                        <form autocomplete="off" method="post">
+                          
+                          <select class="" name="plan_cuenta" id="plan_cuenta" data-live-search="true" required="">
+                          <option value="0">Seleccione</option>
+
+                        <?php 
+                         // $Id_est = isset($_REQUEST["ides"]) ? $_REQUEST["ides"]: 0;
+                         //   $Promo = isset($_REQUEST["promo"]) ? $_REQUEST["promo"]: 0;
+                            $cuenta=$conexion->query("SELECT * FROM `tb_plan_cuenta`"); 
+                            // $desc=$conexion->query("select descripcion from tb_promocion where id_promocion='".$Promo."'");
+                            // $resdesc=mysqli_fetch_array($desc);
+                             while($respcuenta=mysqli_fetch_array($cuenta)){
+                         ?>
+                                 
+                            <option value="<?php echo $respcuenta['id_plan_cuenta']; ?>" > <?php echo $respcuenta['descripcion']; ?> </option>
+                                                       
+
+                           <?php 
+                             }  
+                         ?>
+                           </select>
+                              <br><br>
+                          
+                          Codigo cuenta contable
+                             <input type="text" name="codigocuentasp" required="">
+                             <br><br>
+                          Nueva cuenta contable
+                             <input class="numero" type="text" name="cuentasp" required="">
+                           
+                                                   <br><br>
+                           
+                                                   <br><br>
+                          <input type="submit" name="agregarcuentasubcuenta" class="btn btn-info" value="Agregar subcuenta contable">
+                          
+                        </form>
+
+                       </div>
+                         <?php 
+                        if(isset($_POST['agregarcuentasubcuenta'])){
+                          $id=$_POST['plan_cuenta'];
+                          $codigo=$_POST['codigocuentap'];
+                          $cuenta=$_POST['cuentap'];
+                          // $cantidad=$_POST['actividad'];
+                          // echo ("<script type='text/javascript'>alert('".$cantidad."');</script>");
+                          // $repetido=$conexion->query("select 1 from tb_actividad_comercial where descripcion='".$cantidad."'");
+                          // $result=mysqli_fetch_array($repetido);
+                          // echo '<script type="text/javascript">alert("'.$promo.$id_estudiante.$descripción.$cantidad.'");</script>';
+                          // exit;
+                          if($codigo!="" and $cuenta!=""){
+
+                         
+                          $insert=$conexion->query("insert into tb_plan_subcuentas (id_plan_subcuentas,id_plan_cuenta,descripcion) values ('".$id."','".$codigo.', '.$cuenta."') ");
+                          if(!$insert){
+                            
+                                 echo '<script>jQuery(function(){swal({title:"OK..!!",text:"Registro guardado con exito",type:"success",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                           
+
+                          }else{
+                            echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Error al guardar",type:"error",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                          }
+                        }else{
+                           echo '<script>jQuery(function(){swal({title:"ERROR..!!",text:"Debe seleccionar todos los campos",type:"warning",confirmButtonText:"Aceptar"},function(){location.href="confvehiculo.php";});});</script>';
+                        }
+
+                        }
+                        ?>
+
+
+
+                       </center>
+                       </div>
+                       </div>
+          
+        </div>
         
  </body>
  <script type="text/javascript">
